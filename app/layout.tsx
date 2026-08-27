@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://liuzi-chong.josefina-consequuntu.chatgpt.site'),
   title: '六子冲 · 民间策略棋',
   description: '古朴而精致的六子冲双人策略小游戏。',
   icons: { icon: '/favicon.png' },
