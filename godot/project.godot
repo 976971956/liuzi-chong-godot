@@ -9,12 +9,13 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
 
-window/size/viewport_width=1440
-window/size/viewport_height=900
-window/size/window_width_override=1280
-window/size/window_height_override=800
+window/size/viewport_width=430
+window/size/viewport_height=932
+window/size/window_width_override=430
+window/size/window_height_override=932
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/handheld/orientation=1
 
 [rendering]
 
@@ -25,4 +26,3 @@ textures/default_filters/use_nearest_mipmap_filter=false
 [audio]
 
 driver/enable_input=false
-

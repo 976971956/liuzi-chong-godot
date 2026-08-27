@@ -4,7 +4,7 @@ const ROWS := 5
 const COLS := 4
 const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
-const GAME_FONT = preload("res://assets/NotoSansSC.ttf")
+const GAME_FONT = preload("res://assets/NotoSansSCGameV3.ttf")
 
 var board: Array[String] = []
 var current := "red"
@@ -19,7 +19,9 @@ var piece_skin := 0
 
 var content_box: BoxContainer
 var left_column: VBoxContainer
-var settings_panel: PanelContainer
+var settings_panel: PopupPanel
+var header_margin: MarginContainer
+var page_margin: MarginContainer
 var board_view: Control
 var turn_label: Label
 var step_label: Label
@@ -34,9 +36,9 @@ var piece_buttons: Array[Button] = []
 var sound_engine: Node
 var rules_dialog: AcceptDialog
 
-var board_skin_names := ["古木", "青玉", "星夜", "宣纸"]
-var piece_skin_names := ["篆刻", "琉璃", "卵石", "极简"]
-var background_colors := [Color("f2eee5"), Color("e7efe9"), Color("17263b"), Color("f0eadf")]
+var board_skin_names := ["胡桃木", "青玉", "星河漆", "云纹纸"]
+var piece_skin_names := ["玉扣", "漆雕", "铜章", "星环"]
+var background_colors := [Color("efe8dc"), Color("e5eee8"), Color("101a2b"), Color("f1ece3")]
 
 func _ready() -> void:
 	var game_theme := Theme.new()
@@ -74,7 +76,7 @@ func _build_ui() -> void:
 	header.custom_minimum_size.y = 76
 	header.add_theme_stylebox_override("panel", _style(Color(0.98, 0.97, 0.94, 0.88), 0, Color(0.18, 0.23, 0.20, 0.12), 1))
 	root_vbox.add_child(header)
-	var header_margin := _margin(54, 54, 0, 0)
+	header_margin = _margin(54, 54, 0, 0)
 	header.add_child(header_margin)
 	var header_row := HBoxContainer.new()
 	header_row.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -94,13 +96,27 @@ func _build_ui() -> void:
 	music_button.text = "音"
 	music_button.tooltip_text = "开启或关闭背景音乐"
 	music_button.custom_minimum_size = Vector2(42, 42)
+	music_button.add_theme_color_override("font_color", Color("33483d"))
+	music_button.add_theme_color_override("font_hover_color", Color("17281f"))
 	music_button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.42), 21, Color(0.15, 0.22, 0.18, 0.13), 1))
 	music_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 21))
 	music_button.pressed.connect(_toggle_music_from_header)
 	header_row.add_child(music_button)
+	var settings_button := Button.new()
+	settings_button.text = "设置"
+	settings_button.tooltip_text = "棋盘、棋子与声音设置"
+	settings_button.custom_minimum_size = Vector2(86, 42)
+	settings_button.add_theme_color_override("font_color", Color("33483d"))
+	settings_button.add_theme_color_override("font_hover_color", Color("17281f"))
+	settings_button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.42), 21, Color(0.15, 0.22, 0.18, 0.13), 1))
+	settings_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 21))
+	settings_button.pressed.connect(_show_settings)
+	header_row.add_child(settings_button)
 	var help_button := Button.new()
 	help_button.text = "?"
 	help_button.custom_minimum_size = Vector2(42, 42)
+	help_button.add_theme_color_override("font_color", Color("33483d"))
+	help_button.add_theme_color_override("font_hover_color", Color("17281f"))
 	help_button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.42), 21, Color(0.15, 0.22, 0.18, 0.13), 1))
 	help_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 21))
 	help_button.pressed.connect(_show_rules)
@@ -121,11 +137,11 @@ func _build_ui() -> void:
 	left_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	left_column.add_theme_constant_override("separation", 10)
-	var left_margin := _margin(62, 62, 28, 22)
-	left_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_margin.add_child(left_column)
-	content_box.add_child(left_margin)
+	page_margin = _margin(62, 62, 28, 22)
+	page_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page_margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	page_margin.add_child(left_column)
+	content_box.add_child(page_margin)
 
 	var title_row := HBoxContainer.new()
 	left_column.add_child(title_row)
@@ -161,10 +177,11 @@ func _build_ui() -> void:
 	status_label = Label.new()
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status_label.custom_minimum_size.y = 38
+	status_label.custom_minimum_size.y = 42
+	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_label.add_theme_font_size_override("font_size", 13)
-	status_label.add_theme_color_override("font_color", Color("68746c"))
-	status_label.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.55), 19, Color(0.15, 0.22, 0.18, 0.08), 1))
+	status_label.add_theme_color_override("font_color", Color("415148"))
+	status_label.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.88), 19, Color(0.15, 0.22, 0.18, 0.08), 1))
 	left_column.add_child(status_label)
 
 	var action_row := HBoxContainer.new()
@@ -178,25 +195,29 @@ func _build_ui() -> void:
 	reset_button.pressed.connect(func(): _new_game(true))
 	action_row.add_child(reset_button)
 
-	settings_panel = PanelContainer.new()
-	settings_panel.custom_minimum_size.x = 390
-	settings_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	settings_panel.add_theme_stylebox_override("panel", _style(Color(0.98, 0.97, 0.94, 0.88), 0, Color(0.18, 0.23, 0.20, 0.12), 1))
-	content_box.add_child(settings_panel)
-	var settings_margin := _margin(34, 34, 34, 30)
-	settings_panel.add_child(settings_margin)
+	settings_panel = PopupPanel.new()
+	settings_panel.title = "棋局设置"
+	settings_panel.add_theme_stylebox_override("panel", _style(Color(0.98, 0.97, 0.94, 0.98), 18, Color(0.18, 0.23, 0.20, 0.12), 1))
+	add_child(settings_panel)
+	var settings_scroll := ScrollContainer.new()
+	settings_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	settings_panel.add_child(settings_scroll)
+	var settings_margin := _margin(28, 28, 26, 24)
+	settings_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	settings_scroll.add_child(settings_margin)
 	var settings := VBoxContainer.new()
 	settings.add_theme_constant_override("separation", 14)
 	settings_margin.add_child(settings)
 
-	settings.add_child(_eyebrow("本地双人模式"))
+	settings.add_child(_eyebrow("外观与声音"))
 	var settings_title := Label.new()
 	settings_title.text = "棋局设置"
 	settings_title.add_theme_font_size_override("font_size", 27)
 	settings_title.add_theme_color_override("font_color", Color("17281f"))
 	settings.add_child(settings_title)
 	var settings_copy := Label.new()
-	settings_copy.text = "同屏轮流走子，主动形成“二打一”的活枪即可吃子。"
+	settings_copy.text = "挑选你喜欢的棋盘材质与棋子造型，设置会立即预览。"
 	settings_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settings_copy.add_theme_font_size_override("font_size", 13)
 	settings_copy.add_theme_color_override("font_color", Color("718078"))
@@ -205,7 +226,7 @@ func _build_ui() -> void:
 
 	settings.add_child(_section_title("棋盘皮肤", "04"))
 	var skin_grid := GridContainer.new()
-	skin_grid.columns = 4
+	skin_grid.columns = 2
 	skin_grid.add_theme_constant_override("h_separation", 7)
 	settings.add_child(skin_grid)
 	for i in range(board_skin_names.size()):
@@ -217,7 +238,7 @@ func _build_ui() -> void:
 	settings.add_child(HSeparator.new())
 	settings.add_child(_section_title("棋子样式", "04"))
 	var piece_grid := GridContainer.new()
-	piece_grid.columns = 4
+	piece_grid.columns = 2
 	piece_grid.add_theme_constant_override("h_separation", 7)
 	settings.add_child(piece_grid)
 	for i in range(piece_skin_names.size()):
@@ -267,7 +288,7 @@ func _build_ui() -> void:
 	new_game_button.add_theme_color_override("font_color", Color.WHITE)
 	new_game_button.add_theme_stylebox_override("normal", _style(Color("17281f"), 9))
 	new_game_button.add_theme_stylebox_override("hover", _style(Color("294438"), 9))
-	new_game_button.pressed.connect(func(): _new_game(true))
+	new_game_button.pressed.connect(_new_game_from_settings)
 	settings.add_child(new_game_button)
 	var rules_button := Button.new()
 	rules_button.flat = true
@@ -282,7 +303,7 @@ func _build_rules_dialog() -> void:
 	rules_dialog.title = "六子冲 · 活枪规则"
 	rules_dialog.dialog_text = "① 走一步\n每回合选择一枚己方棋子，沿横线或竖线移动到相邻空点，不能跳跃或斜走。\n\n② 二打一\n本步主动形成连续的“己—己—敌”，且三子之外没有紧邻棋子，便可吃掉枪口的敌子。\n\n③ 定胜负\n把对方吃到只剩一枚，或让对方完全无路可走，即获得胜利。"
 	rules_dialog.ok_button_text = "明白了，开始对弈"
-	rules_dialog.min_size = Vector2i(520, 420)
+	rules_dialog.min_size = Vector2i(330, 400)
 	add_child(rules_dialog)
 
 func _new_game(with_sound: bool) -> void:
@@ -421,8 +442,11 @@ func _has_any_move(target_board: Array[String], player: String) -> bool:
 func _refresh() -> void:
 	board_view.set_state(board, selected, valid_moves, last_move, winner)
 	board_view.set_skins(board_skin, piece_skin)
+	var dark_board := board_skin == 2
 	step_label.text = "传统民间对弈 · 第 %02d 手" % (move_count + 1)
+	step_label.add_theme_color_override("font_color", Color("e3bb73") if dark_board else Color("a84735"))
 	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else "双子成锋，一步制胜"
+	headline.add_theme_color_override("font_color", Color("f3e7cf") if dark_board else Color("17281f"))
 	turn_label.text = "棋局结束" if winner != "" else "● %s方回合" % _player_name(current)
 	turn_label.add_theme_color_override("font_color", Color("a84735") if current == "red" else Color("294b6b"))
 	undo_button.disabled = history.is_empty()
@@ -436,7 +460,7 @@ func _player_name(player: String) -> String:
 
 func _select_board_skin(index: int) -> void:
 	board_skin = index
-	board_view.set_skins(board_skin, piece_skin)
+	_refresh()
 	_update_skin_buttons()
 	queue_redraw()
 
@@ -465,22 +489,53 @@ func _on_sfx_toggled(enabled: bool) -> void:
 func _on_track_selected(index: int) -> void:
 	sound_engine.set_track(index)
 
+func _show_settings() -> void:
+	var viewport_size := get_viewport_rect().size
+	var popup_size := Vector2i(
+		int(minf(430.0, viewport_size.x - 20.0)),
+		int(minf(760.0, viewport_size.y - 20.0))
+	)
+	settings_panel.popup_centered(popup_size)
+
+func _new_game_from_settings() -> void:
+	settings_panel.hide()
+	_new_game(true)
+
 func _show_rules() -> void:
-	rules_dialog.popup_centered(Vector2i(540, 440))
+	if settings_panel.visible:
+		settings_panel.hide()
+	var viewport_size := get_viewport_rect().size
+	rules_dialog.popup_centered(Vector2i(
+		int(minf(540.0, viewport_size.x - 24.0)),
+		int(minf(440.0, viewport_size.y - 24.0))
+	))
 
 func _update_responsive() -> void:
 	if not content_box:
 		return
-	var narrow := get_viewport_rect().size.x < 980.0
-	content_box.vertical = narrow
+	var width := get_viewport_rect().size.x
+	var narrow := width < 700.0
+	content_box.vertical = true
 	if narrow:
 		left_column.custom_minimum_size.x = 0
-		board_view.custom_minimum_size = Vector2(360, 500)
-		settings_panel.custom_minimum_size.x = 0
+		board_view.custom_minimum_size = Vector2(340, 470)
+		header_margin.add_theme_constant_override("margin_left", 14)
+		header_margin.add_theme_constant_override("margin_right", 14)
+		page_margin.add_theme_constant_override("margin_left", 12)
+		page_margin.add_theme_constant_override("margin_right", 12)
+		page_margin.add_theme_constant_override("margin_top", 16)
+		headline.add_theme_font_size_override("font_size", 24)
+		turn_label.custom_minimum_size.x = 102
 	else:
-		left_column.custom_minimum_size.x = 680
-		board_view.custom_minimum_size = Vector2(500, 590)
-		settings_panel.custom_minimum_size.x = 390
+		left_column.custom_minimum_size.x = 620
+		board_view.custom_minimum_size = Vector2(560, 660)
+		header_margin.add_theme_constant_override("margin_left", 48)
+		header_margin.add_theme_constant_override("margin_right", 48)
+		page_margin.add_theme_constant_override("margin_left", 52)
+		page_margin.add_theme_constant_override("margin_right", 52)
+		page_margin.add_theme_constant_override("margin_top", 24)
+		headline.add_theme_font_size_override("font_size", 31)
+		turn_label.custom_minimum_size.x = 112
 
 func _margin(left: int, right: int, top: int, bottom: int) -> MarginContainer:
 	var margin := MarginContainer.new()
@@ -508,10 +563,11 @@ func _style(background: Color, radius: int, border_color := Color.TRANSPARENT, b
 func _small_button(text: String) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(118, 34)
+	button.custom_minimum_size = Vector2(128, 42)
 	button.add_theme_font_size_override("font_size", 12)
-	button.add_theme_color_override("font_color", Color("68746c"))
-	button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.42), 17, Color(0.15, 0.22, 0.18, 0.09), 1))
+	button.add_theme_color_override("font_color", Color("33483d"))
+	button.add_theme_color_override("font_disabled_color", Color("89918d"))
+	button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.82), 17, Color(0.15, 0.22, 0.18, 0.09), 1))
 	button.add_theme_stylebox_override("hover", _style(Color(1, 1, 1, 0.86), 17, Color("bd8f46"), 1))
 	return button
 
@@ -539,9 +595,9 @@ func _section_title(text: String, count: String) -> HBoxContainer:
 func _skin_button(text: String, index: int) -> Button:
 	var colors := [Color("d5a462"), Color("8ea99a"), Color("25334b"), Color("e9dfc9")]
 	var button := Button.new()
-	button.text = "▦\n" + text
+	button.text = "▦   " + text
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(70, 70)
+	button.custom_minimum_size = Vector2(142, 64)
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("5f6962"))
 	button.add_theme_color_override("font_pressed_color", Color("5f6962"))
@@ -551,11 +607,11 @@ func _skin_button(text: String, index: int) -> Button:
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
-	var icons := ["●", "◉", "⬤", "○"]
+	var icons := ["◉", "◎", "●", "⊙"]
 	var button := Button.new()
-	button.text = "%s\n%s" % [icons[index], text]
+	button.text = "%s   %s" % [icons[index], text]
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(70, 70)
+	button.custom_minimum_size = Vector2(142, 64)
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("5f6962"))
 	button.add_theme_color_override("font_pressed_color", Color("5f6962"))
