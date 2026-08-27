@@ -4,7 +4,7 @@ signal point_clicked(index: int)
 
 const ROWS := 5
 const COLS := 4
-const GAME_FONT = preload("res://assets/NotoSansSCGameV4.ttf")
+const GAME_FONT = preload("res://assets/NotoSansSCGameV5.ttf")
 const BOARD_TEXTURES = preload("res://assets/board_texture_atlas.png")
 
 var board: Array[String] = []
@@ -14,6 +14,7 @@ var last_move := -1
 var board_skin := 0
 var piece_skin := 0
 var winner := ""
+var capture_effects: Array[Dictionary] = []
 
 var skin_data := [
 	{"line": Color("e8c98e"), "line_shadow": Color("2b1208"), "accent": Color("f7dfaa"), "wash": Color(0.12, 0.04, 0.01, 0.10)},
@@ -26,6 +27,7 @@ func _ready() -> void:
 	custom_minimum_size = Vector2(340, 470)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	resized.connect(queue_redraw)
+	set_process(false)
 
 func set_state(new_board: Array[String], new_selected: int, new_valid: Array[int], new_last: int, new_winner: String) -> void:
 	board = new_board
@@ -38,6 +40,20 @@ func set_state(new_board: Array[String], new_selected: int, new_valid: Array[int
 func set_skins(new_board_skin: int, new_piece_skin: int) -> void:
 	board_skin = new_board_skin
 	piece_skin = new_piece_skin
+	queue_redraw()
+
+func play_capture_effect(indices: Array[int], side: String) -> void:
+	for index in indices:
+		capture_effects.append({"index": index, "side": side, "time": 0.0, "duration": 0.82})
+	set_process(not capture_effects.is_empty())
+	queue_redraw()
+
+func _process(delta: float) -> void:
+	for i in range(capture_effects.size() - 1, -1, -1):
+		capture_effects[i]["time"] = float(capture_effects[i]["time"]) + delta
+		if float(capture_effects[i]["time"]) >= float(capture_effects[i]["duration"]):
+			capture_effects.remove_at(i)
+	set_process(not capture_effects.is_empty())
 	queue_redraw()
 
 func _get_geometry() -> Dictionary:
@@ -89,8 +105,9 @@ func _draw() -> void:
 		else:
 			_draw_piece(point, board[index], index == selected, index == last_move, grid)
 
-	_draw_count_tag(Vector2(frame.position.x + 12, frame.position.y + 13), "红", board.count("red"), Color("c64b3b"))
-	_draw_count_tag(Vector2(frame.end.x - 12, frame.end.y - 13), "蓝", board.count("blue"), Color("35648f"), true)
+	_draw_capture_effects(grid)
+	_draw_count_tag(Vector2(frame.position.x + 12, frame.position.y + 13), "蓝", board.count("blue"), Color("35648f"))
+	_draw_count_tag(Vector2(frame.end.x - 12, frame.end.y - 13), "红", board.count("red"), Color("c64b3b"), true)
 	if winner != "":
 		_draw_winner_seal(frame.get_center())
 
@@ -147,6 +164,30 @@ func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool
 func _draw_glyph(center: Vector2, radius: float, glyph: String, color: Color) -> void:
 	var font_size := int(radius * 0.70)
 	draw_string(GAME_FONT, center + Vector2(-radius, float(font_size) * 0.36), glyph, HORIZONTAL_ALIGNMENT_CENTER, radius * 2.0, font_size, color)
+
+func _draw_capture_effects(grid: Rect2) -> void:
+	for effect in capture_effects:
+		var progress := clampf(float(effect["time"]) / float(effect["duration"]), 0.0, 1.0)
+		var fade := 1.0 - progress
+		var center := _point_position(int(effect["index"]), grid)
+		var side_color := Color("dc5a48") if String(effect["side"]) == "red" else Color("4f88b8")
+		var gold := Color("ffe19a")
+		var ghost_radius := 24.0 * (1.0 - progress * 0.35)
+		draw_circle(center, ghost_radius, Color(side_color, fade * 0.38))
+		draw_circle(center, 10.0 + progress * 24.0, Color(gold, fade * 0.16))
+		draw_circle(center, maxf(2.0, 9.0 * fade), Color(gold, fade * 0.92))
+		var ring_radius := 13.0 + progress * 48.0
+		draw_arc(center, ring_radius, 0, TAU, 56, Color(gold, minf(1.0, fade * 1.25)), 4.0 * fade + 1.0, true)
+		draw_arc(center, ring_radius * 0.72, 0, TAU, 48, Color(side_color, fade * 0.72), 2.0, true)
+		for shard in range(16):
+			var angle := TAU * float(shard) / 16.0 + float(int(effect["index"]) % 5) * 0.13
+			var distance := 10.0 + progress * (32.0 + float(shard % 3) * 7.0)
+			var direction := Vector2(cos(angle), sin(angle))
+			var start := center + direction * distance
+			var finish := start + direction * (12.0 + float(shard % 2) * 7.0) * fade
+			var shard_color := gold if shard % 2 == 0 else side_color
+			draw_line(start, finish, Color(shard_color, minf(1.0, fade * 1.18)), 3.4 * fade + 0.8, true)
+			draw_circle(finish, 2.6 * fade + 0.8, Color(shard_color, fade))
 
 func _draw_count_tag(anchor: Vector2, label: String, count: int, color: Color, right_align := false) -> void:
 	var tag_size := Vector2(78, 30)
