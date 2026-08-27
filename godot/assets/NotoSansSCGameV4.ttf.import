@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://cpbv7s5l7wnyn"
-path="res://.godot/imported/NotoSansSCGameV3.ttf-b2b9b156ceb11f397d284efd9f99cbbe.fontdata"
+uid="uid://dvptio1547346"
+path="res://.godot/imported/NotoSansSCGameV4.ttf-c2114dc45b2bb2714e34240d034dd77c.fontdata"
 
 [deps]
 
-source_file="res://assets/NotoSansSCGameV3.ttf"
-dest_files=["res://.godot/imported/NotoSansSCGameV3.ttf-b2b9b156ceb11f397d284efd9f99cbbe.fontdata"]
+source_file="res://assets/NotoSansSCGameV4.ttf"
+dest_files=["res://.godot/imported/NotoSansSCGameV4.ttf-c2114dc45b2bb2714e34240d034dd77c.fontdata"]
 
 [params]
 

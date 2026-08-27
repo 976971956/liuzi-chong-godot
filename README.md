@@ -10,11 +10,12 @@
 
 ## 已实现
 
-- 本地双人轮流对弈
+- 人机对战：入门、进阶、高手三档难度
+- 本地双人对抗模式
 - 相邻横竖走子、活枪吃子与胜负判定
 - 可走位置提示、上一步标记、悔棋与重新开局
-- 古木、青玉、星夜、宣纸四种棋盘皮肤
-- 篆刻、琉璃、卵石、极简四种棋子样式
+- 胡桃木、青玉、星河漆、云纹纸四种棋盘皮肤
+- 玉扣、漆雕、铜章、星环四种棋子样式
 - 三套实时合成背景音乐与落子、吃子、胜利音效
 - 桌面和窄屏自适应布局
 - Godot Web 导出，可部署到静态网站
@@ -38,10 +39,10 @@ godot --headless --path godot --export-release Web ../docs/index.html
 godot/                 Godot 工程
   main.tscn            主场景
   scripts/main.gd      界面与游戏状态
+  scripts/ai_player.gd 人机搜索、局面评估与难度策略
   scripts/board_view.gd 棋盘绘制与交互
   scripts/sound_engine.gd 程序音乐与音效
 docs/                  可直接托管的 Web 试玩版
 ```
 
 字体使用 Noto Sans SC 精简字形，遵循 `godot/assets/OFL.txt` 中的 SIL Open Font License。
-

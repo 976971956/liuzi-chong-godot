@@ -4,7 +4,8 @@ const ROWS := 5
 const COLS := 4
 const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
-const GAME_FONT = preload("res://assets/NotoSansSCGameV3.ttf")
+const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
+const GAME_FONT = preload("res://assets/NotoSansSCGameV4.ttf")
 
 var board: Array[String] = []
 var current := "red"
@@ -16,6 +17,10 @@ var move_count := 0
 var history: Array[Dictionary] = []
 var board_skin := 0
 var piece_skin := 0
+var game_mode := "ai"
+var ai_difficulty := 1
+var ai_thinking := false
+var ai_request_id := 0
 
 var content_box: BoxContainer
 var left_column: VBoxContainer
@@ -33,11 +38,16 @@ var sfx_toggle: CheckButton
 var track_select: OptionButton
 var skin_buttons: Array[Button] = []
 var piece_buttons: Array[Button] = []
+var mode_buttons: Array[Button] = []
+var difficulty_buttons: Array[Button] = []
+var difficulty_section: VBoxContainer
 var sound_engine: Node
+var ai_player: RefCounted
 var rules_dialog: AcceptDialog
 
 var board_skin_names := ["胡桃木", "青玉", "星河漆", "云纹纸"]
 var piece_skin_names := ["玉扣", "漆雕", "铜章", "星环"]
+var difficulty_names := ["入门", "进阶", "高手"]
 var background_colors := [Color("efe8dc"), Color("e5eee8"), Color("101a2b"), Color("f1ece3")]
 
 func _ready() -> void:
@@ -49,6 +59,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	sound_engine = SOUND_ENGINE_SCRIPT.new()
 	add_child(sound_engine)
+	ai_player = AI_PLAYER_SCRIPT.new()
 	_build_ui()
 	_build_rules_dialog()
 	_new_game(false)
@@ -217,11 +228,41 @@ func _build_ui() -> void:
 	settings_title.add_theme_color_override("font_color", Color("17281f"))
 	settings.add_child(settings_title)
 	var settings_copy := Label.new()
-	settings_copy.text = "挑选你喜欢的棋盘材质与棋子造型，设置会立即预览。"
+	settings_copy.text = "选择人机或双人对抗，再搭配喜欢的棋盘与棋子。"
 	settings_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settings_copy.add_theme_font_size_override("font_size", 13)
 	settings_copy.add_theme_color_override("font_color", Color("718078"))
 	settings.add_child(settings_copy)
+	settings.add_child(HSeparator.new())
+
+	settings.add_child(_section_title("对战模式", "02"))
+	var mode_grid := GridContainer.new()
+	mode_grid.columns = 2
+	mode_grid.add_theme_constant_override("h_separation", 7)
+	settings.add_child(mode_grid)
+	var mode_names := ["人机对战", "双人对抗"]
+	var mode_copies := ["挑战电脑", "同屏轮流"]
+	for i in range(mode_names.size()):
+		var button := _mode_button(mode_names[i], mode_copies[i])
+		button.pressed.connect(_select_game_mode.bind(i))
+		mode_buttons.append(button)
+		mode_grid.add_child(button)
+
+	difficulty_section = VBoxContainer.new()
+	difficulty_section.add_theme_constant_override("separation", 8)
+	settings.add_child(difficulty_section)
+	difficulty_section.add_child(_section_title("电脑难度", "03"))
+	var difficulty_grid := GridContainer.new()
+	difficulty_grid.columns = 3
+	difficulty_grid.add_theme_constant_override("h_separation", 6)
+	difficulty_section.add_child(difficulty_grid)
+	var difficulty_copies := ["轻松体验", "攻守兼备", "深度推演"]
+	for i in range(difficulty_names.size()):
+		var button := _difficulty_button(difficulty_names[i], difficulty_copies[i])
+		button.pressed.connect(_select_ai_difficulty.bind(i))
+		difficulty_buttons.append(button)
+		difficulty_grid.add_child(button)
+
 	settings.add_child(HSeparator.new())
 
 	settings.add_child(_section_title("棋盘皮肤", "04"))
@@ -296,6 +337,7 @@ func _build_ui() -> void:
 	rules_button.add_theme_color_override("font_color", Color("7f8a84"))
 	rules_button.pressed.connect(_show_rules)
 	settings.add_child(rules_button)
+	_update_mode_buttons()
 	_update_skin_buttons()
 
 func _build_rules_dialog() -> void:
@@ -307,6 +349,8 @@ func _build_rules_dialog() -> void:
 	add_child(rules_dialog)
 
 func _new_game(with_sound: bool) -> void:
+	ai_request_id += 1
+	ai_thinking = false
 	board.clear()
 	board.resize(ROWS * COLS)
 	board.fill("")
@@ -321,13 +365,16 @@ func _new_game(with_sound: bool) -> void:
 	last_move = -1
 	move_count = 0
 	history.clear()
-	_set_status("新棋局开始，红方先行")
+	_set_status("人机对战开始，你执红子" if game_mode == "ai" else "双人对抗开始，红方先行")
 	if with_sound:
 		sound_engine.play_sfx("move")
 	_refresh()
 
 func _on_point_clicked(index: int) -> void:
 	if winner != "":
+		return
+	if ai_thinking or _is_ai_turn():
+		_set_status("电脑正在思考，请稍候…")
 		return
 	var cell := board[index]
 	if cell == current:
@@ -371,12 +418,21 @@ func _move_piece(from: int, to: int) -> void:
 			_set_status("%s方形成活枪，吃掉 %d 枚棋子" % [_player_name(moved_player), captured.size()])
 			sound_engine.play_sfx("capture")
 	_refresh()
+	if _is_ai_turn():
+		_schedule_ai_turn()
 
 func _undo() -> void:
 	if history.is_empty():
 		_set_status("当前没有可以悔棋的步骤")
 		return
-	var snapshot: Dictionary = history.pop_back()
+	ai_request_id += 1
+	ai_thinking = false
+	var undo_steps := 2 if game_mode == "ai" and current == "red" and history.size() >= 2 else 1
+	var snapshot: Dictionary = {}
+	for _step in range(undo_steps):
+		if history.is_empty():
+			break
+		snapshot = history.pop_back()
 	board.assign(snapshot.board)
 	current = snapshot.current
 	winner = snapshot.winner
@@ -384,7 +440,7 @@ func _undo() -> void:
 	move_count = snapshot.move_count
 	selected = -1
 	valid_moves.clear()
-	_set_status("已撤回上一步")
+	_set_status("已撤回双方一轮" if undo_steps == 2 else "已撤回上一步")
 	sound_engine.play_sfx("select")
 	_refresh()
 
@@ -443,11 +499,11 @@ func _refresh() -> void:
 	board_view.set_state(board, selected, valid_moves, last_move, winner)
 	board_view.set_skins(board_skin, piece_skin)
 	var dark_board := board_skin == 2
-	step_label.text = "传统民间对弈 · 第 %02d 手" % (move_count + 1)
+	step_label.text = "传统民间对弈 · %s · 第 %02d 手" % [_mode_label(), move_count + 1]
 	step_label.add_theme_color_override("font_color", Color("e3bb73") if dark_board else Color("a84735"))
-	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else "双子成锋，一步制胜"
+	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else ("你执红子，挑战电脑" if game_mode == "ai" else "双子成锋，一步制胜")
 	headline.add_theme_color_override("font_color", Color("f3e7cf") if dark_board else Color("17281f"))
-	turn_label.text = "棋局结束" if winner != "" else "● %s方回合" % _player_name(current)
+	turn_label.text = "棋局结束" if winner != "" else ("电脑思考中" if ai_thinking else "● %s方回合" % _player_name(current))
 	turn_label.add_theme_color_override("font_color", Color("a84735") if current == "red" else Color("294b6b"))
 	undo_button.disabled = history.is_empty()
 
@@ -457,6 +513,58 @@ func _set_status(text: String) -> void:
 
 func _player_name(player: String) -> String:
 	return "红" if player == "red" else "蓝"
+
+func _mode_label() -> String:
+	return ("人机·%s" % difficulty_names[ai_difficulty]) if game_mode == "ai" else "双人对抗"
+
+func _is_ai_turn() -> bool:
+	return game_mode == "ai" and current == "blue" and winner == ""
+
+func _schedule_ai_turn() -> void:
+	if ai_thinking or not _is_ai_turn():
+		return
+	selected = -1
+	valid_moves.clear()
+	ai_thinking = true
+	ai_request_id += 1
+	var request := ai_request_id
+	_set_status("电脑正在思考（%s难度）…" % difficulty_names[ai_difficulty])
+	_refresh()
+	_run_ai_turn(request)
+
+func _run_ai_turn(request: int) -> void:
+	await get_tree().create_timer(0.55).timeout
+	if request != ai_request_id or not _is_ai_turn():
+		return
+	var move: Dictionary = ai_player.find_best_move(board.duplicate(), ai_difficulty)
+	if request != ai_request_id:
+		return
+	ai_thinking = false
+	if move.is_empty():
+		winner = "red"
+		_set_status("电脑无路可走，红方获胜！")
+		_refresh()
+		return
+	_move_piece(int(move["from"]), int(move["to"]))
+
+func _select_game_mode(index: int) -> void:
+	game_mode = "ai" if index == 0 else "pvp"
+	_update_mode_buttons()
+	_new_game(false)
+
+func _select_ai_difficulty(index: int) -> void:
+	ai_difficulty = index
+	_update_mode_buttons()
+	_new_game(false)
+	sound_engine.play_sfx("select")
+
+func _update_mode_buttons() -> void:
+	for i in range(mode_buttons.size()):
+		mode_buttons[i].button_pressed = (i == 0 and game_mode == "ai") or (i == 1 and game_mode == "pvp")
+	for i in range(difficulty_buttons.size()):
+		difficulty_buttons[i].button_pressed = i == ai_difficulty
+	if difficulty_section:
+		difficulty_section.visible = game_mode == "ai"
 
 func _select_board_skin(index: int) -> void:
 	board_skin = index
@@ -591,6 +699,32 @@ func _section_title(text: String, count: String) -> HBoxContainer:
 	count_label.add_theme_color_override("font_color", Color("a5a69f"))
 	row.add_child(count_label)
 	return row
+
+func _mode_button(title: String, copy: String) -> Button:
+	var button := Button.new()
+	button.text = "%s\n%s" % [title, copy]
+	button.toggle_mode = true
+	button.custom_minimum_size = Vector2(142, 64)
+	button.add_theme_font_size_override("font_size", 13)
+	button.add_theme_color_override("font_color", Color("5f6962"))
+	button.add_theme_color_override("font_pressed_color", Color("17281f"))
+	button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.42), 10, Color(0.15, 0.22, 0.18, 0.10), 1))
+	button.add_theme_stylebox_override("pressed", _style(Color("e7dfcf"), 10, Color("a84735"), 2))
+	button.add_theme_stylebox_override("hover", _style(Color(1, 1, 1, 0.72), 10, Color("bd8f46"), 1))
+	return button
+
+func _difficulty_button(title: String, copy: String) -> Button:
+	var button := Button.new()
+	button.text = "%s\n%s" % [title, copy]
+	button.toggle_mode = true
+	button.custom_minimum_size = Vector2(92, 58)
+	button.add_theme_font_size_override("font_size", 11)
+	button.add_theme_color_override("font_color", Color("657068"))
+	button.add_theme_color_override("font_pressed_color", Color("17281f"))
+	button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.34), 9, Color(0.15, 0.22, 0.18, 0.08), 1))
+	button.add_theme_stylebox_override("pressed", _style(Color("e3eadf"), 9, Color("356652"), 2))
+	button.add_theme_stylebox_override("hover", _style(Color(1, 1, 1, 0.68), 9, Color("bd8f46"), 1))
+	return button
 
 func _skin_button(text: String, index: int) -> Button:
 	var colors := [Color("d5a462"), Color("8ea99a"), Color("25334b"), Color("e9dfc9")]
