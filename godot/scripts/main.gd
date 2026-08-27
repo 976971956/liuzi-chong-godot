@@ -6,6 +6,13 @@ const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
+const UI_BACKGROUND = preload("res://assets/ui_paper_background_v2.png")
+const ICON_MUSIC = preload("res://assets/icons/music.svg")
+const ICON_SETTINGS = preload("res://assets/icons/settings.svg")
+const ICON_RULES = preload("res://assets/icons/rules.svg")
+const ICON_UNDO = preload("res://assets/icons/undo.svg")
+const ICON_RESTART = preload("res://assets/icons/restart.svg")
+const ICON_CLOSE = preload("res://assets/icons/close.svg")
 
 var board: Array[String] = []
 var current := "red"
@@ -71,12 +78,12 @@ func _ready() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), background_colors[board_skin])
 	var is_dark := board_skin == 2
-	var haze := Color(0.36, 0.50, 0.68, 0.07) if is_dark else Color(1, 1, 1, 0.46)
-	draw_circle(Vector2(size.x * 0.17, size.y * 0.18), minf(size.x, size.y) * 0.38, haze)
-	for i in range(34):
-		var y := float(i) * size.y / 33.0
-		var line_color := Color(1, 1, 1, 0.018) if is_dark else Color(0.25, 0.20, 0.13, 0.018)
-		draw_line(Vector2(0, y), Vector2(size.x, y + sin(float(i) * 1.7) * 4.0), line_color, 1.0)
+	var texture_tint := Color(0.15, 0.22, 0.32, 0.30) if is_dark else Color(1.0, 1.0, 1.0, 0.78)
+	if board_skin == 1:
+		texture_tint = Color(0.88, 1.0, 0.92, 0.72)
+	elif board_skin == 3:
+		texture_tint = Color(1.0, 0.98, 0.92, 0.88)
+	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, texture_tint)
 
 func _build_ui() -> void:
 	var root_vbox := VBoxContainer.new()
@@ -121,32 +128,51 @@ func _build_ui() -> void:
 	header_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header_row.add_child(header_spacer)
 	var music_button := Button.new()
-	music_button.text = "乐"
+	music_button.icon = ICON_MUSIC
+	music_button.expand_icon = true
+	music_button.icon_max_width = 18
 	music_button.tooltip_text = "开启或关闭背景音乐"
 	music_button.custom_minimum_size = Vector2(40, 40)
 	music_button.add_theme_color_override("font_color", Color("33483d"))
 	music_button.add_theme_color_override("font_hover_color", Color("17281f"))
+	music_button.add_theme_color_override("icon_normal_color", Color("405248"))
+	music_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
+	music_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
 	music_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("ddd2c2"), 1))
 	music_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 12, Color("b78a45"), 1))
+	music_button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 1))
 	music_button.pressed.connect(_toggle_music_from_header)
 	header_row.add_child(music_button)
 	var settings_button := Button.new()
-	settings_button.text = "设"
+	settings_button.icon = ICON_SETTINGS
+	settings_button.expand_icon = true
+	settings_button.icon_max_width = 18
 	settings_button.tooltip_text = "棋盘、棋子与声音设置"
 	settings_button.custom_minimum_size = Vector2(40, 40)
 	settings_button.add_theme_color_override("font_color", Color("33483d"))
 	settings_button.add_theme_color_override("font_hover_color", Color("17281f"))
+	settings_button.add_theme_color_override("icon_normal_color", Color("405248"))
+	settings_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
+	settings_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
 	settings_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("ddd2c2"), 1))
 	settings_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 12, Color("b78a45"), 1))
+	settings_button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 1))
 	settings_button.pressed.connect(_show_settings)
 	header_row.add_child(settings_button)
 	var help_button := Button.new()
-	help_button.text = "规"
+	help_button.icon = ICON_RULES
+	help_button.expand_icon = true
+	help_button.icon_max_width = 18
+	help_button.tooltip_text = "查看游戏规则"
 	help_button.custom_minimum_size = Vector2(40, 40)
 	help_button.add_theme_color_override("font_color", Color("33483d"))
 	help_button.add_theme_color_override("font_hover_color", Color("17281f"))
+	help_button.add_theme_color_override("icon_normal_color", Color("405248"))
+	help_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
+	help_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
 	help_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("ddd2c2"), 1))
 	help_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 12, Color("b78a45"), 1))
+	help_button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 1))
 	help_button.pressed.connect(_show_rules)
 	header_row.add_child(help_button)
 
@@ -231,9 +257,15 @@ func _build_ui() -> void:
 	action_row.add_theme_constant_override("separation", 10)
 	action_stack.add_child(action_row)
 	undo_button = _small_button("悔棋")
+	undo_button.icon = ICON_UNDO
+	undo_button.expand_icon = true
+	undo_button.icon_max_width = 16
 	undo_button.pressed.connect(_undo)
 	action_row.add_child(undo_button)
 	var reset_button := _primary_button("重新开局")
+	reset_button.icon = ICON_RESTART
+	reset_button.expand_icon = true
+	reset_button.icon_max_width = 16
 	reset_button.pressed.connect(func(): _new_game(true))
 	action_row.add_child(reset_button)
 
@@ -258,10 +290,14 @@ func _build_ui() -> void:
 	settings_eyebrow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	settings_top.add_child(settings_eyebrow)
 	var settings_close := Button.new()
-	settings_close.text = "×"
+	settings_close.icon = ICON_CLOSE
+	settings_close.expand_icon = true
+	settings_close.icon_max_width = 16
 	settings_close.custom_minimum_size = Vector2(34, 34)
 	settings_close.add_theme_font_size_override("font_size", 18)
 	settings_close.add_theme_color_override("font_color", Color("536158"))
+	settings_close.add_theme_color_override("icon_normal_color", Color("536158"))
+	settings_close.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	settings_close.add_theme_stylebox_override("normal", _style(Color("eee5d7"), 10))
 	settings_close.add_theme_stylebox_override("hover", _style(Color("e3d6c4"), 10))
 	settings_close.pressed.connect(settings_panel.hide)
@@ -411,10 +447,14 @@ func _build_rules_dialog() -> void:
 	eyebrow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_row.add_child(eyebrow)
 	var close_button := Button.new()
-	close_button.text = "×"
+	close_button.icon = ICON_CLOSE
+	close_button.expand_icon = true
+	close_button.icon_max_width = 16
 	close_button.custom_minimum_size = Vector2(34, 34)
 	close_button.add_theme_font_size_override("font_size", 18)
 	close_button.add_theme_color_override("font_color", Color("536158"))
+	close_button.add_theme_color_override("icon_normal_color", Color("536158"))
+	close_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	close_button.add_theme_stylebox_override("normal", _style(Color("eee5d7"), 10))
 	close_button.add_theme_stylebox_override("hover", _style(Color("e3d6c4"), 10))
 	close_button.pressed.connect(rules_dialog.hide)
@@ -596,11 +636,10 @@ func _has_any_move(target_board: Array[String], player: String) -> bool:
 func _refresh() -> void:
 	board_view.set_state(board, selected, valid_moves, last_move, winner)
 	board_view.set_skins(board_skin, piece_skin)
-	var dark_board := board_skin == 2
 	step_label.text = "传统民间对弈 · %s · 第 %02d 手" % [_mode_label(), move_count + 1]
-	step_label.add_theme_color_override("font_color", Color("e3bb73") if dark_board else Color("a84735"))
+	step_label.add_theme_color_override("font_color", Color("a84735"))
 	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else ("你执红子，挑战电脑" if game_mode == "ai" else "双子成锋，一步制胜")
-	headline.add_theme_color_override("font_color", Color("f3e7cf") if dark_board else Color("17281f"))
+	headline.add_theme_color_override("font_color", Color("17281f"))
 	turn_label.text = "棋局结束" if winner != "" else ("电脑思考中" if ai_thinking else "● %s方回合" % _player_name(current))
 	turn_label.add_theme_color_override("font_color", Color("a84735") if current == "red" else Color("294b6b"))
 	undo_button.disabled = history.is_empty()
@@ -786,8 +825,12 @@ func _small_button(text: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("33483d"))
 	button.add_theme_color_override("font_disabled_color", Color("89918d"))
+	button.add_theme_color_override("icon_normal_color", Color("405248"))
+	button.add_theme_color_override("icon_hover_color", Color("a7523f"))
+	button.add_theme_color_override("icon_disabled_color", Color("9b9f9c"))
 	button.add_theme_stylebox_override("normal", _style(Color("eee7dc"), 13, Color("d5c9b8"), 1))
 	button.add_theme_stylebox_override("hover", _style(Color("e6dccd"), 13, Color("b78a45"), 1))
+	button.add_theme_stylebox_override("pressed", _style(Color("ddd1bf"), 13, Color("a7523f"), 1))
 	return button
 
 func _primary_button(text: String) -> Button:
@@ -797,8 +840,12 @@ func _primary_button(text: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("fff8e9"))
 	button.add_theme_color_override("font_hover_color", Color.WHITE)
+	button.add_theme_color_override("icon_normal_color", Color("fff8e9"))
+	button.add_theme_color_override("icon_hover_color", Color.WHITE)
+	button.add_theme_color_override("icon_pressed_color", Color("fff8e9"))
 	button.add_theme_stylebox_override("normal", _style(Color("203b31"), 13, Color("b78a45"), 1))
 	button.add_theme_stylebox_override("hover", _style(Color("2b5142"), 13, Color("d3a75e"), 1))
+	button.add_theme_stylebox_override("pressed", _style(Color("172c25"), 13, Color("d3a75e"), 1))
 	return button
 
 func _eyebrow(text: String) -> Label:

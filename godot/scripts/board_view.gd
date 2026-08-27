@@ -17,10 +17,10 @@ var winner := ""
 var capture_effects: Array[Dictionary] = []
 
 var skin_data := [
-	{"line": Color("e8c98e"), "line_shadow": Color("2b1208"), "accent": Color("f7dfaa"), "wash": Color(0.12, 0.04, 0.01, 0.10)},
-	{"line": Color("214f45"), "line_shadow": Color("dce9d9"), "accent": Color("f2e6bd"), "wash": Color(0.02, 0.20, 0.15, 0.06)},
-	{"line": Color("e7be6b"), "line_shadow": Color("050c22"), "accent": Color("fff0ba"), "wash": Color(0.02, 0.03, 0.13, 0.10)},
-	{"line": Color("8c3d31"), "line_shadow": Color("f7eedc"), "accent": Color("c38a45"), "wash": Color(0.25, 0.16, 0.05, 0.04)},
+	{"line": Color("e8c98e"), "line_shadow": Color("2b1208"), "accent": Color("f7dfaa"), "wash": Color(0.12, 0.04, 0.01, 0.10), "frame": Color("4a2a1b"), "edge": Color("b9824d"), "shadow": Color(0.05, 0.02, 0.01, 0.36)},
+	{"line": Color("214f45"), "line_shadow": Color("dce9d9"), "accent": Color("f2e6bd"), "wash": Color(0.02, 0.20, 0.15, 0.06), "frame": Color("24483f"), "edge": Color("c5ad77"), "shadow": Color(0.02, 0.08, 0.07, 0.30)},
+	{"line": Color("e7be6b"), "line_shadow": Color("050c22"), "accent": Color("fff0ba"), "wash": Color(0.02, 0.03, 0.13, 0.10), "frame": Color("101d36"), "edge": Color("c89c4f"), "shadow": Color(0.01, 0.02, 0.08, 0.46)},
+	{"line": Color("8c3d31"), "line_shadow": Color("f7eedc"), "accent": Color("c38a45"), "wash": Color(0.25, 0.16, 0.05, 0.04), "frame": Color("71372f"), "edge": Color("b78a45"), "shadow": Color(0.12, 0.04, 0.03, 0.30)},
 ]
 
 func _ready() -> void:
@@ -72,13 +72,13 @@ func _draw() -> void:
 	var grid: Rect2 = geometry.grid
 	var skin: Dictionary = skin_data[board_skin]
 
-	draw_style_box(_style(Color(0.035, 0.025, 0.02, 0.30), 30.0), Rect2(frame.position + Vector2(0, 14), frame.size))
-	draw_style_box(_style(Color("5c3a21"), 29.0), frame.grow(4.0))
+	draw_style_box(_style(skin.shadow, 30.0), Rect2(frame.position + Vector2(0, 14), frame.size).grow(4.0))
+	draw_style_box(_style(skin.frame, 30.0, skin.edge, 2.0), frame.grow(6.0))
 	var half := BOARD_TEXTURES.get_size() * 0.5
 	var source := Rect2(Vector2(float(board_skin % 2) * half.x, float(board_skin / 2) * half.y), half)
 	draw_texture_rect_region(BOARD_TEXTURES, frame, source)
 	draw_rect(frame, skin.wash)
-	draw_style_box(_style(Color(1, 1, 1, 0.025), 26.0, Color(1, 0.88, 0.61, 0.34), 2.0), frame.grow(-7.0))
+	draw_style_box(_style(Color(1, 1, 1, 0.025), 26.0, Color(skin.edge, 0.54), 2.0), frame.grow(-7.0))
 	draw_style_box(_style(Color.TRANSPARENT, 22.0, Color(0.08, 0.05, 0.03, 0.26), 1.0), frame.grow(-13.0))
 	_draw_corners(frame, skin.accent)
 
