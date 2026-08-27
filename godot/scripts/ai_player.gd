@@ -167,19 +167,6 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 			var after := line[start + 3] if start + 3 < line.size() else -1
 			if (before == -1 or board[before] == "") and (after == -1 or board[after] == ""):
 				var target := window[2] if forward else window[0]
-				if target not in targets and not _is_protected_pair(board, target, opponent):
+				if target not in targets:
 					targets.append(target)
 	return targets
-
-func _is_protected_pair(board: Array[String], target: int, side: String) -> bool:
-	var row: int = int(target / COLS)
-	var col: int = target % COLS
-	for c in range(COLS):
-		var index: int = row * COLS + c
-		if index != target and board[index] == side:
-			return true
-	for r in range(ROWS):
-		var index: int = r * COLS + col
-		if index != target and board[index] == side:
-			return true
-	return false

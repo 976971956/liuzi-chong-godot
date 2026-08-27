@@ -8,15 +8,15 @@ func _init() -> void:
 	board.resize(20)
 	board.fill("")
 
-	# 同一竖线上有两枚红子时，枪口的红子受保护。
+	# 同一竖线上连续四子时，三子活枪被第四子封住。
 	board[0] = "blue"
 	board[4] = "blue"
 	board[8] = "red"
-	board[16] = "red"
+	board[12] = "red"
 	assert(ai._capture_targets(board, 4, "blue").is_empty())
 
-	# 撤掉保护子后，同样的活枪可以吃掉枪口红子。
-	board[16] = ""
+	# 撤掉第四子后，恰好三子连线，可以吃掉枪口红子。
+	board[12] = ""
 	assert(ai._capture_targets(board, 4, "blue") == [8])
 
 	# 新开局中红方在下、蓝方在上，电脑必须能找到合法走法。
