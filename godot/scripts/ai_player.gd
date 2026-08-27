@@ -154,6 +154,12 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 		col_line.append(r * COLS + col)
 	var targets: Array[int] = []
 	for line: Array[int] in [row_line, col_line]:
+		var occupied_count := 0
+		for index in line:
+			if board[index] != "":
+				occupied_count += 1
+		if occupied_count != 3:
+			continue
 		for start in range(line.size() - 2):
 			var window: Array[int] = [line[start], line[start + 1], line[start + 2]]
 			if moved_index not in window:
@@ -163,10 +169,7 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 			var backward := values == [opponent, player, player]
 			if not forward and not backward:
 				continue
-			var before := line[start - 1] if start > 0 else -1
-			var after := line[start + 3] if start + 3 < line.size() else -1
-			if (before == -1 or board[before] == "") and (after == -1 or board[after] == ""):
-				var target := window[2] if forward else window[0]
-				if target not in targets:
-					targets.append(target)
+			var target := window[2] if forward else window[0]
+			if target not in targets:
+				targets.append(target)
 	return targets

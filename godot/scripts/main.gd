@@ -5,7 +5,7 @@ const COLS := 4
 const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
-const GAME_FONT = preload("res://assets/NotoSansSCGameV6.ttf")
+const GAME_FONT = preload("res://assets/NotoSansSCGameV7.ttf")
 
 var board: Array[String] = []
 var current := "red"
@@ -21,7 +21,7 @@ var game_mode := "ai"
 var ai_difficulty := 1
 var ai_thinking := false
 var ai_request_id := 0
-var capture_blocked_by_four := false
+var capture_blocked_by_extra_piece := false
 
 var content_box: BoxContainer
 var left_column: VBoxContainer
@@ -344,7 +344,7 @@ func _build_ui() -> void:
 func _build_rules_dialog() -> void:
 	rules_dialog = AcceptDialog.new()
 	rules_dialog.title = "六子冲 · 活枪规则"
-	rules_dialog.dialog_text = "① 走一步\n每回合选择一枚己方棋子，沿横线或竖线移动到相邻空点，不能跳跃或斜走。\n\n② 二打一\n本步主动形成连续的“己—己—敌”，恰好三子连成一线，便可吃掉枪口的敌子。\n\n③ 四子封枪\n若同一直线上连续出现第四枚棋子，活枪即被封住，不能吃子。\n\n④ 定胜负\n把对方吃到只剩一枚，或让对方完全无路可走，即获得胜利。"
+	rules_dialog.dialog_text = "① 走一步\n每回合选择一枚己方棋子，沿横线或竖线移动到相邻空点，不能跳跃或斜走。\n\n② 二打一\n本步主动形成连续的“己—己—敌”，且整条横线或竖线上只有这三枚棋子，便可吃掉枪口的敌子。\n\n③ 整线封枪\n同一直线上只要另有第四枚棋子，即使中间隔着空点，活枪也会被封住，不能吃子。\n\n④ 定胜负\n把对方吃到只剩一枚，或让对方完全无路可走，即获得胜利。"
 	rules_dialog.ok_button_text = "明白了，开始对弈"
 	rules_dialog.min_size = Vector2i(330, 400)
 	add_child(rules_dialog)
@@ -414,7 +414,7 @@ func _move_piece(from: int, to: int) -> void:
 		var moved_player := current
 		current = opponent
 		if captured.is_empty():
-			_set_status("四子同线，活枪被封，%s方回合" % _player_name(current) if capture_blocked_by_four else "%s方回合，请选择棋子" % _player_name(current))
+			_set_status("整条线上另有棋子，活枪被封，%s方回合" % _player_name(current) if capture_blocked_by_extra_piece else "%s方回合，请选择棋子" % _player_name(current))
 			sound_engine.play_sfx("move")
 		else:
 			_set_status("%s方形成活枪，吃掉 %d 枚棋子" % [_player_name(moved_player), captured.size()])
@@ -463,7 +463,7 @@ func _valid_moves_for(index: int, target_board: Array[String]) -> Array[int]:
 	return moves
 
 func _capture_targets(target_board: Array[String], moved_index: int, player: String) -> Array[int]:
-	capture_blocked_by_four = false
+	capture_blocked_by_extra_piece = false
 	var opponent: String = "blue" if player == "red" else "red"
 	var row: int = int(moved_index / COLS)
 	var col: int = moved_index % COLS
@@ -475,6 +475,10 @@ func _capture_targets(target_board: Array[String], moved_index: int, player: Str
 	var targets: Array[int] = []
 	for line_variant in lines:
 		var line: Array = line_variant
+		var occupied_count := 0
+		for index_variant in line:
+			if target_board[int(index_variant)] != "":
+				occupied_count += 1
 		for start in range(line.size() - 2):
 			var window: Array[int] = [int(line[start]), int(line[start + 1]), int(line[start + 2])]
 			if moved_index not in window:
@@ -484,16 +488,12 @@ func _capture_targets(target_board: Array[String], moved_index: int, player: Str
 			var backward: bool = values == [opponent, player, player]
 			if not forward and not backward:
 				continue
-			var before: int = int(line[start - 1]) if start > 0 else -1
-			var after: int = int(line[start + 3]) if start + 3 < line.size() else -1
-			var clean_before: bool = before == -1 or target_board[before] == ""
-			var clean_after: bool = after == -1 or target_board[after] == ""
-			if clean_before and clean_after:
+			if occupied_count == 3:
 				var target: int = window[2] if forward else window[0]
 				if target not in targets:
 					targets.append(target)
 			else:
-				capture_blocked_by_four = true
+				capture_blocked_by_extra_piece = true
 	return targets
 
 func _has_any_move(target_board: Array[String], player: String) -> bool:
