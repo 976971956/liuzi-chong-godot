@@ -5,7 +5,7 @@ signal point_clicked(index: int)
 const ROWS := 5
 const COLS := 4
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
-const BOARD_TEXTURES = preload("res://assets/board_texture_atlas.png")
+const BOARD_TEXTURES = preload("res://assets/board_texture_atlas_v2.png")
 
 var board: Array[String] = []
 var selected := -1

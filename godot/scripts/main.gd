@@ -6,7 +6,11 @@ const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
-const UI_BACKGROUND = preload("res://assets/ui_paper_background_v2.png")
+const UI_BACKGROUND_ATLAS = preload("res://assets/ui_background_atlas_v3.png")
+const BUTTON_PANEL_PAPER = preload("res://assets/ui/button_panel_paper.svg")
+const BUTTON_PANEL_JADE = preload("res://assets/ui/button_panel_jade.svg")
+const BUTTON_PANEL_CINNABAR = preload("res://assets/ui/button_panel_cinnabar.svg")
+const BUTTON_PANEL_ICON = preload("res://assets/ui/button_panel_icon.svg")
 const ICON_MUSIC = preload("res://assets/icons/music.svg")
 const ICON_SETTINGS = preload("res://assets/icons/settings.svg")
 const ICON_RULES = preload("res://assets/icons/rules.svg")
@@ -77,13 +81,9 @@ func _ready() -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), background_colors[board_skin])
-	var is_dark := board_skin == 2
-	var texture_tint := Color(0.15, 0.22, 0.32, 0.30) if is_dark else Color(1.0, 1.0, 1.0, 0.78)
-	if board_skin == 1:
-		texture_tint = Color(0.88, 1.0, 0.92, 0.72)
-	elif board_skin == 3:
-		texture_tint = Color(1.0, 0.98, 0.92, 0.88)
-	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, texture_tint)
+	var half := UI_BACKGROUND_ATLAS.get_size() * 0.5
+	var source := Rect2(Vector2(float(board_skin % 2) * half.x, float(board_skin / 2) * half.y), half)
+	draw_texture_rect_region(UI_BACKGROUND_ATLAS, Rect2(Vector2.ZERO, size), source)
 
 func _build_ui() -> void:
 	var root_vbox := VBoxContainer.new()
@@ -138,9 +138,9 @@ func _build_ui() -> void:
 	music_button.add_theme_color_override("icon_normal_color", Color("405248"))
 	music_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	music_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
-	music_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("ddd2c2"), 1))
-	music_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 12, Color("b78a45"), 1))
-	music_button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 1))
+	music_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
+	music_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
+	music_button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 18.0))
 	music_button.pressed.connect(_toggle_music_from_header)
 	header_row.add_child(music_button)
 	var settings_button := Button.new()
@@ -154,9 +154,9 @@ func _build_ui() -> void:
 	settings_button.add_theme_color_override("icon_normal_color", Color("405248"))
 	settings_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	settings_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
-	settings_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("ddd2c2"), 1))
-	settings_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 12, Color("b78a45"), 1))
-	settings_button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 1))
+	settings_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
+	settings_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
+	settings_button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 18.0))
 	settings_button.pressed.connect(_show_settings)
 	header_row.add_child(settings_button)
 	var help_button := Button.new()
@@ -170,9 +170,9 @@ func _build_ui() -> void:
 	help_button.add_theme_color_override("icon_normal_color", Color("405248"))
 	help_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	help_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
-	help_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("ddd2c2"), 1))
-	help_button.add_theme_stylebox_override("hover", _style(Color("e9dfca"), 12, Color("b78a45"), 1))
-	help_button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 1))
+	help_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
+	help_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
+	help_button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 18.0))
 	help_button.pressed.connect(_show_rules)
 	header_row.add_child(help_button)
 
@@ -298,8 +298,8 @@ func _build_ui() -> void:
 	settings_close.add_theme_color_override("font_color", Color("536158"))
 	settings_close.add_theme_color_override("icon_normal_color", Color("536158"))
 	settings_close.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	settings_close.add_theme_stylebox_override("normal", _style(Color("eee5d7"), 10))
-	settings_close.add_theme_stylebox_override("hover", _style(Color("e3d6c4"), 10))
+	settings_close.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
+	settings_close.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
 	settings_close.pressed.connect(settings_panel.hide)
 	settings_top.add_child(settings_close)
 	var settings_title := Label.new()
@@ -412,8 +412,8 @@ func _build_ui() -> void:
 	new_game_button.custom_minimum_size.y = 52
 	new_game_button.add_theme_font_size_override("font_size", 15)
 	new_game_button.add_theme_color_override("font_color", Color.WHITE)
-	new_game_button.add_theme_stylebox_override("normal", _style(Color("203b31"), 14, Color("b78a45"), 1))
-	new_game_button.add_theme_stylebox_override("hover", _style(Color("2b5142"), 14, Color("d3a75e"), 1))
+	new_game_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
+	new_game_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_JADE, 20.0, Color("e8fff3")))
 	new_game_button.pressed.connect(_new_game_from_settings)
 	settings.add_child(new_game_button)
 	var rules_button := Button.new()
@@ -455,8 +455,8 @@ func _build_rules_dialog() -> void:
 	close_button.add_theme_color_override("font_color", Color("536158"))
 	close_button.add_theme_color_override("icon_normal_color", Color("536158"))
 	close_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	close_button.add_theme_stylebox_override("normal", _style(Color("eee5d7"), 10))
-	close_button.add_theme_stylebox_override("hover", _style(Color("e3d6c4"), 10))
+	close_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
+	close_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
 	close_button.pressed.connect(rules_dialog.hide)
 	top_row.add_child(close_button)
 	var rules_title := Label.new()
@@ -812,6 +812,22 @@ func _card_style(background: Color, radius: int, border_color: Color) -> StyleBo
 	style.shadow_offset = Vector2(0, 3)
 	return style
 
+func _texture_button_style(texture: Texture2D, margin := 18.0, tint := Color.WHITE) -> StyleBoxTexture:
+	var style := StyleBoxTexture.new()
+	style.texture = texture
+	style.texture_margin_left = margin
+	style.texture_margin_right = margin
+	style.texture_margin_top = margin
+	style.texture_margin_bottom = margin
+	# Keep the nine-slice bevel intact without letting its wide corner slices
+	# squeeze icons and labels into the remaining center pixels on small screens.
+	style.content_margin_left = 8.0
+	style.content_margin_right = 8.0
+	style.content_margin_top = 6.0
+	style.content_margin_bottom = 6.0
+	style.modulate_color = tint
+	return style
+
 func _divider() -> HSeparator:
 	var divider := HSeparator.new()
 	divider.add_theme_constant_override("separation", 8)
@@ -828,9 +844,9 @@ func _small_button(text: String) -> Button:
 	button.add_theme_color_override("icon_normal_color", Color("405248"))
 	button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	button.add_theme_color_override("icon_disabled_color", Color("9b9f9c"))
-	button.add_theme_stylebox_override("normal", _style(Color("eee7dc"), 13, Color("d5c9b8"), 1))
-	button.add_theme_stylebox_override("hover", _style(Color("e6dccd"), 13, Color("b78a45"), 1))
-	button.add_theme_stylebox_override("pressed", _style(Color("ddd1bf"), 13, Color("a7523f"), 1))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0, Color("e8cfc0")))
 	return button
 
 func _primary_button(text: String) -> Button:
@@ -843,9 +859,9 @@ func _primary_button(text: String) -> Button:
 	button.add_theme_color_override("icon_normal_color", Color("fff8e9"))
 	button.add_theme_color_override("icon_hover_color", Color.WHITE)
 	button.add_theme_color_override("icon_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _style(Color("203b31"), 13, Color("b78a45"), 1))
-	button.add_theme_stylebox_override("hover", _style(Color("2b5142"), 13, Color("d3a75e"), 1))
-	button.add_theme_stylebox_override("pressed", _style(Color("172c25"), 13, Color("d3a75e"), 1))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_JADE, 20.0, Color("e8fff3")))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0, Color("b8c8c0")))
 	return button
 
 func _eyebrow(text: String) -> Label:
@@ -917,9 +933,9 @@ func _mode_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("5f6962"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _style(Color("fffaf1"), 12, Color("d8cbb9"), 1))
-	button.add_theme_stylebox_override("pressed", _style(Color("203b31"), 12, Color("b78a45"), 2))
-	button.add_theme_stylebox_override("hover", _style(Color("f0e7d8"), 12, Color("b78a45"), 1))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0))
 	return button
 
 func _difficulty_button(title: String, copy: String) -> Button:
@@ -930,9 +946,9 @@ func _difficulty_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 11)
 	button.add_theme_color_override("font_color", Color("657068"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _style(Color("fffaf1"), 11, Color("d8cbb9"), 1))
-	button.add_theme_stylebox_override("pressed", _style(Color("355b4a"), 11, Color("b78a45"), 2))
-	button.add_theme_stylebox_override("hover", _style(Color("f0e7d8"), 11, Color("b78a45"), 1))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 19.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 19.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 19.0))
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
@@ -943,10 +959,11 @@ func _skin_button(text: String, index: int) -> Button:
 	button.custom_minimum_size = Vector2(142, 64)
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("5f6962"))
-	button.add_theme_color_override("font_pressed_color", Color("5f6962"))
-	button.add_theme_stylebox_override("normal", _style(Color(colors[index], 0.38), 10, Color(0.15, 0.22, 0.18, 0.10), 1))
-	button.add_theme_stylebox_override("pressed", _style(Color(colors[index], 0.58), 10, Color("a84735"), 2))
-	button.add_theme_stylebox_override("hover", _style(Color(colors[index], 0.52), 10, Color("bd8f46"), 1))
+	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
+	var tint: Color = colors[index].lerp(Color.WHITE, 0.72)
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0, tint))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0, tint))
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
@@ -957,8 +974,8 @@ func _piece_button(text: String, index: int) -> Button:
 	button.custom_minimum_size = Vector2(142, 64)
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("5f6962"))
-	button.add_theme_color_override("font_pressed_color", Color("5f6962"))
-	button.add_theme_stylebox_override("normal", _style(Color(1, 1, 1, 0.38), 10, Color(0.15, 0.22, 0.18, 0.10), 1))
-	button.add_theme_stylebox_override("pressed", _style(Color(1, 1, 1, 0.82), 10, Color("a84735"), 2))
-	button.add_theme_stylebox_override("hover", _style(Color(1, 1, 1, 0.66), 10, Color("bd8f46"), 1))
+	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0))
 	return button
