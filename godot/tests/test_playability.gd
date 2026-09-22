@@ -33,7 +33,7 @@ func _init() -> void:
 			var next_board: Array[String] = ai._apply_move(board, chosen, side)
 			game_captures += board.count(opponent) - next_board.count(opponent)
 			board = next_board
-			if board.count(opponent) <= 2:
+			if board.count(opponent) <= 1:
 				finished_games += 1
 				break
 			side = opponent

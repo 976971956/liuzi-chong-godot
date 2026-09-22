@@ -214,7 +214,7 @@ func _build_ui() -> void:
 	step_label.add_theme_color_override("font_color", Color("a65a43"))
 	title_stack.add_child(step_label)
 	headline = Label.new()
-	headline.text = "夹击成势，跃步抢先"
+	headline.text = "二打一，二打二"
 	headline.add_theme_font_size_override("font_size", 26)
 	headline.add_theme_color_override("font_color", Color("17281f"))
 	title_stack.add_child(headline)
@@ -442,7 +442,7 @@ func _build_rules_dialog() -> void:
 
 	var top_row := HBoxContainer.new()
 	stack.add_child(top_row)
-	var eyebrow := _eyebrow("HOW TO PLAY · 四线夹击规则")
+	var eyebrow := _eyebrow("HOW TO PLAY · 民间六子冲规则")
 	eyebrow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_row.add_child(eyebrow)
 	var close_button := Button.new()
@@ -459,21 +459,21 @@ func _build_rules_dialog() -> void:
 	close_button.pressed.connect(rules_dialog.hide)
 	top_row.add_child(close_button)
 	var rules_title := Label.new()
-	rules_title.text = "夹一不夹二，跃步抢先机"
+	rules_title.text = "二打一，二打二"
 	rules_title.add_theme_font_size_override("font_size", 25)
 	rules_title.add_theme_color_override("font_color", Color("17281f"))
 	stack.add_child(rules_title)
 	var rules_copy := Label.new()
-	rules_copy.text = "四线棋盘更开阔，围绕中心落位、跳跃和对子防守展开博弈。"
+	rules_copy.text = "四线棋盘保留民间炮棋的经典攻防，靠成线与走位制造吃子。"
 	rules_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rules_copy.add_theme_font_size_override("font_size", 12)
 	rules_copy.add_theme_color_override("font_color", Color("718078"))
 	stack.add_child(rules_copy)
 	stack.add_child(_rule_card("01", "四线棋盘", "棋盘是横四线、竖四线的 4×4 交点，双方各有六枚棋子。红方从下方出发，蓝方从上方出发。"))
-	stack.add_child(_rule_card("02", "走格或跃步", "每回合移动一枚己方棋子：可走到横竖相邻空点，也可跃过一枚相邻棋子，落到下一格空点。"))
-	stack.add_child(_rule_card("03", "夹一不夹二", "移动后形成“己—敌—己”，吃掉中间的一枚敌子；“敌—敌”对子互相保护，不会被单个夹击拆开。"))
-	stack.add_child(_rule_card("04", "双向围击", "一次移动若横向、竖向同时形成夹击，可以同时吃掉多个敌子；跳跃是抢占夹击点的关键。"))
-	stack.add_child(_rule_card("05", "残局定胜负", "把对方吃到只剩两枚，或让对方完全无路可走，即获得胜利。"))
+	stack.add_child(_rule_card("02", "横竖走一格", "每回合移动一枚己方棋子，沿横线或竖线走到相邻空点，不能跳过棋子。"))
+	stack.add_child(_rule_card("03", "二打一、二打二", "正好三子连线且两枚己棋相连时，吃掉一枚敌子；正好四子连线且两枚己棋相连时，吃掉两枚敌子。"))
+	stack.add_child(_rule_card("04", "最后一子挑吃", "只剩一枚己棋时，可沿直线走任意步但不能越过棋子；把自己插入两枚敌子中间且一端有空位，可一次挑吃两子。"))
+	stack.add_child(_rule_card("05", "定胜负", "把对方减到只剩一枚，或让对方完全无路可走，即获得胜利。"))
 	var start_button := _primary_button("明白了，开始对弈")
 	start_button.custom_minimum_size.y = 48
 	start_button.pressed.connect(rules_dialog.hide)
@@ -512,7 +512,7 @@ func _on_point_clicked(index: int) -> void:
 	if cell == current:
 		selected = -1 if selected == index else index
 		valid_moves = [] if selected == -1 else _valid_moves_for(selected, board)
-		_set_status("请选择一枚棋子" if selected == -1 else "已选择%s方棋子，请走到亮起的空位或跃步点" % _player_name(current))
+		_set_status("请选择一枚棋子" if selected == -1 else "已选择%s方棋子，请走到亮起的横竖空位" % _player_name(current))
 		sound_engine.play_sfx("select")
 		_refresh()
 		return
@@ -536,7 +536,7 @@ func _move_piece(from: int, to: int) -> void:
 	move_count += 1
 	selected = -1
 	valid_moves.clear()
-	if board.count(opponent) <= 2 or not _has_any_move(board, opponent):
+	if board.count(opponent) <= 1 or not _has_any_move(board, opponent):
 		winner = current
 		_set_status("%s方获胜！漂亮的一局" % _player_name(current))
 		sound_engine.play_sfx("win")
@@ -544,10 +544,10 @@ func _move_piece(from: int, to: int) -> void:
 		var moved_player := current
 		current = opponent
 		if captured.is_empty():
-			_set_status("未形成夹击，%s方回合" % _player_name(current))
+			_set_status("未形成吃子，%s方回合" % _player_name(current))
 			sound_engine.play_sfx("move")
 		else:
-			_set_status("%s方完成夹击，吃掉 %d 枚棋子" % [_player_name(moved_player), captured.size()])
+			_set_status("%s方完成吃子，拿走 %d 枚棋子" % [_player_name(moved_player), captured.size()])
 			sound_engine.play_sfx("capture")
 	_refresh()
 	if not captured.is_empty():
@@ -586,21 +586,28 @@ func _valid_moves_for(index: int, target_board: Array[String]) -> Array[int]:
 	for delta: Vector2i in deltas:
 		var r: int = row + delta.x
 		var c: int = col + delta.y
-		if r >= 0 and r < ROWS and c >= 0 and c < COLS:
+		if r < 0 or r >= ROWS or c < 0 or c >= COLS:
+			continue
+		if target_board[index] != "" and target_board.count(target_board[index]) == 1:
+				# 民间规则：只剩最后一子时可沿直线滑行任意步，遇到棋子即停止。
+				var slide_row := r
+				var slide_col := c
+				while slide_row >= 0 and slide_row < ROWS and slide_col >= 0 and slide_col < COLS:
+					var slide_target := slide_row * COLS + slide_col
+					if target_board[slide_target] != "":
+						break
+					moves.append(slide_target)
+					slide_row += delta.x
+					slide_col += delta.y
+		else:
 			var target: int = r * COLS + c
 			if target_board[target] == "":
 				moves.append(target)
-			else:
-				var jump_row: int = row + delta.x * 2
-				var jump_col: int = col + delta.y * 2
-				if jump_row >= 0 and jump_row < ROWS and jump_col >= 0 and jump_col < COLS:
-					var jump_target := jump_row * COLS + jump_col
-					if target_board[jump_target] == "":
-						moves.append(jump_target)
 	return moves
 
 func _capture_targets(target_board: Array[String], moved_index: int, player: String) -> Array[int]:
 	var opponent: String = "blue" if player == "red" else "red"
+	var only_one_piece := target_board.count(player) == 1
 	var row: int = int(moved_index / COLS)
 	var col: int = moved_index % COLS
 	var row_line: Array[int] = []
@@ -611,13 +618,36 @@ func _capture_targets(target_board: Array[String], moved_index: int, player: Str
 	var targets: Array[int] = []
 	for line_variant in lines:
 		var line: Array = line_variant
+		var line_values: Array[String] = []
+		for index in line:
+			line_values.append(target_board[index])
+		# 二打二：正好四子成直线，且两枚己棋相连，吃掉两枚敌棋。
+		if line_values == [player, player, opponent, opponent] and moved_index in [line[0], line[1]]:
+			for target in [line[2], line[3]]:
+				if target not in targets:
+					targets.append(target)
+		elif line_values == [opponent, opponent, player, player] and moved_index in [line[2], line[3]]:
+			for target in [line[0], line[1]]:
+				if target not in targets:
+					targets.append(target)
+
+		# 二打一：正好三子成直线，且两枚己棋相连，吃掉一枚敌棋。
 		for start in range(line.size() - 2):
 			var window: Array[int] = [int(line[start]), int(line[start + 1]), int(line[start + 2])]
 			if moved_index not in window:
 				continue
+			var outside: int = int(line[3]) if start == 0 else int(line[0])
+			if target_board[outside] != "":
+				continue
 			var values: Array[String] = [target_board[window[0]], target_board[window[1]], target_board[window[2]]]
-			if values == [player, opponent, player] and int(window[1]) not in targets:
-				targets.append(int(window[1]))
+			if values == [player, player, opponent] and int(window[2]) not in targets:
+				targets.append(int(window[2]))
+			elif values == [opponent, player, player] and int(window[0]) not in targets:
+				targets.append(int(window[0]))
+			elif only_one_piece and values == [opponent, player, opponent]:
+				for target in [window[0], window[2]]:
+					if int(target) not in targets:
+						targets.append(int(target))
 	return targets
 
 func _has_any_move(target_board: Array[String], player: String) -> bool:
@@ -631,7 +661,7 @@ func _refresh() -> void:
 	board_view.set_skins(board_skin, piece_skin)
 	step_label.text = "传统民间对弈 · %s · 第 %02d 手" % [_mode_label(), move_count + 1]
 	step_label.add_theme_color_override("font_color", Color("a84735"))
-	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else ("你执红子，挑战电脑" if game_mode == "ai" else "夹击成势，跃步抢先")
+	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else ("你执红子，挑战电脑" if game_mode == "ai" else "二打一，二打二")
 	headline.add_theme_color_override("font_color", Color("17281f"))
 	turn_label.text = "棋局结束" if winner != "" else ("电脑思考中" if ai_thinking else "● %s方回合" % _player_name(current))
 	turn_label.add_theme_color_override("font_color", Color("a84735") if current == "red" else Color("294b6b"))

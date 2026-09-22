@@ -74,9 +74,9 @@ func _minimax(board: Array[String], player: String, depth: int, alpha_value: int
 		return best
 
 func _terminal_score(board: Array[String], depth: int) -> int:
-	if board.count(HUMAN_SIDE) <= 2:
+	if board.count(HUMAN_SIDE) <= 1:
 		return 100000 + depth
-	if board.count(AI_SIDE) <= 2:
+	if board.count(AI_SIDE) <= 1:
 		return -100000 - depth
 	if _generate_moves(board, HUMAN_SIDE).is_empty():
 		return 90000 + depth
@@ -129,16 +129,21 @@ func _generate_moves(board: Array[String], player: String) -> Array[Dictionary]:
 			var next_col: int = col + delta.y
 			if next_row < 0 or next_row >= ROWS or next_col < 0 or next_col >= COLS:
 				continue
-			var target: int = next_row * COLS + next_col
-			if board[target] == "":
-				moves.append({"from": index, "to": target, "kind": "step"})
+			if board.count(player) == 1:
+				# 民间规则：只剩最后一子时，可沿直线滑行任意步，遇到棋子即停止。
+				var slide_row := next_row
+				var slide_col := next_col
+				while slide_row >= 0 and slide_row < ROWS and slide_col >= 0 and slide_col < COLS:
+					var slide_target := slide_row * COLS + slide_col
+					if board[slide_target] != "":
+						break
+					moves.append({"from": index, "to": slide_target, "kind": "slide"})
+					slide_row += delta.x
+					slide_col += delta.y
 			else:
-				var jump_row: int = row + delta.x * 2
-				var jump_col: int = col + delta.y * 2
-				if jump_row >= 0 and jump_row < ROWS and jump_col >= 0 and jump_col < COLS:
-					var jump_target := jump_row * COLS + jump_col
-					if board[jump_target] == "":
-						moves.append({"from": index, "to": jump_target, "kind": "jump"})
+				var target: int = next_row * COLS + next_col
+				if board[target] == "":
+					moves.append({"from": index, "to": target, "kind": "step"})
 	return moves
 
 func _apply_move(board: Array[String], move: Dictionary, player: String) -> Array[String]:
@@ -151,6 +156,7 @@ func _apply_move(board: Array[String], move: Dictionary, player: String) -> Arra
 
 func _capture_targets(board: Array[String], moved_index: int, player: String) -> Array[int]:
 	var opponent := HUMAN_SIDE if player == AI_SIDE else AI_SIDE
+	var only_one_piece := board.count(player) == 1
 	var row := int(moved_index / COLS)
 	var col := moved_index % COLS
 	var row_line: Array[int] = []
@@ -161,12 +167,34 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 		col_line.append(r * COLS + col)
 	var targets: Array[int] = []
 	for line: Array[int] in [row_line, col_line]:
-		# 只捕获被两枚己方棋子夹住的单子；敌—敌对子天然互相保护。
+		var values: Array[String] = []
+		for index in line:
+			values.append(board[index])
+		# 二打二：正好四子成直线，且两枚己棋相连，吃掉两枚敌棋。
+		if values == [player, player, opponent, opponent] and moved_index in [line[0], line[1]]:
+			for target in [line[2], line[3]]:
+				if target not in targets:
+					targets.append(target)
+		elif values == [opponent, opponent, player, player] and moved_index in [line[2], line[3]]:
+			for target in [line[0], line[1]]:
+				if target not in targets:
+					targets.append(target)
+
+		# 二打一：正好三子成直线，且两枚己棋相连，吃掉一枚敌棋。
 		for start in range(line.size() - 2):
 			var window: Array[int] = [line[start], line[start + 1], line[start + 2]]
 			if moved_index not in window:
 				continue
-			var values: Array[String] = [board[window[0]], board[window[1]], board[window[2]]]
-			if values == [player, opponent, player] and window[1] not in targets:
-				targets.append(window[1])
+			var outside := line[3] if start == 0 else line[0]
+			if board[outside] != "":
+				continue
+			var window_values: Array[String] = [board[window[0]], board[window[1]], board[window[2]]]
+			if window_values == [player, player, opponent] and window[2] not in targets:
+				targets.append(window[2])
+			elif window_values == [opponent, player, player] and window[0] not in targets:
+				targets.append(window[0])
+			elif only_one_piece and window_values == [opponent, player, opponent]:
+				for target in [window[0], window[2]]:
+					if target not in targets:
+						targets.append(target)
 	return targets

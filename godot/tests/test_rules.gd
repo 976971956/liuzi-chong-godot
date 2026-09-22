@@ -8,41 +8,43 @@ func _init() -> void:
 	board.resize(16)
 	board.fill("")
 
-	# 新规则：己—敌—己夹击，吃掉中间单子。
+	# 二打一：正好三子成线，两枚己棋相连，吃掉一枚敌子。
 	board[0] = "blue"
+	board[1] = "blue"
+	board[2] = "red"
+	assert(ai._capture_targets(board, 1, "blue") == [2])
+
+	# 四子成线时不触发二打一，必须按二打二处理。
+	board[3] = "red"
+	assert(ai._capture_targets(board, 1, "blue") == [2, 3])
+
+	# 二打一的另一种方向：敌—己—己，且线外必须为空。
+	board.fill("")
 	board[1] = "red"
 	board[2] = "blue"
+	board[3] = "blue"
 	assert(ai._capture_targets(board, 2, "blue") == [1])
 
-	# 敌—敌对子互相保护，不会被夹击拆开。
+	# 只有最后一子时，可把自己插入敌—己—敌之间挑吃两子。
 	board.fill("")
-	board[0] = "blue"
-	board[1] = "red"
+	board[0] = "red"
+	board[1] = "blue"
 	board[2] = "red"
-	board[3] = "blue"
-	assert(ai._capture_targets(board, 3, "blue").is_empty())
+	assert(ai._capture_targets(board, 1, "blue") == [0, 2])
 
-	# 横竖两个方向同时形成夹击，可以双吃。
-	board.fill("")
-	board[1] = "red"
-	board[4] = "red"
-	board[5] = "red"
-	board[6] = "blue"
-	board[7] = "red"
-	board[9] = "blue"
-	board[13] = "red"
-	assert(ai._capture_targets(board, 5, "red") == [6, 9])
-
-	# 跃过一枚棋子到两格外的空点。
+	# 只有最后一子时可以沿直线滑行多格，但不能越过棋子。
 	board.fill("")
 	board[0] = "blue"
-	board[1] = "red"
+	board[5] = "red"
 	var moves: Array[Dictionary] = ai._generate_moves(board, "blue")
-	var found_jump := false
+	var slide_targets: Array[int] = []
 	for move in moves:
-		if int(move.from) == 0 and int(move.to) == 2:
-			found_jump = true
-	assert(found_jump)
+		if int(move.from) == 0:
+			slide_targets.append(int(move.to))
+	assert(1 in slide_targets)
+	assert(2 in slide_targets)
+	assert(3 in slide_targets)
+	assert(5 not in slide_targets)
 
 	# 新开局中红方在下、蓝方在上，电脑必须能找到合法走法。
 	board.fill("")
@@ -51,5 +53,5 @@ func _init() -> void:
 	for index in [0, 1, 2, 3, 4, 7]:
 		board[index] = "blue"
 	assert(not ai.find_best_move(board, 2).is_empty())
-	print("四线夹击规则与电脑走法测试通过")
+	print("民间六子冲规则与电脑走法测试通过")
 	quit(0)
