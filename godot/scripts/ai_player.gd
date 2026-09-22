@@ -1,6 +1,6 @@
 extends RefCounted
 
-const ROWS := 5
+const ROWS := 4
 const COLS := 4
 const AI_SIDE := "blue"
 const HUMAN_SIDE := "red"
@@ -74,9 +74,9 @@ func _minimax(board: Array[String], player: String, depth: int, alpha_value: int
 		return best
 
 func _terminal_score(board: Array[String], depth: int) -> int:
-	if board.count(HUMAN_SIDE) <= 1:
+	if board.count(HUMAN_SIDE) <= 2:
 		return 100000 + depth
-	if board.count(AI_SIDE) <= 1:
+	if board.count(AI_SIDE) <= 2:
 		return -100000 - depth
 	if _generate_moves(board, HUMAN_SIDE).is_empty():
 		return 90000 + depth
@@ -131,7 +131,14 @@ func _generate_moves(board: Array[String], player: String) -> Array[Dictionary]:
 				continue
 			var target: int = next_row * COLS + next_col
 			if board[target] == "":
-				moves.append({"from": index, "to": target})
+				moves.append({"from": index, "to": target, "kind": "step"})
+			else:
+				var jump_row: int = row + delta.x * 2
+				var jump_col: int = col + delta.y * 2
+				if jump_row >= 0 and jump_row < ROWS and jump_col >= 0 and jump_col < COLS:
+					var jump_target := jump_row * COLS + jump_col
+					if board[jump_target] == "":
+						moves.append({"from": index, "to": jump_target, "kind": "jump"})
 	return moves
 
 func _apply_move(board: Array[String], move: Dictionary, player: String) -> Array[String]:
@@ -154,20 +161,12 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 		col_line.append(r * COLS + col)
 	var targets: Array[int] = []
 	for line: Array[int] in [row_line, col_line]:
+		# 只捕获被两枚己方棋子夹住的单子；敌—敌对子天然互相保护。
 		for start in range(line.size() - 2):
 			var window: Array[int] = [line[start], line[start + 1], line[start + 2]]
 			if moved_index not in window:
 				continue
 			var values: Array[String] = [board[window[0]], board[window[1]], board[window[2]]]
-			var forward := values == [player, player, opponent]
-			var backward := values == [opponent, player, player]
-			if not forward and not backward:
-				continue
-			var target := window[2] if forward else window[0]
-			var support := line[start + 3] if forward and start + 3 < line.size() else -1
-			if backward and start > 0:
-				support = line[start - 1]
-			var is_protected := support >= 0 and board[support] == opponent
-			if not is_protected and target not in targets:
-				targets.append(target)
+			if values == [player, opponent, player] and window[1] not in targets:
+				targets.append(window[1])
 	return targets

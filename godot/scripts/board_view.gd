@@ -2,7 +2,7 @@ extends Control
 
 signal point_clicked(index: int)
 
-const ROWS := 5
+const ROWS := 4
 const COLS := 4
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
 const BOARD_TEXTURES = preload("res://assets/board_texture_atlas_v2.png")
@@ -24,7 +24,7 @@ var skin_data := [
 ]
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(340, 470)
+	custom_minimum_size = Vector2(340, 430)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	resized.connect(queue_redraw)
 	set_process(false)
@@ -59,11 +59,11 @@ func _process(delta: float) -> void:
 func _get_geometry() -> Dictionary:
 	var horizontal_gap := clampf(size.x * 0.035, 10.0, 26.0)
 	var available := size - Vector2(horizontal_gap * 2.0, 12.0)
-	var frame_width := minf(available.x, available.y / 1.20)
-	var frame_height := frame_width * 1.20
+	var frame_width := minf(available.x, available.y)
+	var frame_height := frame_width
 	var frame := Rect2((size - Vector2(frame_width, frame_height)) * 0.5, Vector2(frame_width, frame_height))
-	var inset_x := clampf(frame_width * 0.135, 42.0, 72.0)
-	var inset_y := clampf(frame_height * 0.125, 48.0, 78.0)
+	var inset_x := clampf(frame_width * 0.135, 40.0, 72.0)
+	var inset_y := clampf(frame_height * 0.135, 40.0, 72.0)
 	return {"frame": frame, "grid": Rect2(frame.position + Vector2(inset_x, inset_y), frame.size - Vector2(inset_x * 2.0, inset_y * 2.0))}
 
 func _draw() -> void:

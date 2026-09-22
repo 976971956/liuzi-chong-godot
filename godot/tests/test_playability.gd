@@ -2,12 +2,12 @@ extends SceneTree
 
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
 const GAME_COUNT := 80
-const TURN_LIMIT := 120
+const TURN_LIMIT := 160
 
 var rng := RandomNumberGenerator.new()
 
 func _init() -> void:
-	rng.seed = 20260827
+	rng.seed = 20260923
 	var ai = AI_PLAYER_SCRIPT.new()
 	var games_with_capture := 0
 	var finished_games := 0
@@ -33,7 +33,7 @@ func _init() -> void:
 			var next_board: Array[String] = ai._apply_move(board, chosen, side)
 			game_captures += board.count(opponent) - next_board.count(opponent)
 			board = next_board
-			if board.count(opponent) <= 1:
+			if board.count(opponent) <= 2:
 				finished_games += 1
 				break
 			side = opponent
@@ -47,14 +47,14 @@ func _init() -> void:
 
 	assert(games_with_capture >= 60)
 	assert(total_captures >= 160)
-	print("可玩性模拟通过：%d/%d 局发生吃子，%d 局决出胜负，共吃掉 %d 子" % [games_with_capture, GAME_COUNT, finished_games, total_captures])
+	print("四线规则可玩性模拟通过：%d/%d 局发生吃子，%d 局决出胜负，共吃掉 %d 子" % [games_with_capture, GAME_COUNT, finished_games, total_captures])
 	quit(0)
 
 func _initial_board() -> Array[String]:
 	var board: Array[String] = []
-	board.resize(20)
+	board.resize(16)
 	board.fill("")
-	for index in [12, 15, 16, 17, 18, 19]:
+	for index in [8, 11, 12, 13, 14, 15]:
 		board[index] = "red"
 	for index in [0, 1, 2, 3, 4, 7]:
 		board[index] = "blue"
