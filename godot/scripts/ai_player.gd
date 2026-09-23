@@ -129,21 +129,9 @@ func _generate_moves(board: Array[String], player: String) -> Array[Dictionary]:
 			var next_col: int = col + delta.y
 			if next_row < 0 or next_row >= ROWS or next_col < 0 or next_col >= COLS:
 				continue
-			if board.count(player) == 1:
-				# 民间规则：只剩最后一子时，可沿直线滑行任意步，遇到棋子即停止。
-				var slide_row := next_row
-				var slide_col := next_col
-				while slide_row >= 0 and slide_row < ROWS and slide_col >= 0 and slide_col < COLS:
-					var slide_target := slide_row * COLS + slide_col
-					if board[slide_target] != "":
-						break
-					moves.append({"from": index, "to": slide_target, "kind": "slide"})
-					slide_row += delta.x
-					slide_col += delta.y
-			else:
-				var target: int = next_row * COLS + next_col
-				if board[target] == "":
-					moves.append({"from": index, "to": target, "kind": "step"})
+			var target: int = next_row * COLS + next_col
+			if board[target] == "":
+				moves.append({"from": index, "to": target, "kind": "step"})
 	return moves
 
 func _apply_move(board: Array[String], move: Dictionary, player: String) -> Array[String]:
@@ -156,7 +144,6 @@ func _apply_move(board: Array[String], move: Dictionary, player: String) -> Arra
 
 func _capture_targets(board: Array[String], moved_index: int, player: String) -> Array[int]:
 	var opponent := HUMAN_SIDE if player == AI_SIDE else AI_SIDE
-	var only_one_piece := board.count(player) == 1
 	var row := int(moved_index / COLS)
 	var col := moved_index % COLS
 	var row_line: Array[int] = []
@@ -167,20 +154,7 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 		col_line.append(r * COLS + col)
 	var targets: Array[int] = []
 	for line: Array[int] in [row_line, col_line]:
-		var values: Array[String] = []
-		for index in line:
-			values.append(board[index])
-		# 二打二：正好四子成直线，且两枚己棋相连，吃掉两枚敌棋。
-		if values == [player, player, opponent, opponent] and moved_index in [line[0], line[1]]:
-			for target in [line[2], line[3]]:
-				if target not in targets:
-					targets.append(target)
-		elif values == [opponent, opponent, player, player] and moved_index in [line[2], line[3]]:
-			for target in [line[0], line[1]]:
-				if target not in targets:
-					targets.append(target)
-
-		# 二打一：正好三子成直线，且两枚己棋相连，吃掉一枚敌棋。
+		# 唯一吃法：正好三子成直线，且两枚己棋相连，吃掉一枚敌棋。
 		for start in range(line.size() - 2):
 			var window: Array[int] = [line[start], line[start + 1], line[start + 2]]
 			if moved_index not in window:
@@ -193,8 +167,4 @@ func _capture_targets(board: Array[String], moved_index: int, player: String) ->
 				targets.append(window[2])
 			elif window_values == [opponent, player, player] and window[0] not in targets:
 				targets.append(window[0])
-			elif only_one_piece and window_values == [opponent, player, opponent]:
-				for target in [window[0], window[2]]:
-					if target not in targets:
-						targets.append(target)
 	return targets
