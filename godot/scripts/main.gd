@@ -78,10 +78,10 @@ func _ready() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	var base := background_colors[board_skin]
+	var base: Color = background_colors[board_skin]
 	draw_rect(Rect2(Vector2.ZERO, size), base)
-	var accent := [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
-	var ink := [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
+	var accent: Color = [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
+	var ink: Color = [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
 	draw_circle(Vector2(size.x * 0.08, size.y * 0.12), size.x * 0.75, Color(accent, 0.15))
 	draw_circle(Vector2(size.x * 0.94, size.y * 0.78), size.x * 0.68, Color(ink, 0.09))
 	draw_circle(Vector2(size.x * 0.44, size.y * 0.48), size.x * 0.78, Color(1, 1, 1, 0.08))
@@ -134,7 +134,6 @@ func _build_ui() -> void:
 	var music_button := Button.new()
 	music_button.icon = ICON_MUSIC
 	music_button.expand_icon = true
-	music_button.icon_max_width = 18
 	music_button.tooltip_text = "开启或关闭背景音乐"
 	music_button.custom_minimum_size = Vector2(40, 40)
 	music_button.add_theme_color_override("font_color", Color("33483d"))
@@ -150,7 +149,6 @@ func _build_ui() -> void:
 	var settings_button := Button.new()
 	settings_button.icon = ICON_SETTINGS
 	settings_button.expand_icon = true
-	settings_button.icon_max_width = 18
 	settings_button.tooltip_text = "棋盘、棋子与声音设置"
 	settings_button.custom_minimum_size = Vector2(40, 40)
 	settings_button.add_theme_color_override("font_color", Color("33483d"))
@@ -166,7 +164,6 @@ func _build_ui() -> void:
 	var help_button := Button.new()
 	help_button.icon = ICON_RULES
 	help_button.expand_icon = true
-	help_button.icon_max_width = 18
 	help_button.tooltip_text = "查看游戏规则"
 	help_button.custom_minimum_size = Vector2(40, 40)
 	help_button.add_theme_color_override("font_color", Color("33483d"))
@@ -263,13 +260,11 @@ func _build_ui() -> void:
 	undo_button = _small_button("悔棋")
 	undo_button.icon = ICON_UNDO
 	undo_button.expand_icon = true
-	undo_button.icon_max_width = 16
 	undo_button.pressed.connect(_undo)
 	action_row.add_child(undo_button)
 	var reset_button := _primary_button("重新开局")
 	reset_button.icon = ICON_RESTART
 	reset_button.expand_icon = true
-	reset_button.icon_max_width = 16
 	reset_button.pressed.connect(func(): _new_game(true))
 	action_row.add_child(reset_button)
 
@@ -296,7 +291,6 @@ func _build_ui() -> void:
 	var settings_close := Button.new()
 	settings_close.icon = ICON_CLOSE
 	settings_close.expand_icon = true
-	settings_close.icon_max_width = 16
 	settings_close.custom_minimum_size = Vector2(34, 34)
 	settings_close.add_theme_font_size_override("font_size", 18)
 	settings_close.add_theme_color_override("font_color", Color("536158"))
@@ -453,7 +447,6 @@ func _build_rules_dialog() -> void:
 	var close_button := Button.new()
 	close_button.icon = ICON_CLOSE
 	close_button.expand_icon = true
-	close_button.icon_max_width = 16
 	close_button.custom_minimum_size = Vector2(34, 34)
 	close_button.add_theme_font_size_override("font_size", 18)
 	close_button.add_theme_color_override("font_color", Color("536158"))
