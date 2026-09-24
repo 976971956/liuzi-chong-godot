@@ -104,52 +104,48 @@ func _draw() -> void:
 			_draw_piece(point, board[index], index == selected, index == last_move, grid)
 
 	_draw_capture_effects(grid)
-	_draw_count_tag(Vector2(frame.position.x + 12, frame.position.y + 13), "蓝", board.count("blue"), Color("35648f"))
-	_draw_count_tag(Vector2(frame.end.x - 12, frame.end.y - 13), "红", board.count("red"), Color("c64b3b"), true)
+	_draw_count_tag(Vector2(frame.position.x + 12, frame.position.y + 13), "黑", board.count("blue"), Color("1c282d"))
+	_draw_count_tag(Vector2(frame.end.x - 12, frame.end.y - 13), "白", board.count("red"), Color("e8dfcf"), true)
 	if winner != "":
 		_draw_winner_seal(frame.get_center())
 
 func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool, grid: Rect2) -> void:
 	var step_x := grid.size.x / float(COLS - 1)
 	var step_y := grid.size.y / float(ROWS - 1)
-	var radius := clampf(minf(step_x, step_y) * 0.275, 20.0, 34.0)
-	var red := side == "red"
-	var primary := Color("bb5a4b") if red else Color("3d7180")
-	var deep := Color("74312e") if red else Color("1d4051")
-	var bright := Color("e18a72") if red else Color("77a9ae")
-	var ivory := Color("fff0d1")
+	var radius := clampf(minf(step_x, step_y) * 0.265, 20.0, 33.0)
+	var white_stone := side == "red"
+	var stone := Color("ebe6d9") if white_stone else Color("20282b")
+	var stone_edge := Color("c0b9aa") if white_stone else Color("0d171b")
+	var stone_highlight := Color("fffdf5") if white_stone else Color("657176")
+	var stone_shadow := Color(0.02, 0.04, 0.04, 0.38)
 
 	if is_selected:
-		draw_arc(center, radius + 9.0, 0, TAU, 48, Color("f4dca0"), 3.0, true)
-		draw_circle(center, radius + 5.0, Color(0.02, 0.06, 0.06, 0.34))
-		center.y -= 3.0
+		draw_arc(center, radius + 9.0, 0, TAU, 56, Color("e9c777"), 3.0, true)
+		draw_circle(center, radius + 5.0, Color(0.02, 0.06, 0.06, 0.26))
+		center.y -= 2.5
 
-	draw_circle(center + Vector2(0, radius * 0.18), radius + 1.5, Color(0.01, 0.03, 0.03, 0.28))
+	# Go-style stones: a dark contact shadow, a full rounded body, and one soft highlight.
+	draw_circle(center + Vector2(0, radius * 0.22), radius + 2.0, stone_shadow)
 	match piece_skin:
 		0:
-			draw_circle(center, radius, deep)
-			draw_circle(center, radius - 2.2, primary)
-			draw_circle(center - Vector2(radius * 0.18, radius * 0.2), radius * 0.68, Color(bright, 0.34))
-			draw_arc(center, radius * 0.76, 0, TAU, 48, Color(1, 0.88, 0.68, 0.62), 1.6, true)
-			_draw_glyph(center, radius, "冲" if red else "守", ivory)
+			draw_circle(center, radius, stone_edge)
+			draw_circle(center - Vector2(0, 1.0), radius - 2.0, stone)
+			draw_circle(center - Vector2(radius * 0.24, radius * 0.28), radius * 0.58, Color(stone_highlight, 0.18))
+			draw_arc(center - Vector2(0, 1.0), radius - 4.0, PI * 1.08, PI * 1.88, 28, Color(stone_highlight, 0.28), 2.0, true)
 		1:
-			draw_circle(center, radius, Color(0.04, 0.09, 0.10, 0.88))
-			draw_circle(center, radius - 2.5, Color(primary, 0.82))
-			draw_arc(center, radius - 5.0, 0, TAU, 56, Color("f0d38b"), 2.0, true)
-			draw_arc(center, radius * 0.58, 0, TAU, 48, Color(bright, 0.82), radius * 0.18, true)
-			_draw_glyph(center, radius, "六", Color("f8db9b"))
+			draw_circle(center, radius, stone_edge)
+			draw_circle(center - Vector2(0, 1.0), radius - 2.0, Color(stone, 0.94))
+			draw_arc(center - Vector2(0, 1.0), radius - 4.5, 0, TAU, 56, Color("d8bf82", 0.52), 1.6, true)
+			draw_circle(center - Vector2(radius * 0.26, radius * 0.3), radius * 0.42, Color(stone_highlight, 0.12))
 		2:
-			draw_circle(center, radius, Color("6a5c4a"))
-			draw_circle(center, radius - 2.5, Color("c4a77b"))
-			draw_circle(center, radius - 6.0, Color(primary, 0.94))
-			draw_arc(center, radius * 0.68, 0, TAU, 48, Color("f2d9a3"), 1.6, true)
-			_draw_glyph(center, radius, "锋" if red else "垒", ivory)
+			draw_circle(center, radius, stone_edge)
+			draw_circle(center - Vector2(0, 1.0), radius - 2.5, stone)
+			draw_arc(center, radius * 0.78, 0, TAU, 48, Color(stone_highlight, 0.16), 2.2, true)
+			draw_circle(center - Vector2(radius * 0.18, radius * 0.22), radius * 0.34, Color(stone_highlight, 0.10))
 		_:
-			draw_circle(center, radius, Color("17252b"))
-			draw_circle(center, radius - 3.0, Color(primary, 0.96))
-			draw_arc(center, radius * 0.76, -0.55, 2.25, 42, Color("ffe29a"), 2.2, true)
-			draw_circle(center + Vector2(radius * 0.56, -radius * 0.51), 2.8, Color("fff1b3"))
-			draw_circle(center, radius * 0.13, bright)
+			draw_circle(center, radius, stone_edge)
+			draw_circle(center - Vector2(0, 1.0), radius - 3.0, stone)
+			draw_circle(center - Vector2(radius * 0.28, radius * 0.34), radius * 0.25, Color(stone_highlight, 0.18))
 
 	if is_last:
 		draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 6.0, Color("24170f"))
@@ -191,12 +187,13 @@ func _draw_count_tag(anchor: Vector2, label: String, count: int, color: Color, r
 	draw_string(GAME_FONT, rect.position + Vector2(28, 20), "%s · %d" % [label, count], HORIZONTAL_ALIGNMENT_LEFT, 46, 12, Color("fff3db"))
 
 func _draw_winner_seal(center: Vector2) -> void:
-	var seal_color := Color("9e352e") if winner == "red" else Color("24547a")
+	var seal_color := Color("e4dac8") if winner == "red" else Color("1b2a31")
+	var seal_text := Color("2b3836") if winner == "red" else Color("f3eadb")
 	draw_circle(center + Vector2(0, 10), 76.0, Color(0.02, 0.01, 0.01, 0.42))
 	draw_circle(center, 72.0, Color(seal_color, 0.98))
 	draw_arc(center, 64.0, 0, TAU, 64, Color("f4d69a"), 3.0, true)
-	draw_string(GAME_FONT, center + Vector2(-48, -17), "胜者", HORIZONTAL_ALIGNMENT_CENTER, 96, 14, Color("f7dfaf"))
-	draw_string(GAME_FONT, center + Vector2(-48, 34), "红" if winner == "red" else "蓝", HORIZONTAL_ALIGNMENT_CENTER, 96, 48, Color("fff3d9"))
+	draw_string(GAME_FONT, center + Vector2(-48, -17), "胜者", HORIZONTAL_ALIGNMENT_CENTER, 96, 14, seal_text)
+	draw_string(GAME_FONT, center + Vector2(-48, 34), "白" if winner == "red" else "黑", HORIZONTAL_ALIGNMENT_CENTER, 96, 48, seal_text)
 
 func _draw_corners(frame: Rect2, color: Color) -> void:
 	var margin := 22.0

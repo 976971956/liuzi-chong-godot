@@ -135,45 +135,21 @@ func _build_ui() -> void:
 	music_button.icon = ICON_MUSIC
 	music_button.expand_icon = true
 	music_button.tooltip_text = "开启或关闭背景音乐"
-	music_button.custom_minimum_size = Vector2(40, 40)
-	music_button.add_theme_color_override("font_color", Color("33483d"))
-	music_button.add_theme_color_override("font_hover_color", Color("17281f"))
-	music_button.add_theme_color_override("icon_normal_color", Color("405248"))
-	music_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	music_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
-	music_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
-	music_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
-	music_button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 18.0))
+	_apply_premium_icon_button(music_button)
 	music_button.pressed.connect(_toggle_music_from_header)
 	header_row.add_child(music_button)
 	var settings_button := Button.new()
 	settings_button.icon = ICON_SETTINGS
 	settings_button.expand_icon = true
 	settings_button.tooltip_text = "棋盘、棋子与声音设置"
-	settings_button.custom_minimum_size = Vector2(40, 40)
-	settings_button.add_theme_color_override("font_color", Color("33483d"))
-	settings_button.add_theme_color_override("font_hover_color", Color("17281f"))
-	settings_button.add_theme_color_override("icon_normal_color", Color("405248"))
-	settings_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	settings_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
-	settings_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
-	settings_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
-	settings_button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 18.0))
+	_apply_premium_icon_button(settings_button)
 	settings_button.pressed.connect(_show_settings)
 	header_row.add_child(settings_button)
 	var help_button := Button.new()
 	help_button.icon = ICON_RULES
 	help_button.expand_icon = true
 	help_button.tooltip_text = "查看游戏规则"
-	help_button.custom_minimum_size = Vector2(40, 40)
-	help_button.add_theme_color_override("font_color", Color("33483d"))
-	help_button.add_theme_color_override("font_hover_color", Color("17281f"))
-	help_button.add_theme_color_override("icon_normal_color", Color("405248"))
-	help_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	help_button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
-	help_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
-	help_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
-	help_button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 18.0))
+	_apply_premium_icon_button(help_button)
 	help_button.pressed.connect(_show_rules)
 	header_row.add_child(help_button)
 
@@ -221,7 +197,7 @@ func _build_ui() -> void:
 	headline.add_theme_color_override("font_color", Color("17281f"))
 	title_stack.add_child(headline)
 	turn_label = Label.new()
-	turn_label.text = "● 红方回合"
+	turn_label.text = "● 白方回合"
 	turn_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	turn_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	turn_label.custom_minimum_size = Vector2(112, 38)
@@ -291,13 +267,7 @@ func _build_ui() -> void:
 	var settings_close := Button.new()
 	settings_close.icon = ICON_CLOSE
 	settings_close.expand_icon = true
-	settings_close.custom_minimum_size = Vector2(34, 34)
-	settings_close.add_theme_font_size_override("font_size", 18)
-	settings_close.add_theme_color_override("font_color", Color("536158"))
-	settings_close.add_theme_color_override("icon_normal_color", Color("536158"))
-	settings_close.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	settings_close.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
-	settings_close.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
+	_apply_premium_icon_button(settings_close, 34.0)
 	settings_close.pressed.connect(settings_panel.hide)
 	settings_top.add_child(settings_close)
 	var settings_title := Label.new()
@@ -371,12 +341,18 @@ func _build_ui() -> void:
 	var music_row := HBoxContainer.new()
 	settings.add_child(music_row)
 	var music_copy := Label.new()
-	music_copy.text = "背景音乐"
+	music_copy.text = "背景音乐 · 氛围旋律"
 	music_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	music_copy.add_theme_font_size_override("font_size", 14)
 	music_row.add_child(music_copy)
 	music_toggle = CheckButton.new()
 	music_toggle.text = "开启"
+	music_toggle.custom_minimum_size = Vector2(82, 38)
+	music_toggle.add_theme_color_override("font_color", Color("56645c"))
+	music_toggle.add_theme_color_override("font_pressed_color", Color("fff8e9"))
+	music_toggle.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 14, Color("d7c7ad"), 1))
+	music_toggle.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 14, Color("b78a45"), 1))
+	music_toggle.add_theme_stylebox_override("pressed", _style(Color("203b31"), 14, Color("b78a45"), 1))
 	music_toggle.toggled.connect(_on_music_toggled)
 	music_row.add_child(music_toggle)
 	track_select = OptionButton.new()
@@ -399,6 +375,12 @@ func _build_ui() -> void:
 	sfx_toggle = CheckButton.new()
 	sfx_toggle.text = "开启"
 	sfx_toggle.button_pressed = true
+	sfx_toggle.custom_minimum_size = Vector2(82, 38)
+	sfx_toggle.add_theme_color_override("font_color", Color("56645c"))
+	sfx_toggle.add_theme_color_override("font_pressed_color", Color("fff8e9"))
+	sfx_toggle.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 14, Color("d7c7ad"), 1))
+	sfx_toggle.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 14, Color("b78a45"), 1))
+	sfx_toggle.add_theme_stylebox_override("pressed", _style(Color("203b31"), 14, Color("b78a45"), 1))
 	sfx_toggle.toggled.connect(_on_sfx_toggled)
 	sfx_row.add_child(sfx_toggle)
 
@@ -415,9 +397,12 @@ func _build_ui() -> void:
 	new_game_button.pressed.connect(_new_game_from_settings)
 	settings.add_child(new_game_button)
 	var rules_button := Button.new()
-	rules_button.flat = true
 	rules_button.text = "查看完整规则  ↗"
-	rules_button.add_theme_color_override("font_color", Color("7f8a84"))
+	rules_button.custom_minimum_size.y = 38
+	rules_button.add_theme_color_override("font_color", Color("5a6a61"))
+	rules_button.add_theme_color_override("font_hover_color", Color("a7523f"))
+	rules_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("d7c7ad"), 1))
+	rules_button.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 12, Color("b78a45"), 1))
 	rules_button.pressed.connect(_show_rules)
 	settings.add_child(rules_button)
 	_update_mode_buttons()
@@ -467,7 +452,7 @@ func _build_rules_dialog() -> void:
 	rules_copy.add_theme_font_size_override("font_size", 12)
 	rules_copy.add_theme_color_override("font_color", Color("718078"))
 	stack.add_child(rules_copy)
-	stack.add_child(_rule_card("01", "四线棋盘", "棋盘是横四线、竖四线的 4×4 交点，双方各有六枚棋子。红方从下方出发，蓝方从上方出发。"))
+	stack.add_child(_rule_card("01", "四线棋盘", "棋盘是横四线、竖四线的 4×4 交点，双方各有六枚棋子。白方从下方出发，黑方从上方出发。"))
 	stack.add_child(_rule_card("02", "横竖走一格", "每回合移动一枚己方棋子，沿横线或竖线走到相邻空点，不能跳过棋子。"))
 	stack.add_child(_rule_card("03", "只认二打一", "主动形成正好三子连线，且排列为“己—己—敌”或“敌—己—己”，即可吃掉这一枚敌子。"))
 	stack.add_child(_rule_card("04", "四子不吃", "一条直线上若排满四枚棋子，不论怎样排列都不吃子；只有正好两己一敌的三子线有效。"))
@@ -495,7 +480,7 @@ func _new_game(with_sound: bool) -> void:
 	last_move = -1
 	move_count = 0
 	history.clear()
-	_set_status("人机对战开始，你执红子" if game_mode == "ai" else "双人对抗开始，红方先行")
+	_set_status("人机对战开始，你执白子" if game_mode == "ai" else "双人对抗开始，白方先行")
 	if with_sound:
 		sound_engine.play_sfx("move")
 	_refresh()
@@ -629,10 +614,10 @@ func _refresh() -> void:
 	board_view.set_skins(board_skin, piece_skin)
 	step_label.text = "传统民间对弈 · %s · 第 %02d 手" % [_mode_label(), move_count + 1]
 	step_label.add_theme_color_override("font_color", Color("a84735"))
-	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else ("你执红子，挑战电脑" if game_mode == "ai" else "双人轮流对战 · 二打一")
+	headline.text = "%s方胜出" % _player_name(winner) if winner != "" else ("你执白子，挑战电脑" if game_mode == "ai" else "双人轮流对战 · 二打一")
 	headline.add_theme_color_override("font_color", Color("17281f"))
 	turn_label.text = "棋局结束" if winner != "" else ("电脑思考中" if ai_thinking else "● %s方回合" % _player_name(current))
-	turn_label.add_theme_color_override("font_color", Color("a84735") if current == "red" else Color("294b6b"))
+	turn_label.add_theme_color_override("font_color", Color("8e7755") if current == "red" else Color("20333a"))
 	undo_button.disabled = history.is_empty()
 
 func _set_status(text: String) -> void:
@@ -640,7 +625,7 @@ func _set_status(text: String) -> void:
 		status_label.text = text
 
 func _player_name(player: String) -> String:
-	return "红" if player == "red" else "蓝"
+	return "白" if player == "red" else "黑"
 
 func _mode_label() -> String:
 	return ("人机·%s" % difficulty_names[ai_difficulty]) if game_mode == "ai" else "双人对抗"
@@ -670,7 +655,7 @@ func _run_ai_turn(request: int) -> void:
 	ai_thinking = false
 	if move.is_empty():
 		winner = "red"
-		_set_status("电脑无路可走，红方获胜！")
+		_set_status("电脑无路可走，白方获胜！")
 		_refresh()
 		return
 	_move_piece(int(move["from"]), int(move["to"]))
@@ -802,6 +787,24 @@ func _card_style(background: Color, radius: int, border_color: Color) -> StyleBo
 	style.shadow_size = 8
 	style.shadow_offset = Vector2(0, 3)
 	return style
+
+func _premium_icon_style(background: Color, border_color: Color) -> StyleBoxFlat:
+	var style := _style(background, 16, border_color, 1)
+	style.shadow_color = Color(0.08, 0.10, 0.08, 0.14)
+	style.shadow_size = 6
+	style.shadow_offset = Vector2(0, 2)
+	return style
+
+func _apply_premium_icon_button(button: Button, size := 46.0) -> void:
+	button.custom_minimum_size = Vector2(size, size)
+	button.add_theme_color_override("font_color", Color("33483d"))
+	button.add_theme_color_override("font_hover_color", Color("17281f"))
+	button.add_theme_color_override("icon_normal_color", Color("3d554b"))
+	button.add_theme_color_override("icon_hover_color", Color("a7523f"))
+	button.add_theme_color_override("icon_pressed_color", Color("fff7e8"))
+	button.add_theme_stylebox_override("normal", _premium_icon_style(Color("f4eee3"), Color("d5c19d")))
+	button.add_theme_stylebox_override("hover", _premium_icon_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("pressed", _premium_icon_style(Color("203b31"), Color("b78a45")))
 
 func _texture_button_style(texture: Texture2D, margin := 18.0, tint := Color.WHITE) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()
