@@ -34,10 +34,10 @@ const PIECE_SKINS: { id: PieceSkin; label: string }[] = [
   { id: 'flat', label: '极简' },
 ];
 
-const MUSIC_TRACKS: { id: MusicTrack; label: string; pattern: number[] }[] = [
-  { id: 'mountain', label: '溪山清韵', pattern: [392, 440, 523.25, 440, 349.23, 392, 293.66, 349.23] },
-  { id: 'rain', label: '竹窗夜雨', pattern: [261.63, 329.63, 392, 329.63, 293.66, 349.23, 440, 349.23] },
-  { id: 'moon', label: '松间明月', pattern: [293.66, 392, 440, 523.25, 440, 392, 329.63, 293.66] },
+const MUSIC_TRACKS: { id: MusicTrack; label: string; pattern: number[]; bass: number; tempo: number }[] = [
+  { id: 'mountain', label: '溪山清韵', pattern: [392, 440, 523.25, 587.33, 659.25, 587.33, 523.25, 440], bass: 196, tempo: 1380 },
+  { id: 'rain', label: '竹窗夜雨', pattern: [261.63, 293.66, 392, 440, 523.25, 440, 392, 293.66], bass: 130.81, tempo: 1120 },
+  { id: 'moon', label: '松间明月', pattern: [293.66, 392, 440, 523.25, 587.33, 523.25, 440, 392], bass: 146.83, tempo: 1540 },
 ];
 
 function makeInitialBoard(): Cell[] {
@@ -122,24 +122,64 @@ export default function Home() {
     const context = ensureAudio();
     const oscillator = context.createOscillator();
     const gain = context.createGain();
+    const filter = context.createBiquadFilter();
     const start = context.currentTime + delay;
     oscillator.type = type;
     oscillator.frequency.setValueAtTime(frequency, start);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(Math.max(900, frequency * 5), start);
+    filter.Q.setValueAtTime(.7, start);
     gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(volume, start + 0.025);
+    gain.gain.exponentialRampToValueAtTime(volume, start + Math.min(.04, duration * .18));
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    oscillator.connect(gain).connect(context.destination);
+    oscillator.connect(filter).connect(gain).connect(context.destination);
     oscillator.start(start);
     oscillator.stop(start + duration + 0.03);
   }, [ensureAudio]);
 
+  const woodTap = useCallback((frequency: number, volume = .08, delay = 0) => {
+    const context = ensureAudio();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    const filter = context.createBiquadFilter();
+    const start = context.currentTime + delay;
+    oscillator.type = 'triangle';
+    oscillator.frequency.setValueAtTime(frequency * 1.55, start);
+    oscillator.frequency.exponentialRampToValueAtTime(frequency * .62, start + .13);
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(Math.min(1900, frequency * 5), start);
+    filter.Q.setValueAtTime(1.4, start);
+    gain.gain.setValueAtTime(.0001, start);
+    gain.gain.exponentialRampToValueAtTime(volume, start + .004);
+    gain.gain.exponentialRampToValueAtTime(.0001, start + .16);
+    oscillator.connect(filter).connect(gain).connect(context.destination);
+    oscillator.start(start);
+    oscillator.stop(start + .19);
+  }, [ensureAudio]);
+
   const playSfx = useCallback((kind: 'select' | 'move' | 'capture' | 'win') => {
     if (!sfxOn) return;
-    if (kind === 'select') tone(520, 0.08, 0.035, 'sine');
-    if (kind === 'move') { tone(260, 0.12, 0.055, 'triangle'); tone(390, 0.1, 0.03, 'sine', 0.035); }
-    if (kind === 'capture') { tone(180, 0.18, 0.07, 'triangle'); tone(120, 0.23, 0.06, 'sine', 0.06); }
-    if (kind === 'win') [392, 523.25, 659.25, 783.99].forEach((note, i) => tone(note, 0.5, 0.055, 'sine', i * 0.13));
-  }, [sfxOn, tone]);
+    if (kind === 'select') {
+      tone(659.25, .12, .028, 'triangle');
+      tone(987.77, .22, .012, 'sine', .025);
+    }
+    if (kind === 'move') {
+      woodTap(205, .1);
+      tone(329.63, .22, .024, 'triangle', .025);
+    }
+    if (kind === 'capture') {
+      woodTap(142, .13);
+      tone(196, .28, .038, 'triangle', .045);
+      tone(293.66, .34, .022, 'sine', .095);
+    }
+    if (kind === 'win') {
+      [392, 440, 523.25, 659.25, 783.99].forEach((note, index) => {
+        woodTap(note / 2, .055, index * .1);
+        tone(note, .6, .035, 'sine', index * .1 + .015);
+        tone(note * 2, .34, .009, 'triangle', index * .1 + .05);
+      });
+    }
+  }, [sfxOn, tone, woodTap]);
 
   const stopMusic = useCallback(() => {
     if (musicTimerRef.current) clearInterval(musicTimerRef.current);
@@ -153,12 +193,14 @@ export default function Home() {
     const track = MUSIC_TRACKS.find((item) => item.id === trackId) ?? MUSIC_TRACKS[0];
     const playNote = () => {
       const frequency = track.pattern[musicStepRef.current % track.pattern.length];
-      tone(frequency, 1.25, 0.018, 'sine');
-      tone(frequency / 2, 1.55, 0.009, 'triangle');
+      const step = musicStepRef.current;
+      tone(frequency, 1.16, .016, 'sine');
+      tone(frequency * 2, .46, .006, 'triangle', .08);
+      if (step % 4 === 0) tone(track.bass, 1.9, .007, 'sine');
       musicStepRef.current += 1;
     };
     playNote();
-    musicTimerRef.current = setInterval(playNote, 1150);
+    musicTimerRef.current = setInterval(playNote, track.tempo);
   }, [ensureAudio, stopMusic, tone]);
 
   useEffect(() => () => {
