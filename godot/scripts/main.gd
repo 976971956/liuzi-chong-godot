@@ -6,7 +6,6 @@ const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
-const UI_BACKGROUND_ATLAS = preload("res://assets/ui_background_atlas_v3.png")
 const BUTTON_PANEL_PAPER = preload("res://assets/ui/button_panel_paper.svg")
 const BUTTON_PANEL_JADE = preload("res://assets/ui/button_panel_jade.svg")
 const BUTTON_PANEL_CINNABAR = preload("res://assets/ui/button_panel_cinnabar.svg")
@@ -56,10 +55,10 @@ var sound_engine: Node
 var ai_player: RefCounted
 var rules_dialog: PopupPanel
 
-var board_skin_names := ["胡桃木", "青玉", "星河漆", "云纹纸"]
-var piece_skin_names := ["玉扣", "漆雕", "铜章", "星环"]
+var board_skin_names := ["墨木", "青玉", "玄漆", "宣纸"]
+var piece_skin_names := ["朱砂", "靛青", "陶釉", "素面"]
 var difficulty_names := ["入门", "进阶", "高手"]
-var background_colors := [Color("efe8dc"), Color("e5eee8"), Color("101a2b"), Color("f1ece3")]
+var background_colors := [Color("dfe8e2"), Color("dbe9e3"), Color("111b2f"), Color("eee7da")]
 
 func _ready() -> void:
 	var game_theme := Theme.new()
@@ -79,10 +78,16 @@ func _ready() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size), background_colors[board_skin])
-	var half := UI_BACKGROUND_ATLAS.get_size() * 0.5
-	var source := Rect2(Vector2(float(board_skin % 2) * half.x, float(board_skin / 2) * half.y), half)
-	draw_texture_rect_region(UI_BACKGROUND_ATLAS, Rect2(Vector2.ZERO, size), source)
+	var base := background_colors[board_skin]
+	draw_rect(Rect2(Vector2.ZERO, size), base)
+	var accent := [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
+	var ink := [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
+	draw_circle(Vector2(size.x * 0.08, size.y * 0.12), size.x * 0.75, Color(accent, 0.15))
+	draw_circle(Vector2(size.x * 0.94, size.y * 0.78), size.x * 0.68, Color(ink, 0.09))
+	draw_circle(Vector2(size.x * 0.44, size.y * 0.48), size.x * 0.78, Color(1, 1, 1, 0.08))
+	for index in range(7):
+		var y := size.y * (0.16 + float(index) * 0.14)
+		draw_line(Vector2(-20, y), Vector2(size.x + 20, y + size.x * 0.06), Color(ink, 0.035), 1.0)
 
 func _build_ui() -> void:
 	var root_vbox := VBoxContainer.new()
@@ -945,7 +950,7 @@ func _difficulty_button(title: String, copy: String) -> Button:
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
-	var colors := [Color("d5a462"), Color("8ea99a"), Color("25334b"), Color("e9dfc9")]
+	var colors := [Color("203d3d"), Color("3b6c65"), Color("1c2942"), Color("e9e1d2")]
 	var button := Button.new()
 	button.text = "▦   " + text
 	button.toggle_mode = true

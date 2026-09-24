@@ -5,7 +5,6 @@ signal point_clicked(index: int)
 const ROWS := 4
 const COLS := 4
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
-const BOARD_TEXTURES = preload("res://assets/board_texture_atlas_v2.png")
 
 var board: Array[String] = []
 var selected := -1
@@ -17,10 +16,10 @@ var winner := ""
 var capture_effects: Array[Dictionary] = []
 
 var skin_data := [
-	{"line": Color("e8c98e"), "line_shadow": Color("2b1208"), "accent": Color("f7dfaa"), "wash": Color(0.12, 0.04, 0.01, 0.10), "frame": Color("4a2a1b"), "edge": Color("b9824d"), "shadow": Color(0.05, 0.02, 0.01, 0.36)},
-	{"line": Color("214f45"), "line_shadow": Color("dce9d9"), "accent": Color("f2e6bd"), "wash": Color(0.02, 0.20, 0.15, 0.06), "frame": Color("24483f"), "edge": Color("c5ad77"), "shadow": Color(0.02, 0.08, 0.07, 0.30)},
-	{"line": Color("e7be6b"), "line_shadow": Color("050c22"), "accent": Color("fff0ba"), "wash": Color(0.02, 0.03, 0.13, 0.10), "frame": Color("101d36"), "edge": Color("c89c4f"), "shadow": Color(0.01, 0.02, 0.08, 0.46)},
-	{"line": Color("8c3d31"), "line_shadow": Color("f7eedc"), "accent": Color("c38a45"), "wash": Color(0.25, 0.16, 0.05, 0.04), "frame": Color("71372f"), "edge": Color("b78a45"), "shadow": Color(0.12, 0.04, 0.03, 0.30)},
+	{"board": Color("203d3d"), "glow": Color("6d9b91"), "line": Color("d9bd7c"), "line_shadow": Color("0c2225"), "accent": Color("f4dca0"), "frame": Color("122b2e"), "edge": Color("bd9758"), "shadow": Color(0.03, 0.06, 0.06, 0.34)},
+	{"board": Color("3b6c65"), "glow": Color("b9ded0"), "line": Color("e6d39b"), "line_shadow": Color("173d3a"), "accent": Color("f6e5b0"), "frame": Color("244b48"), "edge": Color("d5b979"), "shadow": Color(0.02, 0.10, 0.09, 0.28)},
+	{"board": Color("1c2942"), "glow": Color("476285"), "line": Color("d8b66c"), "line_shadow": Color("0a1224"), "accent": Color("ffe5a1"), "frame": Color("101b31"), "edge": Color("c9a35d"), "shadow": Color(0.01, 0.02, 0.07, 0.42)},
+	{"board": Color("e9e1d2"), "glow": Color("fffaf0"), "line": Color("9b604b"), "line_shadow": Color("fdf7e9"), "accent": Color("b98351"), "frame": Color("c8b59a"), "edge": Color("a77d57"), "shadow": Color(0.12, 0.08, 0.05, 0.22)},
 ]
 
 func _ready() -> void:
@@ -72,24 +71,23 @@ func _draw() -> void:
 	var grid: Rect2 = geometry.grid
 	var skin: Dictionary = skin_data[board_skin]
 
-	draw_style_box(_style(skin.shadow, 30.0), Rect2(frame.position + Vector2(0, 14), frame.size).grow(4.0))
-	draw_style_box(_style(skin.frame, 30.0, skin.edge, 2.0), frame.grow(6.0))
-	var half := BOARD_TEXTURES.get_size() * 0.5
-	var source := Rect2(Vector2(float(board_skin % 2) * half.x, float(board_skin / 2) * half.y), half)
-	draw_texture_rect_region(BOARD_TEXTURES, frame, source)
-	draw_rect(frame, skin.wash)
-	draw_style_box(_style(Color(1, 1, 1, 0.025), 26.0, Color(skin.edge, 0.54), 2.0), frame.grow(-7.0))
-	draw_style_box(_style(Color.TRANSPARENT, 22.0, Color(0.08, 0.05, 0.03, 0.26), 1.0), frame.grow(-13.0))
+	draw_style_box(_style(skin.shadow, 28.0), Rect2(frame.position + Vector2(0, 14), frame.size).grow(4.0))
+	draw_style_box(_style(skin.frame, 28.0, skin.edge, 2.0), frame.grow(6.0))
+	draw_style_box(_style(skin.board, 24.0, Color(skin.edge, 0.48), 2.0), frame)
+	draw_circle(frame.position + Vector2(frame.size.x * 0.18, frame.size.y * 0.16), frame.size.x * 0.72, Color(skin.glow, 0.08))
+	draw_circle(frame.position + Vector2(frame.size.x * 0.86, frame.size.y * 0.84), frame.size.x * 0.56, Color(skin.line_shadow, 0.10))
+	draw_style_box(_style(Color(1, 1, 1, 0.035), 21.0, Color(skin.edge, 0.58), 2.0), frame.grow(-8.0))
+	draw_style_box(_style(Color.TRANSPARENT, 18.0, Color(skin.line_shadow, 0.34), 1.0), frame.grow(-14.0))
 	_draw_corners(frame, skin.accent)
 
 	for row in range(ROWS):
 		var y := grid.position.y + grid.size.y * float(row) / float(ROWS - 1)
-		draw_line(Vector2(grid.position.x, y + 2.0), Vector2(grid.end.x, y + 2.0), Color(skin.line_shadow, 0.34), 5.5, true)
-		draw_line(Vector2(grid.position.x, y), Vector2(grid.end.x, y), skin.line, 3.2, true)
+		draw_line(Vector2(grid.position.x, y + 2.0), Vector2(grid.end.x, y + 2.0), Color(skin.line_shadow, 0.42), 4.2, true)
+		draw_line(Vector2(grid.position.x, y), Vector2(grid.end.x, y), skin.line, 2.2, true)
 	for col in range(COLS):
 		var x := grid.position.x + grid.size.x * float(col) / float(COLS - 1)
-		draw_line(Vector2(x + 2.0, grid.position.y), Vector2(x + 2.0, grid.end.y), Color(skin.line_shadow, 0.34), 5.5, true)
-		draw_line(Vector2(x, grid.position.y), Vector2(x, grid.end.y), skin.line, 3.2, true)
+		draw_line(Vector2(x + 2.0, grid.position.y), Vector2(x + 2.0, grid.end.y), Color(skin.line_shadow, 0.42), 4.2, true)
+		draw_line(Vector2(x, grid.position.y), Vector2(x, grid.end.y), skin.line, 2.2, true)
 
 	if board.is_empty():
 		return
@@ -97,11 +95,11 @@ func _draw() -> void:
 		var point := _point_position(index, grid)
 		if board[index] == "":
 			if index in valid_moves:
-				draw_circle(point, 18.0, Color(skin.accent, 0.18))
-				draw_arc(point, 11.5, 0, TAU, 32, Color(skin.accent, 0.92), 2.2, true)
-				draw_circle(point, 3.8, skin.accent)
+				draw_circle(point, 15.0, Color(skin.accent, 0.14))
+				draw_arc(point, 10.0, 0, TAU, 32, Color(skin.accent, 0.92), 2.0, true)
+				draw_circle(point, 3.2, skin.accent)
 			else:
-				draw_circle(point, 4.0, Color(skin.line, 0.86))
+				draw_circle(point, 3.2, Color(skin.line, 0.76))
 		else:
 			_draw_piece(point, board[index], index == selected, index == last_move, grid)
 
@@ -114,48 +112,44 @@ func _draw() -> void:
 func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool, grid: Rect2) -> void:
 	var step_x := grid.size.x / float(COLS - 1)
 	var step_y := grid.size.y / float(ROWS - 1)
-	var radius := clampf(minf(step_x, step_y) * 0.31, 22.0, 38.0)
+	var radius := clampf(minf(step_x, step_y) * 0.275, 20.0, 34.0)
 	var red := side == "red"
-	var primary := Color("bd4638") if red else Color("315f88")
-	var deep := Color("651f1d") if red else Color("132f4a")
-	var bright := Color("f3826a") if red else Color("73a2c5")
+	var primary := Color("bb5a4b") if red else Color("3d7180")
+	var deep := Color("74312e") if red else Color("1d4051")
+	var bright := Color("e18a72") if red else Color("77a9ae")
 	var ivory := Color("fff0d1")
 
 	if is_selected:
-		draw_circle(center, radius + 11.0, Color("ffe8a7"))
-		draw_circle(center, radius + 7.0, Color(0.06, 0.04, 0.03, 0.72))
-		center.y -= 4.0
+		draw_arc(center, radius + 9.0, 0, TAU, 48, Color("f4dca0"), 3.0, true)
+		draw_circle(center, radius + 5.0, Color(0.02, 0.06, 0.06, 0.34))
+		center.y -= 3.0
 
-	draw_circle(center + Vector2(0, radius * 0.24), radius + 1.5, Color(0.02, 0.015, 0.01, 0.34))
+	draw_circle(center + Vector2(0, radius * 0.18), radius + 1.5, Color(0.01, 0.03, 0.03, 0.28))
 	match piece_skin:
 		0:
 			draw_circle(center, radius, deep)
-			draw_circle(center, radius - 2.5, primary)
-			draw_circle(center - Vector2(radius * 0.16, radius * 0.19), radius * 0.73, bright)
-			draw_circle(center + Vector2(radius * 0.09, radius * 0.08), radius * 0.73, primary)
-			draw_arc(center, radius * 0.75, 0, TAU, 48, Color(1, 0.88, 0.68, 0.52), 1.8, true)
+			draw_circle(center, radius - 2.2, primary)
+			draw_circle(center - Vector2(radius * 0.18, radius * 0.2), radius * 0.68, Color(bright, 0.34))
+			draw_arc(center, radius * 0.76, 0, TAU, 48, Color(1, 0.88, 0.68, 0.62), 1.6, true)
 			_draw_glyph(center, radius, "冲" if red else "守", ivory)
 		1:
-			draw_circle(center, radius, Color("211814"))
-			draw_circle(center, radius - 3.0, deep)
-			draw_arc(center, radius - 6.0, 0, TAU, 56, Color("e9bd68"), 2.3, true)
-			draw_arc(center, radius * 0.58, 0, TAU, 48, Color(primary, 0.86), radius * 0.25, true)
+			draw_circle(center, radius, Color(0.04, 0.09, 0.10, 0.88))
+			draw_circle(center, radius - 2.5, Color(primary, 0.82))
+			draw_arc(center, radius - 5.0, 0, TAU, 56, Color("f0d38b"), 2.0, true)
+			draw_arc(center, radius * 0.58, 0, TAU, 48, Color(bright, 0.82), radius * 0.18, true)
 			_draw_glyph(center, radius, "六", Color("f8db9b"))
 		2:
-			draw_circle(center, radius, Color("49321f"))
-			draw_circle(center, radius - 2.0, Color("c9954f"))
-			draw_circle(center, radius - 6.5, Color("72502e"))
-			draw_circle(center, radius - 9.0, primary)
-			for angle in [0.0, PI * 0.5, PI, PI * 1.5]:
-				draw_circle(center + Vector2(cos(angle), sin(angle)) * (radius - 4.2), 2.0, Color("f5d28c"))
+			draw_circle(center, radius, Color("6a5c4a"))
+			draw_circle(center, radius - 2.5, Color("c4a77b"))
+			draw_circle(center, radius - 6.0, Color(primary, 0.94))
+			draw_arc(center, radius * 0.68, 0, TAU, 48, Color("f2d9a3"), 1.6, true)
 			_draw_glyph(center, radius, "锋" if red else "垒", ivory)
 		_:
-			draw_circle(center, radius, Color("0b1420"))
+			draw_circle(center, radius, Color("17252b"))
 			draw_circle(center, radius - 3.0, Color(primary, 0.96))
-			draw_circle(center, radius * 0.62, Color("101a28"))
-			draw_arc(center, radius * 0.76, -0.55, 2.25, 42, Color("ffe29a"), 2.6, true)
-			draw_circle(center + Vector2(radius * 0.56, -radius * 0.51), 3.2, Color("fff1b3"))
-			draw_circle(center, radius * 0.15, bright)
+			draw_arc(center, radius * 0.76, -0.55, 2.25, 42, Color("ffe29a"), 2.2, true)
+			draw_circle(center + Vector2(radius * 0.56, -radius * 0.51), 2.8, Color("fff1b3"))
+			draw_circle(center, radius * 0.13, bright)
 
 	if is_last:
 		draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 6.0, Color("24170f"))
