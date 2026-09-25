@@ -5,6 +5,11 @@ signal point_clicked(index: int)
 const ROWS := 4
 const COLS := 4
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
+const GENERATED_BOARD_PATH := "res://assets/generated_board_surface_v1.png"
+const GENERATED_STONES_PATH := "res://assets/generated_go_stones_v1.png"
+
+const GO_BLACK_SOURCE := Rect2(35, 400, 575, 500)
+const GO_WHITE_SOURCE := Rect2(662, 400, 575, 500)
 
 var board: Array[String] = []
 var selected := -1
@@ -14,6 +19,8 @@ var board_skin := 0
 var piece_skin := 0
 var winner := ""
 var capture_effects: Array[Dictionary] = []
+var generated_board: Texture2D
+var generated_stones: Texture2D
 
 var skin_data := [
 	{"board": Color("203d3d"), "glow": Color("6d9b91"), "line": Color("d9bd7c"), "line_shadow": Color("0c2225"), "accent": Color("f4dca0"), "frame": Color("122b2e"), "edge": Color("bd9758"), "shadow": Color(0.03, 0.06, 0.06, 0.34)},
@@ -26,6 +33,8 @@ func _ready() -> void:
 	custom_minimum_size = Vector2(340, 430)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	resized.connect(queue_redraw)
+	generated_board = load(GENERATED_BOARD_PATH) as Texture2D
+	generated_stones = load(GENERATED_STONES_PATH) as Texture2D
 	set_process(false)
 
 func set_state(new_board: Array[String], new_selected: int, new_valid: Array[int], new_last: int, new_winner: String) -> void:
@@ -74,6 +83,9 @@ func _draw() -> void:
 	draw_style_box(_style(skin.shadow, 28.0), Rect2(frame.position + Vector2(0, 14), frame.size).grow(4.0))
 	draw_style_box(_style(skin.frame, 28.0, skin.edge, 2.0), frame.grow(6.0))
 	draw_style_box(_style(skin.board, 24.0, Color(skin.edge, 0.48), 2.0), frame)
+	if board_skin == 0 and generated_board:
+		draw_texture_rect(generated_board, frame, false, Color(1, 1, 1, 0.78))
+		draw_rect(frame, Color(skin.board, 0.18))
 	draw_circle(frame.position + Vector2(frame.size.x * 0.18, frame.size.y * 0.16), frame.size.x * 0.72, Color(skin.glow, 0.08))
 	draw_circle(frame.position + Vector2(frame.size.x * 0.86, frame.size.y * 0.84), frame.size.x * 0.56, Color(skin.line_shadow, 0.10))
 	draw_style_box(_style(Color(1, 1, 1, 0.035), 21.0, Color(skin.edge, 0.58), 2.0), frame.grow(-8.0))
@@ -140,6 +152,15 @@ func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool
 		draw_arc(center, radius + 9.0, 0, TAU, 56, Color("e9c777"), 3.0, true)
 		draw_circle(center, radius + 5.0, Color(0.02, 0.06, 0.06, 0.26))
 		center.y -= 2.5
+
+	if piece_skin == 0 and generated_stones:
+		var source := GO_WHITE_SOURCE if white_stone else GO_BLACK_SOURCE
+		var target := Rect2(center - Vector2(radius * 1.12, radius * 0.84), Vector2(radius * 2.24, radius * 1.68))
+		draw_texture_rect_region(generated_stones, target, source, Color(1, 1, 1, 0.98))
+		if is_last:
+			draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 5.5, Color("172328", 0.88))
+			draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 3.0, Color("f0d38b"))
+		return
 
 	# A Go-style stone is built in depth layers: contact shadow, side wall, bevel, cap, and gloss.
 	_draw_ellipse(center + Vector2(0, radius * 0.58), radius * 1.12, 0.34, stone_shadow)
