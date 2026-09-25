@@ -180,7 +180,7 @@ func _build_ui() -> void:
 	content_box.add_child(page_margin)
 
 	var hero_panel := PanelContainer.new()
-	hero_panel.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 30.0))
+	hero_panel.add_theme_stylebox_override("panel", _card_style(Color("f8f3e9", 0.96), 20, Color("d9cbb7", 0.90)))
 	left_column.add_child(hero_panel)
 	var hero_margin := _margin(18, 18, 13, 13)
 	hero_panel.add_child(hero_margin)
@@ -217,7 +217,7 @@ func _build_ui() -> void:
 	left_column.add_child(board_view)
 
 	var action_panel := PanelContainer.new()
-	action_panel.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 30.0))
+	action_panel.add_theme_stylebox_override("panel", _card_style(Color("fbf8f1", 0.96), 20, Color("ded5c7", 0.90)))
 	left_column.add_child(action_panel)
 	var action_margin := _margin(12, 12, 10, 12)
 	action_panel.add_child(action_margin)
@@ -251,11 +251,12 @@ func _build_ui() -> void:
 
 	settings_panel = PopupPanel.new()
 	settings_panel.title = "棋局设置"
-	settings_panel.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 34.0))
+	settings_panel.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.98), 24, Color("cdbda4", 0.92)))
 	add_child(settings_panel)
 	var settings_scroll := ScrollContainer.new()
 	settings_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	settings_scroll.clip_contents = true
 	settings_panel.add_child(settings_scroll)
 	var settings_margin := _margin(24, 24, 18, 20)
 	settings_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -389,9 +390,6 @@ func _build_ui() -> void:
 	sfx_toggle.toggled.connect(_on_sfx_toggled)
 	sfx_row.add_child(sfx_toggle)
 
-	var settings_spacer := Control.new()
-	settings_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	settings.add_child(settings_spacer)
 	var new_game_button := Button.new()
 	new_game_button.text = "开始新局   →"
 	new_game_button.custom_minimum_size.y = 52
@@ -415,7 +413,7 @@ func _build_ui() -> void:
 
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
-	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 34.0))
+	rules_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.98), 24, Color("cdbda4", 0.92)))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -713,7 +711,7 @@ func _show_settings() -> void:
 	var viewport_size := get_viewport_rect().size
 	var popup_size := Vector2i(
 		int(minf(430.0, viewport_size.x - 20.0)),
-		int(minf(760.0, viewport_size.y - 20.0))
+		int(minf(700.0, viewport_size.y - 40.0))
 	)
 	settings_panel.popup_centered(popup_size)
 
