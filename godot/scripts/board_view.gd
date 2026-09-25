@@ -112,44 +112,58 @@ func _draw() -> void:
 func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool, grid: Rect2) -> void:
 	var step_x := grid.size.x / float(COLS - 1)
 	var step_y := grid.size.y / float(ROWS - 1)
-	var radius := clampf(minf(step_x, step_y) * 0.265, 20.0, 33.0)
+	var radius := clampf(minf(step_x, step_y) * 0.275, 21.0, 35.0)
 	var white_stone := side == "red"
-	var stone := Color("ebe6d9") if white_stone else Color("20282b")
-	var stone_edge := Color("c0b9aa") if white_stone else Color("0d171b")
-	var stone_highlight := Color("fffdf5") if white_stone else Color("657176")
-	var stone_shadow := Color(0.02, 0.04, 0.04, 0.38)
+	var stone_top := Color("f2eee4") if white_stone else Color("303b41")
+	var stone_mid := Color("d5cdbd") if white_stone else Color("1b252b")
+	var stone_edge := Color("aaa291") if white_stone else Color("0b1318")
+	var stone_highlight := Color("fffdf5") if white_stone else Color("aabcc2")
+	var stone_shadow := Color(0.01, 0.025, 0.03, 0.44)
+	var shine_strength := 0.52
+	var bevel_width := 2.4
+	match piece_skin:
+		1:
+			stone_top = Color("f9f7f0") if white_stone else Color("3b5962")
+			stone_mid = Color("d8e0db") if white_stone else Color("142b34")
+			shine_strength = 0.72
+			bevel_width = 2.0
+		2:
+			stone_top = Color("d9d0c0") if white_stone else Color("343a3c")
+			stone_mid = Color("b5aa99") if white_stone else Color("22282a")
+			stone_highlight = Color("fff5dc") if white_stone else Color("899092")
+			shine_strength = 0.22
+			bevel_width = 3.0
+		_:
+			shine_strength = 0.36
 
 	if is_selected:
 		draw_arc(center, radius + 9.0, 0, TAU, 56, Color("e9c777"), 3.0, true)
 		draw_circle(center, radius + 5.0, Color(0.02, 0.06, 0.06, 0.26))
 		center.y -= 2.5
 
-	# Go-style stones: a dark contact shadow, a full rounded body, and one soft highlight.
-	draw_circle(center + Vector2(0, radius * 0.22), radius + 2.0, stone_shadow)
-	match piece_skin:
-		0:
-			draw_circle(center, radius, stone_edge)
-			draw_circle(center - Vector2(0, 1.0), radius - 2.0, stone)
-			draw_circle(center - Vector2(radius * 0.24, radius * 0.28), radius * 0.58, Color(stone_highlight, 0.18))
-			draw_arc(center - Vector2(0, 1.0), radius - 4.0, PI * 1.08, PI * 1.88, 28, Color(stone_highlight, 0.28), 2.0, true)
-		1:
-			draw_circle(center, radius, stone_edge)
-			draw_circle(center - Vector2(0, 1.0), radius - 2.0, Color(stone, 0.94))
-			draw_arc(center - Vector2(0, 1.0), radius - 4.5, 0, TAU, 56, Color("d8bf82", 0.52), 1.6, true)
-			draw_circle(center - Vector2(radius * 0.26, radius * 0.3), radius * 0.42, Color(stone_highlight, 0.12))
-		2:
-			draw_circle(center, radius, stone_edge)
-			draw_circle(center - Vector2(0, 1.0), radius - 2.5, stone)
-			draw_arc(center, radius * 0.78, 0, TAU, 48, Color(stone_highlight, 0.16), 2.2, true)
-			draw_circle(center - Vector2(radius * 0.18, radius * 0.22), radius * 0.34, Color(stone_highlight, 0.10))
-		_:
-			draw_circle(center, radius, stone_edge)
-			draw_circle(center - Vector2(0, 1.0), radius - 3.0, stone)
-			draw_circle(center - Vector2(radius * 0.28, radius * 0.34), radius * 0.25, Color(stone_highlight, 0.18))
+	# A Go-style stone is built in depth layers: contact shadow, side wall, bevel, cap, and gloss.
+	_draw_ellipse(center + Vector2(0, radius * 0.58), radius * 1.12, 0.34, stone_shadow)
+	for depth in range(6, 0, -1):
+		var depth_ratio := float(depth) / 6.0
+		draw_circle(center + Vector2(0, depth_ratio * radius * 0.18), radius + 1.2, Color(stone_edge, 0.92))
+	draw_circle(center, radius + 0.3, stone_edge)
+	draw_circle(center - Vector2(0, 1.4), radius - 1.8, stone_mid)
+	draw_circle(center - Vector2(0, 2.7), radius - 3.4, stone_top)
+	draw_circle(center - Vector2(radius * 0.18, radius * 0.22), radius * 0.70, Color(stone_highlight, shine_strength * 0.22))
+	_draw_ellipse(center - Vector2(radius * 0.31, radius * 0.38), radius * 0.25, 0.12, Color(stone_highlight, shine_strength))
+	draw_arc(center - Vector2(0, 2.0), radius - 4.0, PI * 1.08, PI * 1.84, 36, Color(stone_highlight, shine_strength * 0.54), bevel_width, true)
+	draw_arc(center + Vector2(0, 1.5), radius - 3.2, PI * 0.16, PI * 0.92, 32, Color(0.01, 0.02, 0.02, 0.24), bevel_width, true)
+	if piece_skin == 1:
+		draw_arc(center - Vector2(0, 1.5), radius - 5.0, 0, TAU, 56, Color("f0d38b", 0.54), 1.2, true)
 
 	if is_last:
-		draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 6.0, Color("24170f"))
-		draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 3.6, Color("ffe092"))
+		draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 5.5, Color("172328", 0.88))
+		draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 3.0, Color("f0d38b"))
+
+func _draw_ellipse(center: Vector2, radius: float, vertical_scale: float, color: Color) -> void:
+	draw_set_transform(center, 0.0, Vector2(radius, radius * vertical_scale))
+	draw_circle(Vector2.ZERO, 1.0, color)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 func _draw_glyph(center: Vector2, radius: float, glyph: String, color: Color) -> void:
 	var font_size := int(radius * 0.70)
