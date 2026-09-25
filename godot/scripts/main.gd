@@ -55,14 +55,17 @@ var sound_engine: Node
 var ai_player: RefCounted
 var rules_dialog: PopupPanel
 
-var board_skin_names := ["墨木", "青玉", "玄漆", "宣纸"]
-var piece_skin_names := ["朱砂", "靛青", "陶釉", "素面"]
+var board_skin_names := ["胡桃木", "青玉", "星河漆", "云纹纸"]
+var piece_skin_names := ["玉扣", "漆雕", "铜章", "星环"]
 var difficulty_names := ["入门", "进阶", "高手"]
 var background_colors := [Color("dfe8e2"), Color("dbe9e3"), Color("111b2f"), Color("eee7da")]
 
 func _ready() -> void:
 	var game_theme := Theme.new()
-	game_theme.default_font = GAME_FONT
+	var game_font: Font = GAME_FONT.duplicate()
+	game_font.fallbacks = [load("res://assets/NotoSansSC.ttf")]
+	game_font.allow_system_fallback = true
+	game_theme.default_font = game_font
 	game_theme.default_font_size = 14
 	theme = game_theme
 	set_process_input(true)
@@ -246,17 +249,17 @@ func _build_ui() -> void:
 
 	settings_panel = PopupPanel.new()
 	settings_panel.title = "棋局设置"
-	settings_panel.add_theme_stylebox_override("panel", _style(Color("f8f3e9"), 24, Color("cdbda4"), 1))
+	settings_panel.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb"), 24, Color("cdbda4")))
 	add_child(settings_panel)
 	var settings_scroll := ScrollContainer.new()
 	settings_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	settings_panel.add_child(settings_scroll)
-	var settings_margin := _margin(22, 22, 20, 22)
+	var settings_margin := _margin(24, 24, 18, 20)
 	settings_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	settings_scroll.add_child(settings_margin)
 	var settings := VBoxContainer.new()
-	settings.add_theme_constant_override("separation", 12)
+	settings.add_theme_constant_override("separation", 8)
 	settings_margin.add_child(settings)
 
 	var settings_top := HBoxContainer.new()
@@ -279,7 +282,7 @@ func _build_ui() -> void:
 	settings_copy.text = "选择对战方式、难度与视觉风格，打造你的专属棋局。"
 	settings_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settings_copy.add_theme_font_size_override("font_size", 13)
-	settings_copy.add_theme_color_override("font_color", Color("718078"))
+	settings_copy.add_theme_color_override("font_color", Color("52645b"))
 	settings.add_child(settings_copy)
 	settings.add_child(_divider())
 
@@ -341,7 +344,7 @@ func _build_ui() -> void:
 	var music_row := HBoxContainer.new()
 	settings.add_child(music_row)
 	var music_copy := Label.new()
-	music_copy.text = "背景音乐 · 氛围旋律"
+	music_copy.text = "背景音乐"
 	music_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	music_copy.add_theme_font_size_override("font_size", 14)
 	music_row.add_child(music_copy)
@@ -361,8 +364,8 @@ func _build_ui() -> void:
 	track_select.add_item("松间明月")
 	track_select.custom_minimum_size.y = 44
 	track_select.add_theme_color_override("font_color", Color("33483d"))
-	track_select.add_theme_stylebox_override("normal", _style(Color("fffaf1"), 12, Color("d8cbb9"), 1))
-	track_select.add_theme_stylebox_override("hover", _style(Color("f1eadf"), 12, Color("b78a45"), 1))
+	track_select.add_theme_stylebox_override("normal", _option_style(Color("f9f5ec"), Color("d7c7ad")))
+	track_select.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	track_select.item_selected.connect(_on_track_selected)
 	settings.add_child(track_select)
 	var sfx_row := HBoxContainer.new()
@@ -410,7 +413,7 @@ func _build_ui() -> void:
 
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
-	rules_dialog.add_theme_stylebox_override("panel", _style(Color("f8f3e9"), 24, Color("cdbdA4"), 1))
+	rules_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb"), 24, Color("cdbda4")))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -432,13 +435,7 @@ func _build_rules_dialog() -> void:
 	var close_button := Button.new()
 	close_button.icon = ICON_CLOSE
 	close_button.expand_icon = true
-	close_button.custom_minimum_size = Vector2(34, 34)
-	close_button.add_theme_font_size_override("font_size", 18)
-	close_button.add_theme_color_override("font_color", Color("536158"))
-	close_button.add_theme_color_override("icon_normal_color", Color("536158"))
-	close_button.add_theme_color_override("icon_hover_color", Color("a7523f"))
-	close_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_ICON, 18.0))
-	close_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 18.0))
+	_apply_premium_icon_button(close_button, 34.0)
 	close_button.pressed.connect(rules_dialog.hide)
 	top_row.add_child(close_button)
 	var rules_title := Label.new()
@@ -781,6 +778,20 @@ func _style(background: Color, radius: int, border_color := Color.TRANSPARENT, b
 		style.border_width_bottom = border_width
 	return style
 
+func _panel_surface(background: Color, radius: int, border_color: Color) -> StyleBoxFlat:
+	var style := _style(background, radius, border_color, 1)
+	style.shadow_color = Color(0.05, 0.09, 0.08, 0.22)
+	style.shadow_size = 14
+	style.shadow_offset = Vector2(0, 5)
+	return style
+
+func _option_style(background: Color, border_color: Color) -> StyleBoxFlat:
+	var style := _style(background, 15, border_color, 1)
+	style.shadow_color = Color(0.06, 0.09, 0.08, 0.10)
+	style.shadow_size = 4
+	style.shadow_offset = Vector2(0, 2)
+	return style
+
 func _card_style(background: Color, radius: int, border_color: Color) -> StyleBoxFlat:
 	var style := _style(background, radius, border_color, 1)
 	style.shadow_color = Color(0.08, 0.10, 0.08, 0.10)
@@ -872,22 +883,22 @@ func _section_title(text: String, count: String) -> HBoxContainer:
 	marker.text = count
 	marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	marker.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	marker.custom_minimum_size = Vector2(30, 24)
-	marker.add_theme_font_size_override("font_size", 9)
-	marker.add_theme_color_override("font_color", Color("fff7e8"))
-	marker.add_theme_stylebox_override("normal", _style(Color("a7523f"), 8))
+	marker.custom_minimum_size = Vector2(32, 26)
+	marker.add_theme_font_size_override("font_size", 10)
+	marker.add_theme_color_override("font_color", Color("f3d9a2"))
+	marker.add_theme_stylebox_override("normal", _style(Color("284c43"), 9, Color("b78a45", 0.72), 1))
 	row.add_child(marker)
 	var label := Label.new()
 	label.text = text
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.add_theme_font_size_override("font_size", 14)
-	label.add_theme_color_override("font_color", Color("26392f"))
+	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_color_override("font_color", Color("1e352d"))
 	row.add_child(label)
 	return row
 
 func _rule_card(number: String, title: String, copy: String) -> PanelContainer:
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", _style(Color("fffaf1"), 14, Color("ded2c0"), 1))
+	card.add_theme_stylebox_override("panel", _option_style(Color("fbf7ef"), Color("e0d4c1")))
 	var margin := _margin(12, 12, 10, 10)
 	card.add_child(margin)
 	var row := HBoxContainer.new()
@@ -915,7 +926,7 @@ func _rule_card(number: String, title: String, copy: String) -> PanelContainer:
 	copy_label.text = copy
 	copy_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	copy_label.add_theme_font_size_override("font_size", 11)
-	copy_label.add_theme_color_override("font_color", Color("718078"))
+	copy_label.add_theme_color_override("font_color", Color("586960"))
 	text_stack.add_child(copy_label)
 	return card
 
@@ -923,26 +934,26 @@ func _mode_button(title: String, copy: String) -> Button:
 	var button := Button.new()
 	button.text = "%s\n%s" % [title, copy]
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(142, 64)
+	button.custom_minimum_size = Vector2(150, 62)
 	button.add_theme_font_size_override("font_size", 13)
-	button.add_theme_color_override("font_color", Color("5f6962"))
+	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
 
 func _difficulty_button(title: String, copy: String) -> Button:
 	var button := Button.new()
 	button.text = "%s\n%s" % [title, copy]
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(92, 58)
+	button.custom_minimum_size = Vector2(98, 58)
 	button.add_theme_font_size_override("font_size", 11)
-	button.add_theme_color_override("font_color", Color("657068"))
+	button.add_theme_color_override("font_color", Color("3c5048"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 19.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 19.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 19.0))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
@@ -950,14 +961,14 @@ func _skin_button(text: String, index: int) -> Button:
 	var button := Button.new()
 	button.text = "▦   " + text
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(142, 64)
+	button.custom_minimum_size = Vector2(150, 58)
 	button.add_theme_font_size_override("font_size", 12)
-	button.add_theme_color_override("font_color", Color("5f6962"))
+	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	var tint: Color = colors[index].lerp(Color.WHITE, 0.72)
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0, tint))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0, tint))
+	button.add_theme_stylebox_override("normal", _option_style(tint, Color("d5c5ad")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
@@ -965,11 +976,11 @@ func _piece_button(text: String, index: int) -> Button:
 	var button := Button.new()
 	button.text = "%s   %s" % [icons[index], text]
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(142, 64)
+	button.custom_minimum_size = Vector2(150, 58)
 	button.add_theme_font_size_override("font_size", 12)
-	button.add_theme_color_override("font_color", Color("5f6962"))
+	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
