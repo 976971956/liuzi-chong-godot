@@ -6,16 +6,17 @@ const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
-const BUTTON_PANEL_PAPER = preload("res://assets/ui/button_panel_paper.svg")
-const BUTTON_PANEL_JADE = preload("res://assets/ui/button_panel_jade.svg")
-const BUTTON_PANEL_CINNABAR = preload("res://assets/ui/button_panel_cinnabar.svg")
-const BUTTON_PANEL_ICON = preload("res://assets/ui/button_panel_icon.svg")
-const ICON_MUSIC = preload("res://assets/icons/music.svg")
-const ICON_SETTINGS = preload("res://assets/icons/settings.svg")
-const ICON_RULES = preload("res://assets/icons/rules.svg")
-const ICON_UNDO = preload("res://assets/icons/undo.svg")
-const ICON_RESTART = preload("res://assets/icons/restart.svg")
-const ICON_CLOSE = preload("res://assets/icons/close.svg")
+const UI_BACKGROUND = preload("res://assets/generated_ui_background.png")
+const BUTTON_PANEL_PAPER = preload("res://assets/generated_panel_paper.png")
+const BUTTON_PANEL_JADE = preload("res://assets/generated_panel_jade.png")
+const BUTTON_PANEL_CINNABAR = preload("res://assets/generated_panel_cinnabar.png")
+const BUTTON_PANEL_ICON = preload("res://assets/generated_panel_jade.png")
+const ICON_MUSIC = preload("res://assets/icons/generated_music.png")
+const ICON_SETTINGS = preload("res://assets/icons/generated_settings.png")
+const ICON_RULES = preload("res://assets/icons/generated_rules.png")
+const ICON_UNDO = preload("res://assets/icons/generated_undo.png")
+const ICON_RESTART = preload("res://assets/icons/generated_restart.png")
+const ICON_CLOSE = preload("res://assets/icons/generated_close.png")
 
 var board: Array[String] = []
 var current := "red"
@@ -83,6 +84,7 @@ func _ready() -> void:
 func _draw() -> void:
 	var base: Color = background_colors[board_skin]
 	draw_rect(Rect2(Vector2.ZERO, size), base)
+	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.74))
 	var accent: Color = [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
 	var ink: Color = [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
 	draw_circle(Vector2(size.x * 0.08, size.y * 0.12), size.x * 0.75, Color(accent, 0.15))
@@ -178,7 +180,7 @@ func _build_ui() -> void:
 	content_box.add_child(page_margin)
 
 	var hero_panel := PanelContainer.new()
-	hero_panel.add_theme_stylebox_override("panel", _card_style(Color("f8f3e9"), 20, Color("ded3c1")))
+	hero_panel.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 30.0))
 	left_column.add_child(hero_panel)
 	var hero_margin := _margin(18, 18, 13, 13)
 	hero_panel.add_child(hero_margin)
@@ -215,7 +217,7 @@ func _build_ui() -> void:
 	left_column.add_child(board_view)
 
 	var action_panel := PanelContainer.new()
-	action_panel.add_theme_stylebox_override("panel", _card_style(Color("fbf8f1"), 20, Color("ded5c7")))
+	action_panel.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 30.0))
 	left_column.add_child(action_panel)
 	var action_margin := _margin(12, 12, 10, 12)
 	action_panel.add_child(action_margin)
@@ -249,7 +251,7 @@ func _build_ui() -> void:
 
 	settings_panel = PopupPanel.new()
 	settings_panel.title = "棋局设置"
-	settings_panel.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb"), 24, Color("cdbda4")))
+	settings_panel.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 34.0))
 	add_child(settings_panel)
 	var settings_scroll := ScrollContainer.new()
 	settings_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -353,9 +355,9 @@ func _build_ui() -> void:
 	music_toggle.custom_minimum_size = Vector2(82, 38)
 	music_toggle.add_theme_color_override("font_color", Color("56645c"))
 	music_toggle.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	music_toggle.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 14, Color("d7c7ad"), 1))
-	music_toggle.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 14, Color("b78a45"), 1))
-	music_toggle.add_theme_stylebox_override("pressed", _style(Color("203b31"), 14, Color("b78a45"), 1))
+	music_toggle.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	music_toggle.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	music_toggle.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 22.0))
 	music_toggle.toggled.connect(_on_music_toggled)
 	music_row.add_child(music_toggle)
 	track_select = OptionButton.new()
@@ -364,8 +366,8 @@ func _build_ui() -> void:
 	track_select.add_item("松间明月")
 	track_select.custom_minimum_size.y = 44
 	track_select.add_theme_color_override("font_color", Color("33483d"))
-	track_select.add_theme_stylebox_override("normal", _option_style(Color("f9f5ec"), Color("d7c7ad")))
-	track_select.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	track_select.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	track_select.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
 	track_select.item_selected.connect(_on_track_selected)
 	settings.add_child(track_select)
 	var sfx_row := HBoxContainer.new()
@@ -381,9 +383,9 @@ func _build_ui() -> void:
 	sfx_toggle.custom_minimum_size = Vector2(82, 38)
 	sfx_toggle.add_theme_color_override("font_color", Color("56645c"))
 	sfx_toggle.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	sfx_toggle.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 14, Color("d7c7ad"), 1))
-	sfx_toggle.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 14, Color("b78a45"), 1))
-	sfx_toggle.add_theme_stylebox_override("pressed", _style(Color("203b31"), 14, Color("b78a45"), 1))
+	sfx_toggle.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	sfx_toggle.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	sfx_toggle.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 22.0))
 	sfx_toggle.toggled.connect(_on_sfx_toggled)
 	sfx_row.add_child(sfx_toggle)
 
@@ -404,8 +406,8 @@ func _build_ui() -> void:
 	rules_button.custom_minimum_size.y = 38
 	rules_button.add_theme_color_override("font_color", Color("5a6a61"))
 	rules_button.add_theme_color_override("font_hover_color", Color("a7523f"))
-	rules_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("d7c7ad"), 1))
-	rules_button.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 12, Color("b78a45"), 1))
+	rules_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	rules_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
 	rules_button.pressed.connect(_show_rules)
 	settings.add_child(rules_button)
 	_update_mode_buttons()
@@ -413,7 +415,7 @@ func _build_ui() -> void:
 
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
-	rules_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb"), 24, Color("cdbda4")))
+	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 34.0))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -833,6 +835,20 @@ func _texture_button_style(texture: Texture2D, margin := 18.0, tint := Color.WHI
 	style.modulate_color = tint
 	return style
 
+func _generated_panel_style(texture: Texture2D, margin := 32.0, tint := Color.WHITE) -> StyleBoxTexture:
+	var style := StyleBoxTexture.new()
+	style.texture = texture
+	style.texture_margin_left = margin
+	style.texture_margin_right = margin
+	style.texture_margin_top = margin
+	style.texture_margin_bottom = margin
+	style.content_margin_left = 18.0
+	style.content_margin_right = 18.0
+	style.content_margin_top = 14.0
+	style.content_margin_bottom = 14.0
+	style.modulate_color = tint
+	return style
+
 func _divider() -> HSeparator:
 	var divider := HSeparator.new()
 	divider.add_theme_constant_override("separation", 8)
@@ -898,7 +914,7 @@ func _section_title(text: String, count: String) -> HBoxContainer:
 
 func _rule_card(number: String, title: String, copy: String) -> PanelContainer:
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", _option_style(Color("fbf7ef"), Color("e0d4c1")))
+	card.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 24.0))
 	var margin := _margin(12, 12, 10, 10)
 	card.add_child(margin)
 	var row := HBoxContainer.new()
@@ -938,9 +954,9 @@ func _mode_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
 	return button
 
 func _difficulty_button(title: String, copy: String) -> Button:
@@ -951,9 +967,9 @@ func _difficulty_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 11)
 	button.add_theme_color_override("font_color", Color("3c5048"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
@@ -966,9 +982,9 @@ func _skin_button(text: String, index: int) -> Button:
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	var tint: Color = colors[index].lerp(Color.WHITE, 0.72)
-	button.add_theme_stylebox_override("normal", _option_style(tint, Color("d5c5ad")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
@@ -980,7 +996,7 @@ func _piece_button(text: String, index: int) -> Button:
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
+	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
 	return button
