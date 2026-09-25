@@ -355,9 +355,9 @@ func _build_ui() -> void:
 	music_toggle.custom_minimum_size = Vector2(82, 38)
 	music_toggle.add_theme_color_override("font_color", Color("56645c"))
 	music_toggle.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	music_toggle.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
-	music_toggle.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
-	music_toggle.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 22.0))
+	music_toggle.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 14, Color("d7c7ad"), 1))
+	music_toggle.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 14, Color("b78a45"), 1))
+	music_toggle.add_theme_stylebox_override("pressed", _style(Color("203b31"), 14, Color("b78a45"), 1))
 	music_toggle.toggled.connect(_on_music_toggled)
 	music_row.add_child(music_toggle)
 	track_select = OptionButton.new()
@@ -366,8 +366,8 @@ func _build_ui() -> void:
 	track_select.add_item("松间明月")
 	track_select.custom_minimum_size.y = 44
 	track_select.add_theme_color_override("font_color", Color("33483d"))
-	track_select.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
-	track_select.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	track_select.add_theme_stylebox_override("normal", _option_style(Color("f9f5ec"), Color("d7c7ad")))
+	track_select.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	track_select.item_selected.connect(_on_track_selected)
 	settings.add_child(track_select)
 	var sfx_row := HBoxContainer.new()
@@ -383,9 +383,9 @@ func _build_ui() -> void:
 	sfx_toggle.custom_minimum_size = Vector2(82, 38)
 	sfx_toggle.add_theme_color_override("font_color", Color("56645c"))
 	sfx_toggle.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	sfx_toggle.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
-	sfx_toggle.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
-	sfx_toggle.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 22.0))
+	sfx_toggle.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 14, Color("d7c7ad"), 1))
+	sfx_toggle.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 14, Color("b78a45"), 1))
+	sfx_toggle.add_theme_stylebox_override("pressed", _style(Color("203b31"), 14, Color("b78a45"), 1))
 	sfx_toggle.toggled.connect(_on_sfx_toggled)
 	sfx_row.add_child(sfx_toggle)
 
@@ -406,8 +406,8 @@ func _build_ui() -> void:
 	rules_button.custom_minimum_size.y = 38
 	rules_button.add_theme_color_override("font_color", Color("5a6a61"))
 	rules_button.add_theme_color_override("font_hover_color", Color("a7523f"))
-	rules_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
-	rules_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 22.0))
+	rules_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("d7c7ad"), 1))
+	rules_button.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 12, Color("b78a45"), 1))
 	rules_button.pressed.connect(_show_rules)
 	settings.add_child(rules_button)
 	_update_mode_buttons()
@@ -824,8 +824,8 @@ func _texture_button_style(texture: Texture2D, margin := 18.0, tint := Color.WHI
 	style.texture = texture
 	style.texture_margin_left = margin
 	style.texture_margin_right = margin
-	style.texture_margin_top = margin
-	style.texture_margin_bottom = margin
+	style.texture_margin_top = minf(margin, 10.0)
+	style.texture_margin_bottom = minf(margin, 10.0)
 	# Keep the nine-slice bevel intact without letting its wide corner slices
 	# squeeze icons and labels into the remaining center pixels on small screens.
 	style.content_margin_left = 8.0
@@ -914,7 +914,7 @@ func _section_title(text: String, count: String) -> HBoxContainer:
 
 func _rule_card(number: String, title: String, copy: String) -> PanelContainer:
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", _generated_panel_style(BUTTON_PANEL_PAPER, 24.0))
+	card.add_theme_stylebox_override("panel", _option_style(Color("fbf7ef"), Color("e0d4c1")))
 	var margin := _margin(12, 12, 10, 10)
 	card.add_child(margin)
 	var row := HBoxContainer.new()
@@ -954,9 +954,9 @@ func _mode_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
 
 func _difficulty_button(title: String, copy: String) -> Button:
@@ -967,9 +967,9 @@ func _difficulty_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 11)
 	button.add_theme_color_override("font_color", Color("3c5048"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
@@ -982,9 +982,9 @@ func _skin_button(text: String, index: int) -> Button:
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	var tint: Color = colors[index].lerp(Color.WHITE, 0.72)
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("normal", _option_style(tint, Color("d5c5ad")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
@@ -996,7 +996,7 @@ func _piece_button(text: String, index: int) -> Button:
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 24.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_PAPER, 24.0))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	return button
