@@ -6,10 +6,10 @@ const ROWS := 4
 const COLS := 4
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
 const GENERATED_BOARD_PATH := "res://assets/generated_board_surface_v2.png"
-const GENERATED_STONES_PATH := "res://assets/generated_go_stones_v2.png"
+const GENERATED_STONES_PATH := "res://assets/generated_go_stones_v3.png"
 
-const GO_BLACK_SOURCE := Rect2(110, 100, 700, 700)
-const GO_WHITE_SOURCE := Rect2(964, 100, 700, 700)
+const GO_BLACK_SOURCE := Rect2(60, 50, 790, 780)
+const GO_WHITE_SOURCE := Rect2(927, 50, 790, 780)
 
 var board: Array[String] = []
 var selected := -1
@@ -155,7 +155,7 @@ func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool
 
 	if piece_skin == 0 and generated_stones:
 		var source := GO_WHITE_SOURCE if white_stone else GO_BLACK_SOURCE
-		var target := Rect2(center - Vector2(radius * 1.05, radius * 0.93), Vector2(radius * 2.10, radius * 1.86))
+		var target := Rect2(center - Vector2(radius, radius), Vector2(radius * 2.0, radius * 2.0))
 		draw_texture_rect_region(generated_stones, target, source, Color(1, 1, 1, 0.98))
 		if is_last:
 			draw_circle(center + Vector2(radius * 0.72, -radius * 0.72), 5.5, Color("172328", 0.88))
