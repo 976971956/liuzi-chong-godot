@@ -533,6 +533,9 @@ func _build_result_dialog() -> void:
 	shell.add_child(body)
 	var body_margin := _margin(24, 24, 24, 22)
 	body.add_child(body_margin)
+	var body_content := VBoxContainer.new()
+	body_content.add_theme_constant_override("separation", 10)
+	body_margin.add_child(body_content)
 	var badge := Label.new()
 	badge.text = "胜"
 	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -541,22 +544,22 @@ func _build_result_dialog() -> void:
 	badge.add_theme_font_size_override("font_size", 28)
 	badge.add_theme_color_override("font_color", Color("fff8e9"))
 	badge.add_theme_stylebox_override("normal", _style(Color("b56a4e"), 32, Color("dcbf83"), 2))
-	body_margin.add_child(badge)
+	body_content.add_child(badge)
 	result_title = Label.new()
 	result_title.text = "白方胜出"
 	result_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_title.add_theme_font_size_override("font_size", 26)
 	result_title.add_theme_color_override("font_color", Color("1e352d"))
-	body_margin.add_child(result_title)
+	body_content.add_child(result_title)
 	result_copy = Label.new()
 	result_copy.text = "局已结束，开始下一局?"
 	result_copy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_copy.add_theme_font_size_override("font_size", 13)
 	result_copy.add_theme_color_override("font_color", Color("65756d"))
-	body_margin.add_child(result_copy)
+	body_content.add_child(result_copy)
 	var actions := VBoxContainer.new()
 	actions.add_theme_constant_override("separation", 8)
-	body_margin.add_child(actions)
+	body_content.add_child(actions)
 	var again := _primary_button("开始下一局  →")
 	again.custom_minimum_size.y = 48
 	again.pressed.connect(_restart_from_result)
