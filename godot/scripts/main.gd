@@ -38,6 +38,7 @@ var left_column: VBoxContainer
 var settings_panel: PopupPanel
 var header_margin: MarginContainer
 var page_margin: MarginContainer
+var action_layout: BoxContainer
 var board_view: Control
 var turn_label: Label
 var step_label: Label
@@ -169,8 +170,8 @@ func _build_ui() -> void:
 	main_scroll.add_child(content_box)
 
 	left_column = VBoxContainer.new()
-	left_column.custom_minimum_size.x = 680
-	left_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_column.custom_minimum_size.x = 1040
+	left_column.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	left_column.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	left_column.add_theme_constant_override("separation", 12)
 	page_margin = _margin(62, 62, 22, 20)
@@ -217,27 +218,26 @@ func _build_ui() -> void:
 	left_column.add_child(board_view)
 
 	var action_panel := PanelContainer.new()
-	action_panel.add_theme_stylebox_override("panel", _card_style(Color("fbf8f1", 0.96), 20, Color("ded5c7", 0.90)))
+	action_panel.add_theme_stylebox_override("panel", _card_style(Color("f8f5ed", 0.98), 18, Color("d9d2c3", 0.90)))
 	left_column.add_child(action_panel)
-	var action_margin := _margin(12, 12, 10, 12)
+	var action_margin := _margin(18, 18, 14, 14)
 	action_panel.add_child(action_margin)
-	var action_stack := VBoxContainer.new()
-	action_stack.add_theme_constant_override("separation", 9)
-	action_margin.add_child(action_stack)
+	action_layout = BoxContainer.new()
+	action_layout.add_theme_constant_override("separation", 14)
+	action_margin.add_child(action_layout)
 	status_label = Label.new()
-	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status_label.custom_minimum_size.y = 36
+	status_label.custom_minimum_size.y = 44
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status_label.add_theme_font_size_override("font_size", 13)
-	status_label.add_theme_color_override("font_color", Color("415148"))
-	status_label.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 11))
-	action_stack.add_child(status_label)
+	status_label.add_theme_font_size_override("font_size", 14)
+	status_label.add_theme_color_override("font_color", Color("33483e"))
+	action_layout.add_child(status_label)
 
 	var action_row := HBoxContainer.new()
-	action_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	action_row.size_flags_horizontal = Control.SIZE_SHRINK_END
 	action_row.add_theme_constant_override("separation", 10)
-	action_stack.add_child(action_row)
+	action_layout.add_child(action_row)
 	undo_button = _small_button("悔棋")
 	undo_button.icon = ICON_UNDO
 	undo_button.expand_icon = true
@@ -251,49 +251,68 @@ func _build_ui() -> void:
 
 	settings_panel = PopupPanel.new()
 	settings_panel.title = "棋局设置"
-	settings_panel.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.98), 24, Color("cdbda4", 0.92)))
+	settings_panel.add_theme_stylebox_override("panel", _panel_surface(Color("f3f0e9"), 20, Color("c9d0c6")))
 	add_child(settings_panel)
+	var settings_shell := VBoxContainer.new()
+	settings_shell.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	settings_shell.add_theme_constant_override("separation", 0)
+	settings_shell.clip_contents = true
+	settings_panel.add_child(settings_shell)
+	var settings_header := PanelContainer.new()
+	settings_header.add_theme_stylebox_override("panel", _style(Color("23483e"), 18))
+	settings_shell.add_child(settings_header)
+	var settings_header_margin := _margin(20, 16, 15, 15)
+	settings_header.add_child(settings_header_margin)
+	var settings_top := HBoxContainer.new()
+	settings_top.add_theme_constant_override("separation", 12)
+	settings_header_margin.add_child(settings_top)
+	var settings_heading := VBoxContainer.new()
+	settings_heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	settings_heading.add_theme_constant_override("separation", 2)
+	settings_top.add_child(settings_heading)
+	var settings_eyebrow := _eyebrow("LIUZI CHONG  /  个性棋局")
+	settings_eyebrow.add_theme_color_override("font_color", Color("bcd1c2"))
+	settings_heading.add_child(settings_eyebrow)
+	var settings_title := Label.new()
+	settings_title.text = "棋局设置"
+	settings_title.add_theme_font_size_override("font_size", 24)
+	settings_title.add_theme_color_override("font_color", Color("fffaf0"))
+	settings_heading.add_child(settings_title)
+	var settings_close := Button.new()
+	settings_close.text = "×"
+	settings_close.tooltip_text = "关闭设置"
+	settings_close.custom_minimum_size = Vector2(38, 38)
+	settings_close.add_theme_font_size_override("font_size", 25)
+	settings_close.add_theme_color_override("font_color", Color("fffaf0"))
+	settings_close.add_theme_color_override("font_hover_color", Color.WHITE)
+	settings_close.add_theme_stylebox_override("normal", _style(Color("41665a"), 12))
+	settings_close.add_theme_stylebox_override("hover", _style(Color("5c7868"), 12))
+	settings_close.pressed.connect(settings_panel.hide)
+	settings_top.add_child(settings_close)
+
 	var settings_scroll := ScrollContainer.new()
-	settings_scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	settings_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	settings_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	settings_scroll.clip_contents = true
-	settings_panel.add_child(settings_scroll)
-	var settings_margin := _margin(24, 24, 18, 20)
+	settings_shell.add_child(settings_scroll)
+	var settings_margin := _margin(18, 18, 16, 16)
 	settings_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	settings_scroll.add_child(settings_margin)
 	var settings := VBoxContainer.new()
-	settings.add_theme_constant_override("separation", 8)
+	settings.add_theme_constant_override("separation", 10)
 	settings_margin.add_child(settings)
-
-	var settings_top := HBoxContainer.new()
-	settings.add_child(settings_top)
-	var settings_eyebrow := _eyebrow("GAME STUDIO · 个性棋局")
-	settings_eyebrow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	settings_top.add_child(settings_eyebrow)
-	var settings_close := Button.new()
-	settings_close.icon = ICON_CLOSE
-	settings_close.expand_icon = true
-	_apply_premium_icon_button(settings_close, 34.0)
-	settings_close.pressed.connect(settings_panel.hide)
-	settings_top.add_child(settings_close)
-	var settings_title := Label.new()
-	settings_title.text = "棋局设置"
-	settings_title.add_theme_font_size_override("font_size", 25)
-	settings_title.add_theme_color_override("font_color", Color("17281f"))
-	settings.add_child(settings_title)
 	var settings_copy := Label.new()
-	settings_copy.text = "选择对战方式、难度与视觉风格，打造你的专属棋局。"
+	settings_copy.text = "选择玩法、棋具和声音，营造喜欢的对弈氛围。"
 	settings_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	settings_copy.add_theme_font_size_override("font_size", 13)
-	settings_copy.add_theme_color_override("font_color", Color("52645b"))
+	settings_copy.add_theme_font_size_override("font_size", 12)
+	settings_copy.add_theme_color_override("font_color", Color("576960"))
 	settings.add_child(settings_copy)
-	settings.add_child(_divider())
 
-	settings.add_child(_section_title("对战模式", "01"))
+	var mode_group := _settings_group(settings, "对战模式", "01")
 	var mode_grid := GridContainer.new()
 	mode_grid.columns = 2
-	mode_grid.add_theme_constant_override("h_separation", 7)
-	settings.add_child(mode_grid)
+	mode_grid.add_theme_constant_override("h_separation", 8)
+	mode_group.add_child(mode_grid)
 	var mode_names := ["人机对战", "双人对抗"]
 	var mode_copies := ["挑战电脑", "同屏轮流"]
 	for i in range(mode_names.size()):
@@ -302,13 +321,11 @@ func _build_ui() -> void:
 		mode_buttons.append(button)
 		mode_grid.add_child(button)
 
-	difficulty_section = VBoxContainer.new()
+	difficulty_section = _settings_group(settings, "电脑难度", "02")
 	difficulty_section.add_theme_constant_override("separation", 8)
-	settings.add_child(difficulty_section)
-	difficulty_section.add_child(_section_title("电脑难度", "02"))
 	var difficulty_grid := GridContainer.new()
 	difficulty_grid.columns = 3
-	difficulty_grid.add_theme_constant_override("h_separation", 6)
+	difficulty_grid.add_theme_constant_override("h_separation", 7)
 	difficulty_section.add_child(difficulty_grid)
 	var difficulty_copies := ["轻松体验", "攻守兼备", "深度推演"]
 	for i in range(difficulty_names.size()):
@@ -317,35 +334,31 @@ func _build_ui() -> void:
 		difficulty_buttons.append(button)
 		difficulty_grid.add_child(button)
 
-	settings.add_child(_divider())
-
-	settings.add_child(_section_title("棋盘皮肤", "03"))
+	var board_group := _settings_group(settings, "棋盘皮肤", "03")
 	var skin_grid := GridContainer.new()
 	skin_grid.columns = 2
-	skin_grid.add_theme_constant_override("h_separation", 7)
-	settings.add_child(skin_grid)
+	skin_grid.add_theme_constant_override("h_separation", 8)
+	board_group.add_child(skin_grid)
 	for i in range(board_skin_names.size()):
 		var button := _skin_button(board_skin_names[i], i)
 		button.pressed.connect(_select_board_skin.bind(i))
 		skin_buttons.append(button)
 		skin_grid.add_child(button)
 
-	settings.add_child(_divider())
-	settings.add_child(_section_title("棋子样式", "04"))
+	var piece_group := _settings_group(settings, "棋子样式", "04")
 	var piece_grid := GridContainer.new()
 	piece_grid.columns = 2
-	piece_grid.add_theme_constant_override("h_separation", 7)
-	settings.add_child(piece_grid)
+	piece_grid.add_theme_constant_override("h_separation", 8)
+	piece_group.add_child(piece_grid)
 	for i in range(piece_skin_names.size()):
 		var button := _piece_button(piece_skin_names[i], i)
 		button.pressed.connect(_select_piece_skin.bind(i))
 		piece_buttons.append(button)
 		piece_grid.add_child(button)
 
-	settings.add_child(_divider())
-	settings.add_child(_section_title("声音氛围", "05"))
+	var sound_group := _settings_group(settings, "声音氛围", "05")
 	var music_row := HBoxContainer.new()
-	settings.add_child(music_row)
+	sound_group.add_child(music_row)
 	var music_copy := Label.new()
 	music_copy.text = "背景音乐"
 	music_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -370,9 +383,9 @@ func _build_ui() -> void:
 	track_select.add_theme_stylebox_override("normal", _option_style(Color("f9f5ec"), Color("d7c7ad")))
 	track_select.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
 	track_select.item_selected.connect(_on_track_selected)
-	settings.add_child(track_select)
+	sound_group.add_child(track_select)
 	var sfx_row := HBoxContainer.new()
-	settings.add_child(sfx_row)
+	sound_group.add_child(sfx_row)
 	var sfx_copy := Label.new()
 	sfx_copy.text = "落子与吃子音效"
 	sfx_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -390,24 +403,27 @@ func _build_ui() -> void:
 	sfx_toggle.toggled.connect(_on_sfx_toggled)
 	sfx_row.add_child(sfx_toggle)
 
-	var new_game_button := Button.new()
-	new_game_button.text = "开始新局   →"
-	new_game_button.custom_minimum_size.y = 52
-	new_game_button.add_theme_font_size_override("font_size", 15)
-	new_game_button.add_theme_color_override("font_color", Color.WHITE)
-	new_game_button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
-	new_game_button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_JADE, 20.0, Color("e8fff3")))
+	var settings_footer := PanelContainer.new()
+	settings_footer.add_theme_stylebox_override("panel", _style(Color("ebe7dc"), 16, Color("d4d6cc"), 1))
+	settings_shell.add_child(settings_footer)
+	var footer_margin := _margin(18, 18, 12, 12)
+	settings_footer.add_child(footer_margin)
+	var footer_row := HBoxContainer.new()
+	footer_row.add_theme_constant_override("separation", 8)
+	footer_margin.add_child(footer_row)
+	var new_game_button := _primary_button("开始新局  →")
+	new_game_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	new_game_button.pressed.connect(_new_game_from_settings)
-	settings.add_child(new_game_button)
+	footer_row.add_child(new_game_button)
 	var rules_button := Button.new()
-	rules_button.text = "查看完整规则  ↗"
-	rules_button.custom_minimum_size.y = 38
+	rules_button.text = "游戏规则"
+	rules_button.custom_minimum_size = Vector2(98, 44)
 	rules_button.add_theme_color_override("font_color", Color("5a6a61"))
 	rules_button.add_theme_color_override("font_hover_color", Color("a7523f"))
 	rules_button.add_theme_stylebox_override("normal", _style(Color("f1eadf"), 12, Color("d7c7ad"), 1))
 	rules_button.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 12, Color("b78a45"), 1))
 	rules_button.pressed.connect(_show_rules)
-	settings.add_child(rules_button)
+	footer_row.add_child(rules_button)
 	_update_mode_buttons()
 	_update_skin_buttons()
 
@@ -674,7 +690,7 @@ func _update_mode_buttons() -> void:
 	for i in range(difficulty_buttons.size()):
 		difficulty_buttons[i].button_pressed = i == ai_difficulty
 	if difficulty_section:
-		difficulty_section.visible = game_mode == "ai"
+		difficulty_section.get_parent().visible = game_mode == "ai"
 
 func _select_board_skin(index: int) -> void:
 	board_skin = index
@@ -736,7 +752,9 @@ func _update_responsive() -> void:
 	content_box.vertical = true
 	if narrow:
 		left_column.custom_minimum_size.x = 0
-		board_view.custom_minimum_size = Vector2(340, 430)
+		board_view.custom_minimum_size = Vector2(maxf(280.0, width - 24.0), 430)
+		action_layout.vertical = true
+		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		header_margin.add_theme_constant_override("margin_left", 12)
 		header_margin.add_theme_constant_override("margin_right", 12)
 		page_margin.add_theme_constant_override("margin_left", 12)
@@ -745,8 +763,10 @@ func _update_responsive() -> void:
 		headline.add_theme_font_size_override("font_size", 22)
 		turn_label.custom_minimum_size.x = 96
 	else:
-		left_column.custom_minimum_size.x = 620
+		left_column.custom_minimum_size.x = minf(1040.0, width - 104.0)
 		board_view.custom_minimum_size = Vector2(560, 640)
+		action_layout.vertical = false
+		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		header_margin.add_theme_constant_override("margin_left", 48)
 		header_margin.add_theme_constant_override("margin_right", 48)
 		page_margin.add_theme_constant_override("margin_left", 52)
@@ -863,9 +883,10 @@ func _small_button(text: String) -> Button:
 	button.add_theme_color_override("icon_normal_color", Color("405248"))
 	button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	button.add_theme_color_override("icon_disabled_color", Color("9b9f9c"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_PAPER, 20.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_CINNABAR, 20.0, Color("e8cfc0")))
+	button.add_theme_stylebox_override("normal", _option_style(Color("fffdf8"), Color("c7cfc6")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("edf4ed"), Color("729785")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("dceadd"), Color("729785")))
+	button.add_theme_stylebox_override("disabled", _option_style(Color("e9e9e4"), Color("d2d7cf")))
 	return button
 
 func _primary_button(text: String) -> Button:
@@ -878,9 +899,9 @@ func _primary_button(text: String) -> Button:
 	button.add_theme_color_override("icon_normal_color", Color("fff8e9"))
 	button.add_theme_color_override("icon_hover_color", Color.WHITE)
 	button.add_theme_color_override("icon_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _texture_button_style(BUTTON_PANEL_JADE, 20.0))
-	button.add_theme_stylebox_override("hover", _texture_button_style(BUTTON_PANEL_JADE, 20.0, Color("e8fff3")))
-	button.add_theme_stylebox_override("pressed", _texture_button_style(BUTTON_PANEL_JADE, 20.0, Color("b8c8c0")))
+	button.add_theme_stylebox_override("normal", _option_style(Color("234b3f"), Color("7da18c")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("30604e"), Color("a9c3a3")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("193a32"), Color("7da18c")))
 	return button
 
 func _eyebrow(text: String) -> Label:
@@ -909,6 +930,18 @@ func _section_title(text: String, count: String) -> HBoxContainer:
 	label.add_theme_color_override("font_color", Color("1e352d"))
 	row.add_child(label)
 	return row
+
+func _settings_group(parent: VBoxContainer, title: String, count: String) -> VBoxContainer:
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", _style(Color("fffdf8"), 15, Color("d9ddd3"), 1))
+	parent.add_child(card)
+	var inset := _margin(12, 12, 10, 12)
+	card.add_child(inset)
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 9)
+	inset.add_child(stack)
+	stack.add_child(_section_title(title, count))
+	return stack
 
 func _rule_card(number: String, title: String, copy: String) -> PanelContainer:
 	var card := PanelContainer.new()
@@ -948,34 +981,36 @@ func _mode_button(title: String, copy: String) -> Button:
 	var button := Button.new()
 	button.text = "%s\n%s" % [title, copy]
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(150, 62)
+	button.custom_minimum_size = Vector2(118, 60)
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
 	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
 	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
 	return button
 
 func _difficulty_button(title: String, copy: String) -> Button:
 	var button := Button.new()
 	button.text = "%s\n%s" % [title, copy]
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(98, 58)
+	button.custom_minimum_size = Vector2(82, 56)
 	button.add_theme_font_size_override("font_size", 11)
 	button.add_theme_color_override("font_color", Color("3c5048"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
 	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
 	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
 	var colors := [Color("203d3d"), Color("3b6c65"), Color("1c2942"), Color("e9e1d2")]
 	var button := Button.new()
-	button.text = "▦   " + text
+	button.text = text
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(150, 58)
+	button.custom_minimum_size = Vector2(118, 52)
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
@@ -983,18 +1018,19 @@ func _skin_button(text: String, index: int) -> Button:
 	button.add_theme_stylebox_override("normal", _option_style(tint, Color("d5c5ad")))
 	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
 	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
-	var icons := ["◉", "◎", "●", "⊙"]
 	var button := Button.new()
-	button.text = "%s   %s" % [icons[index], text]
+	button.text = text
 	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(150, 58)
+	button.custom_minimum_size = Vector2(118, 52)
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
 	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
 	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
+	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
 	return button
