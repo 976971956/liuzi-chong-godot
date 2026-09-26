@@ -911,6 +911,7 @@ func _show_settings() -> void:
 func _new_game_from_settings() -> void:
 	settings_panel.hide()
 	_new_game(true)
+	_show_game()
 
 func _show_rules() -> void:
 	if settings_panel.visible:
