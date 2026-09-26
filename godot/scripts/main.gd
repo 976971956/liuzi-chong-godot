@@ -34,6 +34,8 @@ var ai_thinking := false
 var ai_request_id := 0
 
 var content_box: BoxContainer
+var game_root: VBoxContainer
+var home_page: Control
 var left_column: VBoxContainer
 var settings_panel: PopupPanel
 var header_margin: MarginContainer
@@ -56,6 +58,9 @@ var difficulty_section: VBoxContainer
 var sound_engine: Node
 var ai_player: RefCounted
 var rules_dialog: PopupPanel
+var result_dialog: PopupPanel
+var result_title: Label
+var result_copy: Label
 
 var board_skin_names := ["胡桃木", "青玉", "星河漆", "云纹纸"]
 var piece_skin_names := ["玉扣", "漆雕", "铜章", "星环"]
@@ -77,7 +82,10 @@ func _ready() -> void:
 	ai_player = AI_PLAYER_SCRIPT.new()
 	_build_ui()
 	_build_rules_dialog()
+	_build_result_dialog()
+	_build_home_page()
 	_new_game(false)
+	_show_home()
 	get_viewport().size_changed.connect(_update_responsive)
 	_update_responsive()
 	queue_redraw()
@@ -97,6 +105,7 @@ func _draw() -> void:
 
 func _build_ui() -> void:
 	var root_vbox := VBoxContainer.new()
+	game_root = root_vbox
 	root_vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root_vbox.add_theme_constant_override("separation", 0)
 	add_child(root_vbox)
@@ -429,6 +438,167 @@ func _build_ui() -> void:
 	_update_mode_buttons()
 	_update_skin_buttons()
 
+func _build_home_page() -> void:
+	home_page = Control.new()
+	home_page.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	home_page.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(home_page)
+	var outer := _margin(22, 22, 30, 26)
+	outer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	home_page.add_child(outer)
+	var center := VBoxContainer.new()
+	center.set_anchors_preset(Control.PRESET_CENTER)
+	center.position = Vector2(-170, -250)
+	center.size = Vector2(340, 500)
+	center.add_theme_constant_override("separation", 12)
+	outer.add_child(center)
+	var logo := Label.new()
+	logo.text = "六"
+	logo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	logo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	logo.custom_minimum_size = Vector2(72, 72)
+	logo.add_theme_font_size_override("font_size", 34)
+	logo.add_theme_color_override("font_color", Color("fff8e9"))
+	logo.add_theme_stylebox_override("normal", _style(Color("203b31"), 22, Color("c9a25f"), 2))
+	center.add_child(logo)
+	var brand := Label.new()
+	brand.text = "六子冲"
+	brand.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	brand.add_theme_font_size_override("font_size", 30)
+	brand.add_theme_color_override("font_color", Color("17281f"))
+	center.add_child(brand)
+	var sub := Label.new()
+	sub.text = "LIUZI CHONG  ·  民间六子棋"
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.add_theme_font_size_override("font_size", 11)
+	sub.add_theme_color_override("font_color", Color("786f63"))
+	center.add_child(sub)
+	var intro := Label.new()
+	intro.text = "两枚成枪，只打孤子。\n选一种方式开始你的对弈。"
+	intro.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	intro.add_theme_font_size_override("font_size", 14)
+	intro.add_theme_color_override("font_color", Color("52645b"))
+	intro.add_theme_constant_override("line_spacing", 4)
+	center.add_child(intro)
+	var divider := _divider()
+	divider.add_theme_constant_override("separation", 6)
+	center.add_child(divider)
+	var ai_button := _home_button("人机对战", "挑战电脑 · 三档难度")
+	ai_button.pressed.connect(func(): _start_game("ai"))
+	center.add_child(ai_button)
+	var pvp_button := _home_button("双人对战", "同屏轮流 · 本地对弈")
+	pvp_button.pressed.connect(func(): _start_game("pvp"))
+	center.add_child(pvp_button)
+	var utility_row := HBoxContainer.new()
+	utility_row.add_theme_constant_override("separation", 10)
+	center.add_child(utility_row)
+	var settings_button := _home_secondary_button("游戏设置")
+	settings_button.pressed.connect(_show_settings)
+	utility_row.add_child(settings_button)
+	var rules_button := _home_secondary_button("游戏规则")
+	rules_button.pressed.connect(_show_rules)
+	utility_row.add_child(rules_button)
+	var footer := Label.new()
+	footer.text = "沉下心，走好每一手"
+	footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	footer.add_theme_font_size_override("font_size", 11)
+	footer.add_theme_color_override("font_color", Color("8a7760"))
+	center.add_child(footer)
+
+func _build_result_dialog() -> void:
+	result_dialog = PopupPanel.new()
+	result_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f5f1e8"), 22, Color("cdbda4")))
+	add_child(result_dialog)
+	var shell := VBoxContainer.new()
+	shell.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	shell.add_theme_constant_override("separation", 0)
+	result_dialog.add_child(shell)
+	var header := PanelContainer.new()
+	header.add_theme_stylebox_override("panel", _style(Color("23483e"), 20))
+	shell.add_child(header)
+	var header_margin := _margin(22, 22, 18, 18)
+	header.add_child(header_margin)
+	var eyebrow := _eyebrow("GAME OVER  ·  本局结束")
+	eyebrow.add_theme_color_override("font_color", Color("bcd1c2"))
+	header_margin.add_child(eyebrow)
+	var body := VBoxContainer.new()
+	body.add_theme_constant_override("separation", 10)
+	shell.add_child(body)
+	var body_margin := _margin(24, 24, 24, 22)
+	body.add_child(body_margin)
+	var badge := Label.new()
+	badge.text = "胜"
+	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	badge.custom_minimum_size = Vector2(64, 64)
+	badge.add_theme_font_size_override("font_size", 28)
+	badge.add_theme_color_override("font_color", Color("fff8e9"))
+	badge.add_theme_stylebox_override("normal", _style(Color("b56a4e"), 32, Color("dcbf83"), 2))
+	body_margin.add_child(badge)
+	result_title = Label.new()
+	result_title.text = "白方胜出"
+	result_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_title.add_theme_font_size_override("font_size", 26)
+	result_title.add_theme_color_override("font_color", Color("1e352d"))
+	body_margin.add_child(result_title)
+	result_copy = Label.new()
+	result_copy.text = "漂亮的一局，准备再来一局吗？"
+	result_copy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_copy.add_theme_font_size_override("font_size", 13)
+	result_copy.add_theme_color_override("font_color", Color("65756d"))
+	body_margin.add_child(result_copy)
+	var actions := VBoxContainer.new()
+	actions.add_theme_constant_override("separation", 8)
+	body_margin.add_child(actions)
+	var again := _primary_button("再来一局  →")
+	again.custom_minimum_size.y = 48
+	again.pressed.connect(_restart_from_result)
+	actions.add_child(again)
+	var home := Button.new()
+	home.text = "返回首页"
+	home.custom_minimum_size.y = 42
+	home.add_theme_font_size_override("font_size", 13)
+	home.add_theme_color_override("font_color", Color("53655c"))
+	home.add_theme_color_override("font_hover_color", Color("a7523f"))
+	home.add_theme_stylebox_override("normal", _style(Color("eee9df"), 12, Color("d7c7ad"), 1))
+	home.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 12, Color("b78a45"), 1))
+	home.pressed.connect(_return_home_from_result)
+	actions.add_child(home)
+
+func _start_game(mode: String) -> void:
+	game_mode = mode
+	_update_mode_buttons()
+	_new_game(true)
+	_show_game()
+
+func _show_home() -> void:
+	if result_dialog:
+		result_dialog.hide()
+	if settings_panel:
+		settings_panel.hide()
+	if rules_dialog:
+		rules_dialog.hide()
+	game_root.visible = false
+	home_page.visible = true
+
+func _show_game() -> void:
+	home_page.visible = false
+	game_root.visible = true
+
+func _show_result_dialog() -> void:
+	if result_dialog == null or winner == "":
+		return
+	result_title.text = "%s方胜出" % _player_name(winner)
+	result_copy.text = "漂亮的一局，准备再来一局吗？"
+	result_dialog.popup_centered(Vector2i(360, 370))
+
+func _restart_from_result() -> void:
+	result_dialog.hide()
+	_new_game(true)
+
+func _return_home_from_result() -> void:
+	_show_home()
+
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
 	rules_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.98), 24, Color("cdbda4", 0.92)))
@@ -480,6 +650,8 @@ func _build_rules_dialog() -> void:
 func _new_game(with_sound: bool) -> void:
 	ai_request_id += 1
 	ai_thinking = false
+	if result_dialog:
+		result_dialog.hide()
 	board.clear()
 	board.resize(ROWS * COLS)
 	board.fill("")
@@ -538,6 +710,8 @@ func _move_piece(from: int, to: int) -> void:
 		winner = current
 		_set_status("%s方获胜！漂亮的一局" % _player_name(current))
 		sound_engine.play_sfx("win")
+		_refresh()
+		_show_result_dialog()
 	else:
 		var moved_player := current
 		current = opponent
@@ -672,6 +846,7 @@ func _run_ai_turn(request: int) -> void:
 		winner = "red"
 		_set_status("电脑无路可走，白方获胜！")
 		_refresh()
+		_show_result_dialog()
 		return
 	_move_piece(int(move["from"]), int(move["to"]))
 
@@ -912,6 +1087,31 @@ func _eyebrow(text: String) -> Label:
 	label.add_theme_font_size_override("font_size", 11)
 	label.add_theme_color_override("font_color", Color("a84735"))
 	return label
+
+func _home_button(title: String, copy: String) -> Button:
+	var button := Button.new()
+	button.text = "%s\n%s" % [title, copy]
+	button.custom_minimum_size = Vector2(320, 68)
+	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_color_override("font_color", Color("23483e"))
+	button.add_theme_color_override("font_hover_color", Color("fff8e9"))
+	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
+	button.add_theme_stylebox_override("normal", _option_style(Color("f8f3e9", 0.96), Color("d5c5ad")))
+	button.add_theme_stylebox_override("hover", _option_style(Color("2e5a4b"), Color("b78a45")))
+	button.add_theme_stylebox_override("pressed", _option_style(Color("203b31"), Color("d3a75e")))
+	return button
+
+func _home_secondary_button(text: String) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.custom_minimum_size.y = 46
+	button.add_theme_font_size_override("font_size", 13)
+	button.add_theme_color_override("font_color", Color("53655c"))
+	button.add_theme_color_override("font_hover_color", Color("23483e"))
+	button.add_theme_stylebox_override("normal", _style(Color("eee9df", 0.94), 13, Color("d7c7ad"), 1))
+	button.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 13, Color("b78a45"), 1))
+	return button
 
 func _section_title(text: String, count: String) -> HBoxContainer:
 	var row := HBoxContainer.new()

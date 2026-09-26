@@ -128,8 +128,6 @@ func _draw() -> void:
 			_draw_piece(point, board[index], index == selected, index == last_move, grid)
 
 	_draw_capture_effects(grid)
-	if winner != "":
-		_draw_winner_seal(frame.get_center())
 
 func _draw_piece(center: Vector2, side: String, is_selected: bool, is_last: bool, grid: Rect2) -> void:
 	var step_x := grid.size.x / float(COLS - 1)
