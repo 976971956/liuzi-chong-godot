@@ -259,6 +259,7 @@ func _build_ui() -> void:
 	action_row.add_child(reset_button)
 
 	settings_panel = PopupPanel.new()
+	settings_panel.theme = theme
 	settings_panel.title = "棋局设置"
 	settings_panel.add_theme_stylebox_override("panel", _panel_surface(Color("f3f0e9"), 20, Color("c9d0c6")))
 	add_child(settings_panel)
@@ -512,6 +513,7 @@ func _build_home_page() -> void:
 
 func _build_result_dialog() -> void:
 	result_dialog = PopupPanel.new()
+	result_dialog.theme = theme
 	result_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f5f1e8"), 22, Color("cdbda4")))
 	add_child(result_dialog)
 	var shell := VBoxContainer.new()
@@ -547,7 +549,7 @@ func _build_result_dialog() -> void:
 	result_title.add_theme_color_override("font_color", Color("1e352d"))
 	body_margin.add_child(result_title)
 	result_copy = Label.new()
-	result_copy.text = "漂亮的一局，准备再来一局吗？"
+	result_copy.text = "局已结束，开始下一局?"
 	result_copy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_copy.add_theme_font_size_override("font_size", 13)
 	result_copy.add_theme_color_override("font_color", Color("65756d"))
@@ -555,12 +557,12 @@ func _build_result_dialog() -> void:
 	var actions := VBoxContainer.new()
 	actions.add_theme_constant_override("separation", 8)
 	body_margin.add_child(actions)
-	var again := _primary_button("再来一局  →")
+	var again := _primary_button("开始下一局  →")
 	again.custom_minimum_size.y = 48
 	again.pressed.connect(_restart_from_result)
 	actions.add_child(again)
 	var home := Button.new()
-	home.text = "返回首页"
+	home.text = "回到开始"
 	home.custom_minimum_size.y = 42
 	home.add_theme_font_size_override("font_size", 13)
 	home.add_theme_color_override("font_color", Color("53655c"))
@@ -594,7 +596,7 @@ func _show_result_dialog() -> void:
 	if result_dialog == null or winner == "":
 		return
 	result_title.text = "%s方胜出" % _player_name(winner)
-	result_copy.text = "漂亮的一局，准备再来一局吗？"
+	result_copy.text = "局已结束，开始下一局?"
 	result_dialog.popup_centered(Vector2i(360, 370))
 
 func _restart_from_result() -> void:
@@ -606,6 +608,7 @@ func _return_home_from_result() -> void:
 
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
+	rules_dialog.theme = theme
 	rules_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.98), 24, Color("cdbda4", 0.92)))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
