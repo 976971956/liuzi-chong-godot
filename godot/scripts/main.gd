@@ -302,7 +302,7 @@ func _build_ui() -> void:
 	settings.add_theme_constant_override("separation", 10)
 	settings_margin.add_child(settings)
 	var settings_copy := Label.new()
-	settings_copy.text = "选择玩法、棋具和声音，营造喜欢的对弈氛围。"
+	settings_copy.text = "选择对战方式、难度与视觉风格，打造你的专属棋局。"
 	settings_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	settings_copy.add_theme_font_size_override("font_size", 12)
 	settings_copy.add_theme_color_override("font_color", Color("576960"))
@@ -363,6 +363,7 @@ func _build_ui() -> void:
 	music_copy.text = "背景音乐"
 	music_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	music_copy.add_theme_font_size_override("font_size", 14)
+	music_copy.add_theme_color_override("font_color", Color("33483d"))
 	music_row.add_child(music_copy)
 	music_toggle = CheckButton.new()
 	music_toggle.text = "开启"
@@ -390,6 +391,7 @@ func _build_ui() -> void:
 	sfx_copy.text = "落子与吃子音效"
 	sfx_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sfx_copy.add_theme_font_size_override("font_size", 14)
+	sfx_copy.add_theme_color_override("font_color", Color("33483d"))
 	sfx_row.add_child(sfx_copy)
 	sfx_toggle = CheckButton.new()
 	sfx_toggle.text = "开启"
@@ -416,7 +418,7 @@ func _build_ui() -> void:
 	new_game_button.pressed.connect(_new_game_from_settings)
 	footer_row.add_child(new_game_button)
 	var rules_button := Button.new()
-	rules_button.text = "游戏规则"
+	rules_button.text = "规则"
 	rules_button.custom_minimum_size = Vector2(98, 44)
 	rules_button.add_theme_color_override("font_color", Color("5a6a61"))
 	rules_button.add_theme_color_override("font_hover_color", Color("a7523f"))
