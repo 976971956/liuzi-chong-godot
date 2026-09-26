@@ -443,15 +443,20 @@ func _build_home_page() -> void:
 	home_page.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	home_page.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(home_page)
-	var outer := _margin(22, 22, 30, 26)
-	outer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	home_page.add_child(outer)
+	var center_wrap := CenterContainer.new()
+	center_wrap.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	home_page.add_child(center_wrap)
+	var shell := PanelContainer.new()
+	shell.custom_minimum_size = Vector2(360, 520)
+	shell.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.96), 28, Color("cdbda4", 0.92)))
+	center_wrap.add_child(shell)
+	var shell_margin := _margin(28, 28, 26, 26)
+	shell.add_child(shell_margin)
 	var center := VBoxContainer.new()
-	center.set_anchors_preset(Control.PRESET_CENTER)
-	center.position = Vector2(-170, -250)
-	center.size = Vector2(340, 500)
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	center.add_theme_constant_override("separation", 12)
-	outer.add_child(center)
+	shell_margin.add_child(center)
 	var logo := Label.new()
 	logo.text = "六"
 	logo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
