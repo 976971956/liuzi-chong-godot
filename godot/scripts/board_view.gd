@@ -128,8 +128,6 @@ func _draw() -> void:
 			_draw_piece(point, board[index], index == selected, index == last_move, grid)
 
 	_draw_capture_effects(grid)
-	_draw_count_tag(Vector2(frame.position.x + 12, frame.position.y + 13), "黑", board.count("blue"), Color("1c282d"))
-	_draw_count_tag(Vector2(frame.end.x - 12, frame.end.y - 13), "白", board.count("red"), Color("e8dfcf"), true)
 	if winner != "":
 		_draw_winner_seal(frame.get_center())
 
@@ -225,13 +223,6 @@ func _draw_capture_effects(grid: Rect2) -> void:
 			var shard_color := gold if shard % 2 == 0 else side_color
 			draw_line(start, finish, Color(shard_color, minf(1.0, fade * 1.18)), 3.4 * fade + 0.8, true)
 			draw_circle(finish, 2.6 * fade + 0.8, Color(shard_color, fade))
-
-func _draw_count_tag(anchor: Vector2, label: String, count: int, color: Color, right_align := false) -> void:
-	var tag_size := Vector2(78, 30)
-	var rect := Rect2(anchor - (Vector2(tag_size.x, tag_size.y) if right_align else Vector2.ZERO), tag_size)
-	draw_style_box(_style(Color(0.06, 0.045, 0.035, 0.72), 15.0, Color(1, 0.9, 0.68, 0.18), 1.0), rect)
-	draw_circle(rect.position + Vector2(16, 15), 7.0, color)
-	draw_string(GAME_FONT, rect.position + Vector2(28, 20), "%s · %d" % [label, count], HORIZONTAL_ALIGNMENT_LEFT, 46, 12, Color("fff3db"))
 
 func _draw_winner_seal(center: Vector2) -> void:
 	var seal_color := Color("e4dac8") if winner == "red" else Color("1b2a31")
