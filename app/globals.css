@@ -241,3 +241,256 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
   .player-red { left: -5%; top: -8%; } .player-blue { right: -5%; bottom: -8%; }
   .control-panel { display: block; padding: 30px 24px; }
 }
+
+/* Generated visual refresh: ink, jade and warm paper materials. */
+.game-shell {
+  --ink: #17333a;
+  --muted: #62716f;
+  --paper: #f4eee3;
+  --red: #b54c43;
+  --blue: #2d5964;
+  --gold: #c49b57;
+  min-height: 100vh;
+  background-color: #d8ddd3;
+  background-image:
+    linear-gradient(112deg, rgba(244, 239, 228, .86) 0%, rgba(237, 237, 225, .72) 42%, rgba(24, 53, 54, .18) 100%),
+    url('/ui-bg-ink.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.game-shell::before {
+  opacity: .07;
+  background-image: radial-gradient(rgba(255,255,255,.8) .7px, transparent .7px);
+  background-size: 8px 8px;
+  mix-blend-mode: soft-light;
+}
+
+.topbar {
+  height: 86px;
+  padding-inline: clamp(24px, 6vw, 92px);
+  border-bottom: 1px solid rgba(28, 61, 62, .15);
+  background: rgba(246, 242, 232, .66);
+  box-shadow: 0 12px 38px rgba(21, 42, 41, .1);
+}
+
+.brand { gap: 14px; }
+.brand-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  border-color: rgba(28, 67, 67, .28);
+  background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(191, 215, 200, .64));
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.42), 0 8px 18px rgba(31, 64, 59, .14);
+}
+.brand b { font-size: 22px; letter-spacing: .2em; color: #1d3b40; }
+.brand small { color: #6e7b75; letter-spacing: .3em; }
+
+.top-actions {
+  gap: 6px;
+  padding: 5px;
+  border-color: rgba(31, 65, 64, .14);
+  background: rgba(255,255,255,.34);
+  box-shadow: 0 5px 18px rgba(27, 58, 56, .08);
+}
+.icon-button { width: 38px; height: 38px; border-radius: 12px; }
+.icon-button.active { background: #1e4547; border-color: #1e4547; }
+
+.play-layout { min-height: calc(100vh - 86px); grid-template-columns: minmax(620px, 1fr) minmax(360px, 410px); }
+.play-stage { padding: clamp(34px, 5vh, 66px) clamp(34px, 5vw, 92px) 30px; }
+.play-stage::before {
+  width: min(820px, 95%);
+  height: min(820px, 88%);
+  background: radial-gradient(circle, rgba(255,255,255,.72), rgba(221,235,222,.22) 50%, transparent 74%);
+}
+.eyebrow { color: #ad4c45; letter-spacing: .28em; }
+.stage-heading { margin-bottom: 26px; }
+.stage-heading h1 { color: #173940; font-size: clamp(26px, 2.6vw, 42px); letter-spacing: .08em; }
+.turn-pill {
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: #476261;
+  border-color: rgba(35,72,69,.17);
+  background: rgba(251,248,239,.7);
+  box-shadow: 0 8px 26px rgba(32, 61, 57, .08);
+}
+
+.board-wrap { width: min(60vh, 524px); }
+.board-frame {
+  border-radius: 28px;
+  padding: 12.5%;
+  box-shadow: 0 34px 70px rgba(32, 48, 42, .28), inset 0 0 0 2px rgba(62,34,19,.24), inset 0 0 0 7px rgba(255,237,188,.13), 0 0 0 1px rgba(255,255,255,.34);
+}
+.player-tag {
+  padding: 9px 12px;
+  border-radius: 13px;
+  background: rgba(250, 247, 237, .82);
+  border-color: rgba(32, 72, 69, .15);
+  box-shadow: 0 12px 28px rgba(30, 59, 54, .13);
+}
+.status-line {
+  margin-top: 19px;
+  padding: 10px 16px;
+  color: #536967;
+  background: rgba(250, 247, 238, .74);
+  border-color: rgba(35, 72, 69, .14);
+  box-shadow: 0 10px 26px rgba(34, 63, 58, .07);
+}
+.board-actions { margin-top: 14px; }
+.board-actions button { border-radius: 10px; padding: 8px 14px; color: #63736f; background: rgba(255,255,255,.42); }
+
+.control-panel {
+  padding: clamp(34px, 5vh, 62px) clamp(28px, 3.3vw, 44px) 38px;
+  border-left: 1px solid rgba(26, 62, 61, .15);
+  background: rgba(240, 242, 233, .78);
+  box-shadow: -24px 0 70px rgba(24, 51, 49, .12);
+}
+.panel-intro { padding-bottom: 27px; }
+.panel-intro h2 { color: #173e43; font-size: 30px; letter-spacing: .1em; }
+.panel-intro > p:last-child { color: #647572; line-height: 1.9; }
+.setting-group { padding: 22px 0; border-color: rgba(36, 72, 68, .14); }
+.setting-title { color: #254a4b; }
+.setting-title b { color: #9ba9a1; }
+.skin-card, .piece-choice {
+  border-color: rgba(31, 70, 68, .14);
+  background: rgba(255,255,255,.28);
+}
+.skin-card:hover, .piece-choice:hover { border-color: rgba(35, 89, 81, .3); background: rgba(255,255,255,.58); }
+.skin-card.active, .piece-choice.active {
+  border-color: rgba(177, 76, 67, .7);
+  background: rgba(255,255,255,.74);
+  box-shadow: 0 9px 20px rgba(73, 70, 48, .1);
+}
+.skin-card span, .piece-choice { color: #60716d; }
+.audio-settings {
+  margin-top: 20px;
+  padding: 5px 14px 15px;
+  border-color: rgba(31, 70, 68, .14);
+  background: rgba(255,255,255,.28);
+}
+.sound-row { padding-top: 16px; }
+.sound-row b { color: #294d4d; }
+.sound-row small { color: #879792; }
+.toggle.on { background: #4a8172; border-color: #4a8172; }
+.primary-button {
+  margin-top: 27px;
+  border-radius: 13px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #1c4b4c, #15383c);
+  box-shadow: 0 15px 30px rgba(20, 62, 61, .22);
+}
+.primary-button:hover { box-shadow: 0 18px 34px rgba(20, 62, 61, .28); }
+.rules-link { color: #70817d; }
+
+.game-shell.skin-jade, .game-shell.skin-paper, .game-shell.skin-night {
+  background-image: linear-gradient(112deg, rgba(244, 239, 228, .7), rgba(237, 237, 225, .4) 42%, rgba(24, 53, 54, .25)), url('/ui-bg-ink.webp');
+}
+.game-shell.skin-night .control-panel { background: rgba(15, 31, 42, .82); }
+.game-shell.skin-night .stage-heading h1, .game-shell.skin-night .panel-intro h2, .game-shell.skin-night .setting-title, .game-shell.skin-night .sound-row b { color: #e8e3d5; }
+.game-shell.skin-night .panel-intro > p:last-child, .game-shell.skin-night .rules-link { color: #a9b7b4; }
+
+@media (max-width: 980px) {
+  .play-layout { min-height: auto; }
+  .control-panel { padding-top: 34px; }
+}
+
+@media (max-width: 620px) {
+  .topbar { height: 70px; }
+  .play-layout { min-height: calc(100vh - 70px); }
+  .play-stage { padding: 28px 22px 22px; }
+  .stage-heading h1 { font-size: 25px; }
+  .board-wrap { width: min(92vw, 430px); }
+  .control-panel { padding: 32px 22px; }
+}
+
+/* Generated button kit: the same lacquer and rice-paper materials are shared by every control. */
+.game-shell .icon-button,
+.game-shell .modal-close {
+  border: 0;
+  background-color: transparent;
+  background-image: url('/ui-button-icon.webp');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: #d8e5d9;
+  text-shadow: 0 1px 2px rgba(10, 38, 37, .55);
+  box-shadow: 0 6px 13px rgba(22, 57, 55, .16);
+}
+.game-shell .icon-button:hover,
+.game-shell .modal-close:hover {
+  color: #fff5d6;
+  background-color: transparent;
+  border-color: transparent;
+  filter: brightness(1.08) saturate(1.08);
+  transform: translateY(-1px);
+}
+.game-shell .icon-button.active {
+  background-color: transparent;
+  border-color: transparent;
+  color: #f6dfaa;
+  filter: brightness(1.12) saturate(1.12);
+}
+
+.game-shell .primary-button {
+  border: 0;
+  background-color: transparent;
+  background-image: url('/ui-button-primary.webp');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: #f7f1df;
+  text-shadow: 0 1px 2px rgba(5, 27, 28, .5);
+}
+.game-shell .primary-button span { color: #ecd28c; }
+.game-shell .primary-button:hover {
+  background-color: transparent;
+  filter: brightness(1.08) saturate(1.06);
+}
+
+.game-shell .board-actions button,
+.game-shell .track-picker button,
+.game-shell .rules-link,
+.game-shell .skin-card,
+.game-shell .piece-choice {
+  background-color: transparent;
+  background-image: url('/ui-button-secondary.webp');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-color: transparent;
+}
+.game-shell .board-actions button:hover:not(:disabled),
+.game-shell .track-picker button:hover,
+.game-shell .rules-link:hover,
+.game-shell .skin-card:hover,
+.game-shell .piece-choice:hover {
+  background-color: transparent;
+  border-color: transparent;
+  filter: brightness(1.04) saturate(1.06);
+}
+.game-shell .board-actions button:disabled { filter: grayscale(.42); }
+.game-shell .track-picker button.active,
+.game-shell .skin-card.active,
+.game-shell .piece-choice.active {
+  background-color: transparent;
+  border-color: rgba(174, 71, 61, .6);
+  box-shadow: 0 9px 20px rgba(73, 70, 48, .12);
+}
+.game-shell .rules-link {
+  padding: 10px 16px;
+  color: #5e716c;
+  border-radius: 12px;
+  text-decoration: none;
+}
+.game-shell .rules-link:hover { color: #1c4849; }
+
+.game-shell .modal-close {
+  top: 17px;
+  right: 19px;
+  color: #e7f0e4;
+}
+
+.game-shell .toggle {
+  border-color: rgba(31, 70, 68, .18);
+  background: rgba(255,255,255,.58);
+  box-shadow: inset 0 1px 2px rgba(23, 52, 49, .12);
+}
+.game-shell .toggle.on { background: #4a8172; border-color: #3b6d64; }
