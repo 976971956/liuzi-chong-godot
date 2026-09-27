@@ -6,7 +6,7 @@ const ROWS := 4
 const COLS := 4
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
 const GENERATED_BOARD_PATHS := [
-	"res://assets/generated_board_surface_v2.png",
+	"res://assets/generated_board_surface_v3.png",
 	"res://assets/generated_board_surface_jade.png",
 	"res://assets/generated_board_surface_star.png",
 	"res://assets/generated_board_surface_paper.png",

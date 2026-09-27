@@ -6,17 +6,17 @@ const BOARD_VIEW_SCRIPT = preload("res://scripts/board_view.gd")
 const SOUND_ENGINE_SCRIPT = preload("res://scripts/sound_engine.gd")
 const AI_PLAYER_SCRIPT = preload("res://scripts/ai_player.gd")
 const GAME_FONT = preload("res://assets/NotoSansSCGameV10.ttf")
-const UI_BACKGROUND = preload("res://assets/generated_ui_background.png")
+const UI_BACKGROUND = preload("res://assets/ui_background_v4.png")
 const BUTTON_PANEL_PAPER = preload("res://assets/generated_panel_paper.png")
 const BUTTON_PANEL_JADE = preload("res://assets/generated_panel_jade.png")
 const BUTTON_PANEL_CINNABAR = preload("res://assets/generated_panel_cinnabar.png")
 const BUTTON_PANEL_ICON = preload("res://assets/generated_panel_jade.png")
-const ICON_MUSIC = preload("res://assets/icons/generated_music.png")
-const ICON_SETTINGS = preload("res://assets/icons/generated_settings.png")
-const ICON_RULES = preload("res://assets/icons/generated_rules.png")
-const ICON_UNDO = preload("res://assets/icons/generated_undo.png")
-const ICON_RESTART = preload("res://assets/icons/generated_restart.png")
-const ICON_CLOSE = preload("res://assets/icons/generated_close.png")
+const ICON_MUSIC = preload("res://assets/icons/generated_music_v2.png")
+const ICON_SETTINGS = preload("res://assets/icons/generated_settings_v2.png")
+const ICON_RULES = preload("res://assets/icons/generated_rules_v2.png")
+const ICON_UNDO = preload("res://assets/icons/generated_undo_v2.png")
+const ICON_RESTART = preload("res://assets/icons/generated_restart_v2.png")
+const ICON_CLOSE = preload("res://assets/icons/generated_close_v2.png")
 
 var board: Array[String] = []
 var current := "red"
@@ -93,7 +93,7 @@ func _ready() -> void:
 func _draw() -> void:
 	var base: Color = background_colors[board_skin]
 	draw_rect(Rect2(Vector2.ZERO, size), base)
-	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.74))
+	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.88))
 	var accent: Color = [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
 	var ink: Color = [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
 	draw_circle(Vector2(size.x * 0.08, size.y * 0.12), size.x * 0.75, Color(accent, 0.15))
