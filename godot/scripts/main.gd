@@ -163,7 +163,7 @@ func _build_ui() -> void:
 	var help_button := Button.new()
 	help_button.icon = ICON_RULES
 	help_button.expand_icon = true
-	help_button.tooltip_text = "查看游戏规则"
+	help_button.tooltip_text = "查看对弈规则"
 	_apply_premium_icon_button(help_button)
 	help_button.pressed.connect(_show_rules)
 	header_row.add_child(help_button)
@@ -480,7 +480,7 @@ func _build_home_page() -> void:
 	sub.add_theme_color_override("font_color", Color("786f63"))
 	center.add_child(sub)
 	var intro := Label.new()
-	intro.text = "两枚成枪，只打孤子。\n选一种方式开始你的对弈。"
+	intro.text = "两枚成枪，只打孤子。\n选择方式开始对弈。"
 	intro.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	intro.add_theme_font_size_override("font_size", 14)
 	intro.add_theme_color_override("font_color", Color("52645b"))
@@ -489,7 +489,7 @@ func _build_home_page() -> void:
 	var divider := _divider()
 	divider.add_theme_constant_override("separation", 6)
 	center.add_child(divider)
-	var ai_button := _home_button("人机对战", "挑战电脑 · 三档难度")
+	var ai_button := _home_button("人机对战", "挑战电脑 · 难度可选")
 	ai_button.pressed.connect(func(): _start_game("ai"))
 	center.add_child(ai_button)
 	var pvp_button := _home_button("双人对战", "同屏轮流 · 本地对弈")
@@ -498,14 +498,14 @@ func _build_home_page() -> void:
 	var utility_row := HBoxContainer.new()
 	utility_row.add_theme_constant_override("separation", 10)
 	center.add_child(utility_row)
-	var settings_button := _home_secondary_button("游戏设置")
+	var settings_button := _home_secondary_button("棋局设置")
 	settings_button.pressed.connect(_show_settings)
 	utility_row.add_child(settings_button)
-	var rules_button := _home_secondary_button("游戏规则")
+	var rules_button := _home_secondary_button("对弈规则")
 	rules_button.pressed.connect(_show_rules)
 	utility_row.add_child(rules_button)
 	var footer := Label.new()
-	footer.text = "沉下心，走好每一手"
+	footer.text = "每一手"
 	footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	footer.add_theme_font_size_override("font_size", 11)
 	footer.add_theme_color_override("font_color", Color("8a7760"))
@@ -525,7 +525,7 @@ func _build_result_dialog() -> void:
 	shell.add_child(header)
 	var header_margin := _margin(22, 22, 18, 18)
 	header.add_child(header_margin)
-	var eyebrow := _eyebrow("GAME OVER  ·  本局结束")
+	var eyebrow := _eyebrow("GAME OVER  ·  局已结束")
 	eyebrow.add_theme_color_override("font_color", Color("bcd1c2"))
 	header_margin.add_child(eyebrow)
 	var body := VBoxContainer.new()
@@ -638,21 +638,21 @@ func _build_rules_dialog() -> void:
 	close_button.pressed.connect(rules_dialog.hide)
 	top_row.add_child(close_button)
 	var rules_title := Label.new()
-	rules_title.text = "只认二打一"
+	rules_title.text = "二打一"
 	rules_title.add_theme_font_size_override("font_size", 25)
 	rules_title.add_theme_color_override("font_color", Color("17281f"))
 	stack.add_child(rules_title)
 	var rules_copy := Label.new()
-	rules_copy.text = "两枚己棋相连形成枪身，只能打掉同一直线上的一枚孤立敌子。"
+	rules_copy.text = "两枚己棋相连形成枪身，只能打掉同一直线上的一枚孤子。"
 	rules_copy.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rules_copy.add_theme_font_size_override("font_size", 12)
 	rules_copy.add_theme_color_override("font_color", Color("718078"))
 	stack.add_child(rules_copy)
-	stack.add_child(_rule_card("01", "四线棋盘", "棋盘是横四线、竖四线的 4×4 交点，双方各有六枚棋子。白方从下方出发，黑方从上方出发。"))
-	stack.add_child(_rule_card("02", "横竖走一格", "每回合移动一枚己方棋子，沿横线或竖线走到相邻空点，不能跳过棋子。"))
-	stack.add_child(_rule_card("03", "只认二打一", "主动形成正好三子连线，且排列为“己—己—敌”或“敌—己—己”，即可吃掉这一枚敌子。"))
-	stack.add_child(_rule_card("04", "四子不吃", "一条直线上若排满四枚棋子，不论怎样排列都不吃子；只有正好两己一敌的三子线有效。"))
-	stack.add_child(_rule_card("05", "两种对战", "可选择人机对战并设置三档难度，也可选择本地双人对抗；把对方减到一枚或令其无路可走即胜。"))
+	stack.add_child(_rule_card("01", "4线棋盘", "横4线、竖4线形成4×4棋盘。双方有六枚棋子。白方在下方，蓝方在上方。"))
+	stack.add_child(_rule_card("02", "横竖走一格", "每回合移动一枚己方棋子，沿横线或竖线走到相邻空点；路上有棋子时不可走。"))
+	stack.add_child(_rule_card("03", "二打一", "三子连线时，己—己—敌或敌—己—己，即可吃掉一枚敌子。"))
+	stack.add_child(_rule_card("04", "4子不吃", "直线若有4枚棋子，不吃子；两己一敌的三子线有效。"))
+	stack.add_child(_rule_card("05", "双人对战", "可选择人机对战，电脑难度可选；也可选择本地双人对抗；对方只剩一枚或无路可走即胜。"))
 	var start_button := _primary_button("明白了，开始对弈")
 	start_button.custom_minimum_size.y = 48
 	start_button.pressed.connect(rules_dialog.hide)
@@ -727,10 +727,10 @@ func _move_piece(from: int, to: int) -> void:
 		var moved_player := current
 		current = opponent
 		if captured.is_empty():
-			_set_status("未形成二打一，%s方回合" % _player_name(current))
+			_set_status("请走棋，%s方回合" % _player_name(current))
 			sound_engine.play_sfx("move")
 		else:
-			_set_status("%s方完成吃子，拿走 %d 枚棋子" % [_player_name(moved_player), captured.size()])
+			_set_status("%s方完成吃子，吃掉 %d 枚棋子" % [_player_name(moved_player), captured.size()])
 			sound_engine.play_sfx("capture")
 	_refresh()
 	if not captured.is_empty():
@@ -825,7 +825,7 @@ func _set_status(text: String) -> void:
 		status_label.text = text
 
 func _player_name(player: String) -> String:
-	return "白" if player == "red" else "黑"
+	return "白" if player == "red" else "蓝"
 
 func _mode_label() -> String:
 	return ("人机·%s" % difficulty_names[ai_difficulty]) if game_mode == "ai" else "双人对抗"

@@ -229,7 +229,7 @@ func _draw_winner_seal(center: Vector2) -> void:
 	draw_circle(center, 72.0, Color(seal_color, 0.98))
 	draw_arc(center, 64.0, 0, TAU, 64, Color("f4d69a"), 3.0, true)
 	draw_string(GAME_FONT, center + Vector2(-48, -17), "胜者", HORIZONTAL_ALIGNMENT_CENTER, 96, 14, seal_text)
-	draw_string(GAME_FONT, center + Vector2(-48, 34), "白" if winner == "red" else "黑", HORIZONTAL_ALIGNMENT_CENTER, 96, 48, seal_text)
+	draw_string(GAME_FONT, center + Vector2(-48, 34), "白" if winner == "red" else "蓝", HORIZONTAL_ALIGNMENT_CENTER, 96, 48, seal_text)
 
 func _draw_corners(frame: Rect2, color: Color) -> void:
 	var margin := 22.0
