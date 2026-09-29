@@ -494,3 +494,191 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
   box-shadow: inset 0 1px 2px rgba(23, 52, 49, .12);
 }
 .game-shell .toggle.on { background: #4a8172; border-color: #3b6d64; }
+
+/* Full interface themes. Board and piece skins remain independent so players can
+   mix a visual mood with any of the existing board materials. */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.theme-card {
+  position: relative;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(31, 70, 68, .14);
+  border-radius: 13px;
+  background: rgba(255,255,255,.28);
+  color: #60716d;
+  cursor: pointer;
+  text-align: left;
+  transition: .2s ease;
+}
+.theme-card:hover { transform: translateY(-2px); border-color: rgba(35, 89, 81, .3); }
+.theme-card.active { border-color: rgba(177, 76, 67, .72); box-shadow: 0 9px 20px rgba(73, 70, 48, .12); }
+.theme-card.active::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 3px rgba(166,69,53,.12);
+}
+.theme-card > i {
+  position: relative;
+  display: flex;
+  gap: 3px;
+  height: 44px;
+  padding: 7px;
+  overflow: hidden;
+  border-radius: 9px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.theme-card > i::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255,255,255,.3), transparent 55%);
+}
+.theme-card > i span { position: relative; display: block; width: 8px; height: 100%; border-radius: 99px; opacity: .84; }
+.theme-card-copy { display: flex; flex-direction: column; gap: 2px; }
+.theme-card-copy b { font-size: 11px; color: currentColor; }
+.theme-card-copy small { font: 9px/1.3 Arial, sans-serif; color: #8b9994; letter-spacing: .04em; }
+.theme-card-ink > i { background: linear-gradient(135deg, #dfe9df, #416b69 57%, #1d3d44); }
+.theme-card-ink > i span:nth-child(1) { background: #f2dfbd; }
+.theme-card-ink > i span:nth-child(2) { background: #b64e45; }
+.theme-card-ink > i span:nth-child(3) { background: #1c484a; }
+.theme-card-vermilion > i { background: linear-gradient(135deg, #f4dfbf, #ae4936 55%, #4a1e25); }
+.theme-card-vermilion > i span:nth-child(1) { background: #e9c47e; }
+.theme-card-vermilion > i span:nth-child(2) { background: #9d2f29; }
+.theme-card-vermilion > i span:nth-child(3) { background: #f3e8ce; }
+.theme-card-moon > i { background: linear-gradient(135deg, #e8edf0, #7b99a9 55%, #354d67); }
+.theme-card-moon > i span:nth-child(1) { background: #f7f5e8; }
+.theme-card-moon > i span:nth-child(2) { background: #7397a7; }
+.theme-card-moon > i span:nth-child(3) { background: #d77e72; }
+
+.game-shell.ui-theme-ink {
+  --theme-text: #173940;
+  --theme-muted: #647572;
+  --theme-panel: rgba(240, 242, 233, .78);
+  --theme-surface: rgba(250, 247, 238, .74);
+  --theme-border: rgba(35, 72, 69, .14);
+  --theme-accent: #ad4c45;
+  --theme-gold: #c49b57;
+}
+.game-shell.ui-theme-vermilion {
+  --theme-text: #542620;
+  --theme-muted: #80665a;
+  --theme-panel: rgba(248, 235, 216, .88);
+  --theme-surface: rgba(255, 247, 230, .78);
+  --theme-border: rgba(124, 56, 39, .18);
+  --theme-accent: #a63b31;
+  --theme-gold: #bb8741;
+  color: var(--theme-text);
+  background-color: #ead8be;
+  background-image:
+    linear-gradient(115deg, rgba(248, 232, 207, .56), rgba(218, 161, 126, .08) 54%, rgba(61, 25, 25, .18)),
+    url('/ui-bg-vermilion.webp');
+  background-size: cover;
+  background-position: center;
+}
+.game-shell.ui-theme-moon {
+  --theme-text: #24394e;
+  --theme-muted: #687b8c;
+  --theme-panel: rgba(229, 237, 241, .86);
+  --theme-surface: rgba(243, 247, 248, .78);
+  --theme-border: rgba(49, 81, 105, .18);
+  --theme-accent: #ba5b56;
+  --theme-gold: #b38b52;
+  color: var(--theme-text);
+  background-color: #c9d7e1;
+  background-image:
+    linear-gradient(115deg, rgba(236, 243, 244, .32), rgba(135, 165, 182, .08) 52%, rgba(19, 39, 62, .22)),
+    url('/ui-bg-moon.webp');
+  background-size: cover;
+  background-position: center;
+}
+
+.game-shell.ui-theme-vermilion .topbar,
+.game-shell.ui-theme-vermilion .control-panel { background: var(--theme-panel); border-color: var(--theme-border); }
+.game-shell.ui-theme-moon .topbar,
+.game-shell.ui-theme-moon .control-panel { background: var(--theme-panel); border-color: var(--theme-border); }
+.game-shell.ui-theme-vermilion .brand b,
+.game-shell.ui-theme-vermilion .stage-heading h1,
+.game-shell.ui-theme-vermilion .panel-intro h2,
+.game-shell.ui-theme-vermilion .setting-title,
+.game-shell.ui-theme-vermilion .sound-row b { color: var(--theme-text); }
+.game-shell.ui-theme-moon .brand b,
+.game-shell.ui-theme-moon .stage-heading h1,
+.game-shell.ui-theme-moon .panel-intro h2,
+.game-shell.ui-theme-moon .setting-title,
+.game-shell.ui-theme-moon .sound-row b { color: var(--theme-text); }
+.game-shell.ui-theme-vermilion .eyebrow,
+.game-shell.ui-theme-vermilion .rules-modal li b,
+.game-shell.ui-theme-moon .eyebrow,
+.game-shell.ui-theme-moon .rules-modal li b { color: var(--theme-accent); }
+.game-shell.ui-theme-vermilion .panel-intro > p:last-child,
+.game-shell.ui-theme-vermilion .status-line,
+.game-shell.ui-theme-vermilion .rules-link,
+.game-shell.ui-theme-moon .panel-intro > p:last-child,
+.game-shell.ui-theme-moon .status-line,
+.game-shell.ui-theme-moon .rules-link { color: var(--theme-muted); }
+.game-shell.ui-theme-vermilion .turn-pill,
+.game-shell.ui-theme-vermilion .player-tag,
+.game-shell.ui-theme-vermilion .status-line,
+.game-shell.ui-theme-moon .turn-pill,
+.game-shell.ui-theme-moon .player-tag,
+.game-shell.ui-theme-moon .status-line { background: var(--theme-surface); border-color: var(--theme-border); }
+.game-shell.ui-theme-vermilion .setting-group,
+.game-shell.ui-theme-vermilion .panel-intro,
+.game-shell.ui-theme-moon .setting-group,
+.game-shell.ui-theme-moon .panel-intro { border-color: var(--theme-border); }
+
+/* Tint the generated button materials so each theme feels like a full treatment. */
+.game-shell.ui-theme-vermilion .primary-button {
+  background-image: linear-gradient(rgba(119, 31, 24, .38), rgba(67, 16, 16, .52)), url('/ui-button-primary.webp');
+}
+.game-shell.ui-theme-vermilion .icon-button,
+.game-shell.ui-theme-vermilion .modal-close {
+  background-image: linear-gradient(rgba(116, 35, 27, .24), rgba(71, 20, 22, .35)), url('/ui-button-icon.webp');
+}
+.game-shell.ui-theme-vermilion .board-actions button,
+.game-shell.ui-theme-vermilion .track-picker button,
+.game-shell.ui-theme-vermilion .rules-link,
+.game-shell.ui-theme-vermilion .skin-card,
+.game-shell.ui-theme-vermilion .piece-choice { background-image: linear-gradient(rgba(239, 191, 133, .3), rgba(162, 61, 43, .18)), url('/ui-button-secondary.webp'); color: #704039; }
+.game-shell.ui-theme-moon .primary-button {
+  background-image: linear-gradient(rgba(31, 71, 101, .3), rgba(17, 43, 68, .46)), url('/ui-button-primary.webp');
+}
+.game-shell.ui-theme-moon .icon-button,
+.game-shell.ui-theme-moon .modal-close {
+  background-image: linear-gradient(rgba(55, 98, 121, .22), rgba(24, 52, 78, .32)), url('/ui-button-icon.webp');
+}
+.game-shell.ui-theme-moon .board-actions button,
+.game-shell.ui-theme-moon .track-picker button,
+.game-shell.ui-theme-moon .rules-link,
+.game-shell.ui-theme-moon .skin-card,
+.game-shell.ui-theme-moon .piece-choice { background-image: linear-gradient(rgba(190, 213, 222, .34), rgba(67, 105, 127, .18)), url('/ui-button-secondary.webp'); color: #405e6d; }
+.game-shell.ui-theme-vermilion .theme-card,
+.game-shell.ui-theme-moon .theme-card { border-color: var(--theme-border); background: var(--theme-surface); }
+.game-shell.ui-theme-vermilion .theme-card-copy small,
+.game-shell.ui-theme-moon .theme-card-copy small { color: var(--theme-muted); }
+
+.game-shell.ui-theme-vermilion .rules-modal { background: #fbf0df; color: #542620; border-color: rgba(124,56,39,.2); }
+.game-shell.ui-theme-vermilion .rule-example { background: #eed7b8; }
+.game-shell.ui-theme-moon .rules-modal { background: #eef3f4; color: #24394e; border-color: rgba(49,81,105,.2); }
+.game-shell.ui-theme-moon .rule-example { background: #d9e5e8; }
+
+@media (max-width: 620px) {
+  .theme-options { gap: 6px; }
+  .theme-card { min-height: 91px; padding: 6px; }
+  .theme-card > i { height: 39px; }
+  .theme-card-copy b { font-size: 10px; }
+  .theme-card-copy small { font-size: 8px; }
+}

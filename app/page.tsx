@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type Player = 'red' | 'blue';
 type Cell = Player | null;
+type UITheme = 'ink' | 'vermilion' | 'moon';
 type BoardSkin = 'wood' | 'jade' | 'night' | 'paper';
 type PieceSkin = 'classic' | 'glass' | 'stone' | 'flat';
 type MusicTrack = 'mountain' | 'rain' | 'moon';
@@ -25,6 +26,12 @@ const BOARD_SKINS: { id: BoardSkin; label: string }[] = [
   { id: 'jade', label: '青玉' },
   { id: 'night', label: '星夜' },
   { id: 'paper', label: '宣纸' },
+];
+
+const UI_THEMES: { id: UITheme; label: string; description: string }[] = [
+  { id: 'ink', label: '松烟青玉', description: '清雅 · 层次' },
+  { id: 'vermilion', label: '朱砂金漆', description: '暖烈 · 雅致' },
+  { id: 'moon', label: '月白黛青', description: '静谧 · 通透' },
 ];
 
 const PIECE_SKINS: { id: PieceSkin; label: string }[] = [
@@ -101,6 +108,7 @@ export default function Home() {
   const [history, setHistory] = useState<Snapshot[]>([]);
   const [moveCount, setMoveCount] = useState(0);
   const [lastMove, setLastMove] = useState<number | null>(null);
+  const [uiTheme, setUiTheme] = useState<UITheme>('ink');
   const [boardSkin, setBoardSkin] = useState<BoardSkin>('wood');
   const [pieceSkin, setPieceSkin] = useState<PieceSkin>('classic');
   const [musicTrack, setMusicTrack] = useState<MusicTrack>('mountain');
@@ -304,7 +312,7 @@ export default function Home() {
   };
 
   return (
-    <main className={`game-shell skin-${boardSkin} pieces-${pieceSkin}`}>
+    <main className={`game-shell ui-theme-${uiTheme} skin-${boardSkin} pieces-${pieceSkin}`}>
       <header className="topbar">
         <button className="brand" onClick={resetGame} aria-label="重新开始六子冲">
           <span className="brand-mark"><i /><i /><i /></span>
@@ -368,6 +376,23 @@ export default function Home() {
             <p className="eyebrow">本地双人模式</p>
             <h2>棋局设置</h2>
             <p>同屏轮流走子，主动形成“二打一”的活枪即可吃子。</p>
+          </div>
+
+          <div className="setting-group theme-setting">
+            <div className="setting-title"><span>界面主题</span><b>0{UI_THEMES.length}</b></div>
+            <div className="theme-options" role="radiogroup" aria-label="选择界面主题">
+              {UI_THEMES.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setUiTheme(theme.id)}
+                  className={`theme-card theme-card-${theme.id} ${uiTheme === theme.id ? 'active' : ''}`}
+                  aria-pressed={uiTheme === theme.id}
+                >
+                  <i aria-hidden="true"><span /><span /><span /></i>
+                  <span className="theme-card-copy"><b>{theme.label}</b><small>{theme.description}</small></span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="setting-group">
