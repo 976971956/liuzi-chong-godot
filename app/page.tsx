@@ -359,8 +359,8 @@ export default function Home() {
                 })}
               </div>
             </div>
-            <div className="player-tag player-red"><span className="mini-piece red" />红方 <b>{counts.red}</b></div>
-            <div className="player-tag player-blue"><span className="mini-piece blue" />蓝方 <b>{counts.blue}</b></div>
+            <div className="player-tag player-red"><span className="faction-badge red" aria-hidden="true" /><span className="player-copy"><small>先锋阵营</small><b>红方 · {counts.red}</b></span></div>
+            <div className="player-tag player-blue"><span className="faction-badge blue" aria-hidden="true" /><span className="player-copy"><small>守备阵营</small><b>蓝方 · {counts.blue}</b></span></div>
             {winner && <div className="winner-seal"><small>胜者</small><b>{winner === 'red' ? '红' : '蓝'}</b><span>再来一局</span></div>}
           </div>
 
