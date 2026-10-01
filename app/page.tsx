@@ -366,15 +366,16 @@ export default function Home() {
 
           <div className="status-line" role="status"><span>✦</span>{status}</div>
           <div className="board-actions">
-            <button onClick={undo} disabled={history.length === 0}>↶ 悔棋</button>
-            <button onClick={resetGame}>⟳ 重新开局</button>
+            <button onClick={undo} disabled={history.length === 0}>↶ 退一步</button>
+            <button onClick={resetGame}>⟳ 重开战局</button>
           </div>
         </div>
 
         <aside className="control-panel">
           <div className="panel-intro">
-            <p className="eyebrow">本地双人模式</p>
-            <h2>棋局设置</h2>
+            <div className="panel-kicker"><span /> MATCH CONTROL <b>LOCAL PVP</b></div>
+            <p className="eyebrow">局内控制 · MATCH HUD</p>
+            <h2>战局控制台</h2>
             <p>同屏轮流走子，主动形成“二打一”的活枪即可吃子。</p>
           </div>
 
@@ -431,8 +432,8 @@ export default function Home() {
             </div>
           </div>
 
-          <button className="primary-button" onClick={resetGame}>{winner ? '再来一局' : '开始新局'} <span>→</span></button>
-          <button className="rules-link" onClick={() => setRulesOpen(true)}>查看完整规则 <span>↗</span></button>
+          <button className="primary-button" onClick={resetGame}>{winner ? '再开一局' : '进入战局'} <span>→</span></button>
+          <button className="rules-link" onClick={() => setRulesOpen(true)}>打开战术手册 <span>↗</span></button>
         </aside>
       </section>
 
