@@ -440,14 +440,23 @@ export default function Home() {
         <div className="modal-backdrop" role="presentation" onMouseDown={() => setRulesOpen(false)}>
           <section className="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title" onMouseDown={(event) => event.stopPropagation()}>
             <button className="modal-close" onClick={() => setRulesOpen(false)} aria-label="关闭规则">×</button>
-            <p className="eyebrow">HOW TO PLAY</p>
-            <h2 id="rules-title">六子冲 · 活枪规则</h2>
+            <div className="modal-header">
+              <div className="modal-crest" aria-hidden="true"><b>六</b><span>子冲</span></div>
+              <div className="modal-heading">
+                <p className="eyebrow">局内手册 · RULE 01</p>
+                <h2 id="rules-title">活枪规则</h2>
+                <small>二打一 · 三线制胜</small>
+              </div>
+              <div className="modal-turn"><b>{String(moveCount).padStart(2, '0')}</b><small>回合</small></div>
+            </div>
+            <div className="modal-divider" aria-hidden="true"><span>◇</span><i /> <small>战局指南</small> <i /><span>◇</span></div>
             <ol>
               <li><b>走一步</b><span>每回合选择一枚己方棋子，沿横线或竖线移动到相邻空点，不能跳跃或斜走。</span></li>
               <li><b>二打一</b><span>本步主动形成连续的“己—己—敌”，且三子之外没有紧邻棋子，便可吃掉枪口的敌子。</span></li>
               <li><b>定胜负</b><span>把对方吃到只剩一枚，或让对方完全无路可走，即获得胜利。</span></li>
             </ol>
             <div className="rule-example"><i className="dot red" /><i className="dot red" /><i className="dot blue target" /><span>两枚己子形成枪身，吃掉枪口敌子</span></div>
+            <div className="modal-footer"><span>当前战局</span><b>{current === 'red' ? '红方' : '蓝方'}先手</b><em>红 {counts.red} · {counts.blue} 蓝</em></div>
             <button className="primary-button" onClick={() => setRulesOpen(false)}>明白了，开始对弈</button>
           </section>
         </div>
