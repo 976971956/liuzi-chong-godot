@@ -1063,6 +1063,113 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
 .game-shell.ui-theme-moon .turn-pill,
 .game-shell.ui-theme-moon .status-line { color: #e7f0ef; }
 
+/* Material pass: the board and stones use the same generated art language as the
+   rest of the game. The earlier gradient circles made the play surface feel like
+   a dashboard preview, especially when the stone skin was selected. */
+.game-shell .board-frame {
+  background-color: #6e2d1d;
+  background-image:
+    linear-gradient(135deg, rgba(255, 210, 142, .12), rgba(56, 13, 12, .16)),
+    url('/board-surface-rosewood.webp');
+  background-repeat: no-repeat, repeat;
+  background-position: center;
+  background-size: 100% 100%, cover;
+  box-shadow:
+    0 30px 60px rgba(50, 23, 18, .34),
+    inset 0 0 0 2px rgba(73, 23, 16, .4),
+    inset 0 0 0 7px rgba(255, 228, 175, .18),
+    0 0 0 1px rgba(255, 246, 216, .32);
+}
+.game-shell.skin-jade .board-frame {
+  background-image:
+    linear-gradient(135deg, rgba(231, 255, 241, .1), rgba(13, 54, 45, .2)),
+    url('/board-surface-jade.webp');
+  background-size: 100% 100%, cover;
+}
+.game-shell.skin-night .board-frame {
+  background-image:
+    linear-gradient(135deg, rgba(20, 42, 70, .18), rgba(2, 10, 25, .3)),
+    url('/board-surface-night.webp');
+  background-size: 100% 100%, cover;
+}
+.game-shell.skin-paper .board-frame {
+  background-image:
+    linear-gradient(135deg, rgba(255, 247, 226, .16), rgba(111, 62, 32, .08)),
+    url('/board-surface-paper.webp');
+  background-size: 100% 100%, cover;
+}
+.game-shell .board-lines i {
+  background: #3d2119;
+  opacity: .82;
+  box-shadow: 0 1px 0 rgba(255, 231, 170, .2), 0 0 0 1px rgba(36, 14, 11, .08);
+}
+.game-shell.skin-jade .board-lines i { background: #174b43; }
+.game-shell.skin-night .board-lines i { background: #d6b668; }
+.game-shell.skin-paper .board-lines i { background: #7e392e; }
+.game-shell .point:not(.has-piece)::before {
+  background: #2d1712;
+  box-shadow: 0 0 0 2px rgba(255, 223, 160, .12);
+}
+.game-shell.skin-jade .point:not(.has-piece)::before { background: #123c37; }
+.game-shell.skin-night .point:not(.has-piece)::before { background: #d1aa5f; }
+.game-shell.skin-paper .point:not(.has-piece)::before { background: #8a3b2f; }
+
+.game-shell .piece {
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 100% 100% !important;
+  border-radius: 50%;
+  box-shadow: 0 8px 11px rgba(22, 10, 8, .28), 0 2px 0 rgba(255, 240, 210, .16) !important;
+  filter: none;
+}
+.game-shell .point.red .piece { background-image: url('/piece-lacquer-red.webp') !important; }
+.game-shell .point.blue .piece { background-image: url('/piece-lacquer-blue.webp') !important; }
+.game-shell .piece::before { display: none; }
+.game-shell .piece i {
+  width: 52%;
+  height: 52%;
+  color: rgba(255, 237, 209, .76);
+  border: 1px solid rgba(255, 237, 209, .34) !important;
+  background: radial-gradient(circle, rgba(54, 11, 9, .12), transparent 72%);
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.8vh, 18px);
+  text-shadow: 0 1px 2px rgba(46, 5, 3, .55);
+}
+.game-shell .point.blue .piece i {
+  color: rgba(226, 240, 255, .82);
+  border-color: rgba(226, 240, 255, .36) !important;
+  background: radial-gradient(circle, rgba(6, 22, 53, .14), transparent 72%);
+  text-shadow: 0 1px 2px rgba(4, 13, 36, .62);
+}
+.game-shell.pieces-glass .piece { filter: saturate(1.12) brightness(1.08) !important; }
+.game-shell.pieces-stone .piece { filter: saturate(.78) contrast(1.04) !important; }
+.game-shell.pieces-flat .piece { filter: saturate(.92) contrast(1.08) !important; }
+.game-shell.pieces-flat .piece i { display: none; }
+
+/* Keep the selectors in the picker honest: each preview now matches the board
+   material shown on the play surface rather than a generic CSS circle. */
+.game-shell .skin-card.wood i { background: url('/board-surface-rosewood.webp') center/cover; }
+.game-shell .skin-card.jade i { background: url('/board-surface-jade.webp') center/cover; }
+.game-shell .skin-card.night i { background: url('/board-surface-night.webp') center/cover; }
+.game-shell .skin-card.paper i { background: url('/board-surface-paper.webp') center/cover; }
+.game-shell .skin-card i::before { border-color: rgba(255, 233, 187, .65); background: repeating-linear-gradient(0deg, transparent 0 8px, rgba(255, 233, 187, .44) 9px 10px); }
+.game-shell .demo-piece.classic,
+.game-shell .demo-piece.glass,
+.game-shell .demo-piece.stone,
+.game-shell .demo-piece.flat {
+  background-image: url('/piece-lacquer-red.webp');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  box-shadow: none;
+  border: 0;
+}
+.game-shell .demo-piece.glass { filter: saturate(1.12) brightness(1.08); }
+.game-shell .demo-piece.stone { filter: saturate(.78) contrast(1.04); }
+.game-shell .demo-piece.flat { filter: saturate(.92) contrast(1.08); }
+
 @media (max-width: 620px) {
   .player-tag { min-width: 118px; padding-right: 7px; }
   .faction-badge { width: 30px; height: 30px; }
