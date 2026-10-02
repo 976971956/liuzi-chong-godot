@@ -1123,8 +1123,8 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
   box-shadow: 0 8px 11px rgba(22, 10, 8, .28), 0 2px 0 rgba(255, 240, 210, .16) !important;
   filter: none;
 }
-.game-shell .point.red .piece { background-image: url('/piece-lacquer-red.webp') !important; }
-.game-shell .point.blue .piece { background-image: url('/piece-lacquer-blue.webp') !important; }
+.game-shell .point.red .piece { background-image: url('/piece-glass-white.webp') !important; }
+.game-shell .point.blue .piece { background-image: url('/piece-glass-black.webp') !important; }
 .game-shell .piece::before { display: none; }
 .game-shell .piece i {
   width: 52%;
@@ -1142,6 +1142,18 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
   background: radial-gradient(circle, rgba(6, 22, 53, .14), transparent 72%);
   text-shadow: 0 1px 2px rgba(4, 13, 36, .62);
 }
+.game-shell .point.red .piece i {
+  color: rgba(128, 35, 43, .82);
+  border-color: rgba(128, 35, 43, .34) !important;
+  background: radial-gradient(circle, rgba(255, 255, 255, .22), transparent 72%);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, .7);
+}
+.game-shell.pieces-glass .point.red .piece { background-image: url('/piece-ring-white.webp') !important; }
+.game-shell.pieces-glass .point.blue .piece { background-image: url('/piece-ring-black.webp') !important; }
+.game-shell.pieces-stone .point.red .piece { background-image: url('/piece-jade-white.webp') !important; }
+.game-shell.pieces-stone .point.blue .piece { background-image: url('/piece-jade-black.webp') !important; }
+.game-shell.pieces-flat .point.red .piece { background-image: url('/piece-flat-white.webp') !important; }
+.game-shell.pieces-flat .point.blue .piece { background-image: url('/piece-flat-black.webp') !important; }
 .game-shell.pieces-glass .piece { filter: saturate(1.12) brightness(1.08) !important; }
 .game-shell.pieces-stone .piece { filter: saturate(.78) contrast(1.04) !important; }
 .game-shell.pieces-flat .piece { filter: saturate(.92) contrast(1.08) !important; }
@@ -1158,7 +1170,7 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
 .game-shell .demo-piece.glass,
 .game-shell .demo-piece.stone,
 .game-shell .demo-piece.flat {
-  background-image: url('/piece-lacquer-red.webp');
+  background-image: url('/piece-glass-white.webp');
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
@@ -1166,9 +1178,9 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
   box-shadow: none;
   border: 0;
 }
-.game-shell .demo-piece.glass { filter: saturate(1.12) brightness(1.08); }
-.game-shell .demo-piece.stone { filter: saturate(.78) contrast(1.04); }
-.game-shell .demo-piece.flat { filter: saturate(.92) contrast(1.08); }
+.game-shell .demo-piece.glass { background-image: url('/piece-ring-white.webp'); }
+.game-shell .demo-piece.stone { background-image: url('/piece-jade-white.webp'); filter: saturate(.9); }
+.game-shell .demo-piece.flat { background-image: url('/piece-flat-white.webp'); }
 
 @media (max-width: 620px) {
   .player-tag { min-width: 118px; padding-right: 7px; }
