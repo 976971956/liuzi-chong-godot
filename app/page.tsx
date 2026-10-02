@@ -359,7 +359,7 @@ export default function Home() {
                       onClick={() => handlePoint(index)}
                       role="gridcell"
                       aria-label={side ? `${side === 'red' ? '红' : '蓝'}方棋子，第${row + 1}行第${col + 1}列` : `空棋位，第${row + 1}行第${col + 1}列`}
-                    >{side && <span className="piece"><i>{pieceSkin === 'flat' ? '' : side === 'red' ? '冲' : '守'}</i></span>}</button>
+                    >{side && <span className="piece" aria-hidden="true" />}</button>
                   );
                 })}
               </div>
