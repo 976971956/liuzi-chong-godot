@@ -1070,3 +1070,80 @@ button:focus-visible { outline: 2px solid rgba(166,69,53,.72); outline-offset: 3
   .player-copy b { font-size: 10px; }
   .turn-pill { min-width: 0; }
 }
+
+/* Generated type and icon layer: keep text crisp while the generated assets carry the game material. */
+@font-face {
+  font-family: 'Liuzi Sans';
+  src: url('/fonts/NotoSansSCGameV10.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Liuzi Sans Text';
+  src: url('/fonts/NotoSansSC.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+:root {
+  --font-display: 'Liuzi Sans', 'Noto Sans SC', sans-serif;
+  --font-body: 'Liuzi Sans Text', 'Noto Sans SC', sans-serif;
+}
+body, button, a { font-family: var(--font-body); }
+.brand b, .stage-heading h1, .panel-intro h2, .rules-modal h2, .modal-heading h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-synthesis: none;
+}
+.eyebrow, .panel-kicker, .brand small, .theme-card-copy small { font-family: var(--font-body); }
+
+.stage-banner {
+  width: min(100%, 670px);
+  min-height: 84px;
+  margin: -8px auto 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 42px;
+  background: url('/ui-banner-plaque.webp') center / 100% 100% no-repeat;
+  filter: drop-shadow(0 10px 18px rgba(63, 49, 28, .12));
+}
+.stage-banner-copy { display: grid; gap: 3px; text-align: center; color: #214a4a; letter-spacing: .18em; }
+.stage-banner-copy small { color: #a06443; font: 700 9px/1.1 var(--font-body); letter-spacing: .22em; }
+.stage-banner-copy b { font: 800 clamp(18px, 2vw, 25px)/1.1 var(--font-display); }
+.banner-ornament { width: 28px; height: 28px; border: 1px solid rgba(167, 119, 61, .68); transform: rotate(45deg); position: relative; opacity: .82; }
+.banner-ornament::after { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(33, 74, 73, .45); }
+.banner-ornament.right { transform: rotate(45deg) scaleX(-1); }
+
+.ui-icon {
+  display: inline-block;
+  flex: none;
+  width: 21px;
+  height: 21px;
+  background: center / contain no-repeat;
+  vertical-align: middle;
+}
+.ui-icon-music { background-image: url('/ui-icon-music.webp'); }
+.ui-icon-rules { background-image: url('/ui-icon-rules.webp'); }
+.ui-icon-undo { background-image: url('/ui-icon-undo.webp'); width: 18px; height: 18px; }
+.ui-icon-restart { background-image: url('/ui-icon-restart.webp'); width: 18px; height: 18px; }
+.icon-button { display: grid; place-items: center; font-size: 0; }
+.icon-button .ui-icon { width: 24px; height: 24px; filter: drop-shadow(0 2px 2px rgba(34, 64, 57, .18)); }
+.icon-button.active .ui-icon { filter: brightness(1.55) saturate(.82); }
+.board-actions button { display: inline-flex; align-items: center; gap: 5px; }
+.primary-button .ui-icon { color: #d5b06e; font-size: 21px; line-height: 1; }
+.rules-link { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.ui-icon-arrow-small { font-size: 14px; color: var(--gold); }
+.sound-row span > i.sound-icon { width: 26px; height: 26px; margin-right: 4px; background: center / contain no-repeat; filter: drop-shadow(0 2px 2px rgba(54, 67, 51, .18)); }
+.sound-icon-music { background-image: url('/ui-icon-music.webp'); }
+.sound-icon-rules { background-image: url('/ui-icon-rules.webp'); }
+
+@media (max-width: 920px) {
+  .stage-banner { margin-top: 0; padding-inline: 28px; min-height: 72px; }
+}
+@media (max-width: 620px) {
+  .stage-banner { min-height: 63px; padding-inline: 19px; margin-bottom: 6px; }
+  .stage-banner-copy b { font-size: 18px; }
+  .stage-banner-copy small { font-size: 7px; }
+  .banner-ornament { width: 21px; height: 21px; }
+  .stage-heading { margin-bottom: 19px; }
+}

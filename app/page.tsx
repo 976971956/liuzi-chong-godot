@@ -319,13 +319,18 @@ export default function Home() {
           <span><b>六子冲</b><small>LINE OF SIX</small></span>
         </button>
         <div className="top-actions">
-          <button className={`icon-button ${musicOn ? 'active' : ''}`} onClick={toggleMusic} aria-label={musicOn ? '关闭音乐' : '开启音乐'}>{musicOn ? '♪' : '♩'}</button>
-          <button className="icon-button" onClick={() => setRulesOpen(true)} aria-label="游戏说明">?</button>
+          <button className={`icon-button ${musicOn ? 'active' : ''}`} onClick={toggleMusic} aria-label={musicOn ? '关闭音乐' : '开启音乐'}><span className="ui-icon ui-icon-music" aria-hidden="true" />{musicOn ? '♪' : '♩'}</button>
+          <button className="icon-button" onClick={() => setRulesOpen(true)} aria-label="游戏说明"><span className="ui-icon ui-icon-rules" aria-hidden="true" />?</button>
         </div>
       </header>
 
       <section className="play-layout">
         <div className="play-stage">
+          <div className="stage-banner" aria-hidden="true">
+            <span className="banner-ornament left" />
+            <span className="stage-banner-copy"><small>六子冲 · LINE OF SIX</small><b>双子成锋</b></span>
+            <span className="banner-ornament right" />
+          </div>
           <div className="stage-heading">
             <div>
               <p className="eyebrow">传统民间对弈 · 第 {String(moveCount + 1).padStart(2, '0')} 手</p>
@@ -366,8 +371,8 @@ export default function Home() {
 
           <div className="status-line" role="status"><span>✦</span>{status}</div>
           <div className="board-actions">
-            <button onClick={undo} disabled={history.length === 0}>↶ 退一步</button>
-            <button onClick={resetGame}>⟳ 重开战局</button>
+            <button onClick={undo} disabled={history.length === 0}><span className="ui-icon ui-icon-undo" aria-hidden="true" />退一步</button>
+            <button onClick={resetGame}><span className="ui-icon ui-icon-restart" aria-hidden="true" />重开战局</button>
           </div>
         </div>
 
@@ -420,20 +425,20 @@ export default function Home() {
 
           <div className="audio-settings">
             <div className="sound-row">
-              <span><i>♫</i><b>背景音乐</b><small>{MUSIC_TRACKS.find((track) => track.id === musicTrack)?.label}</small></span>
+              <span><i className="sound-icon sound-icon-music" aria-hidden="true" /><b>背景音乐</b><small>{MUSIC_TRACKS.find((track) => track.id === musicTrack)?.label}</small></span>
               <button className={`toggle ${musicOn ? 'on' : ''}`} onClick={toggleMusic} aria-label="切换背景音乐" aria-pressed={musicOn}><i /></button>
             </div>
             <div className="track-picker" aria-label="选择背景音乐">
               {MUSIC_TRACKS.map((track) => <button key={track.id} onClick={() => chooseTrack(track.id)} className={musicTrack === track.id ? 'active' : ''}>{track.label}</button>)}
             </div>
             <div className="sound-row">
-              <span><i>♬</i><b>落子音效</b><small>木音 · 吃子 · 胜利</small></span>
+              <span><i className="sound-icon sound-icon-rules" aria-hidden="true" /><b>落子音效</b><small>木音 · 吃子 · 胜利</small></span>
               <button className={`toggle ${sfxOn ? 'on' : ''}`} onClick={() => { setSfxOn((value) => !value); if (!sfxOn) tone(440, .12, .04); }} aria-label="切换落子音效" aria-pressed={sfxOn}><i /></button>
             </div>
           </div>
 
-          <button className="primary-button" onClick={resetGame}>{winner ? '再开一局' : '进入战局'} <span>→</span></button>
-          <button className="rules-link" onClick={() => setRulesOpen(true)}>打开战术手册 <span>↗</span></button>
+          <button className="primary-button" onClick={resetGame}>{winner ? '再开一局' : '进入战局'} <span className="ui-icon ui-icon-arrow" aria-hidden="true">→</span></button>
+          <button className="rules-link" onClick={() => setRulesOpen(true)}>打开战术手册 <span className="ui-icon ui-icon-arrow-small" aria-hidden="true">↗</span></button>
         </aside>
       </section>
 

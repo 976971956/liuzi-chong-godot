@@ -40,3 +40,9 @@ next-env.d.ts
 # Godot
 /godot/.godot/
 *.tmp
+
+# Godot iOS export payloads (regenerate with scripts/export-ios.sh)
+/ios/*.xcframework/
+/ios/*.pck
+/ios/data.pck
+/build/ios/
