@@ -14,4 +14,4 @@
 ./scripts/package-ios.sh
 ```
 
-脚本默认使用 `BYSMY792J7` 和本机的 `Apple Development` 证书，也可以通过 `IOS_TEAM_ID`、`IOS_SIGNING_IDENTITY` 和 `IOS_CONFIGURATION` 覆盖。导出的文件位于 `build/ios/ipa/LiuziChong.ipa`。把 iPhone 解锁并信任这台 Mac 后，在 Xcode 里选择设备运行，或使用 `xcrun devicectl device install app --device <设备UDID> build/ios/ipa/LiuziChong.ipa` 安装。
+脚本会先从 `godot/` 重新生成最新的 `ios/LiuziChong.pck`，再归档 Xcode 工程，因此 UI 和游戏逻辑会与源码同步。脚本默认使用 `BYSMY792J7` 和本机的 `Apple Development` 证书，也可以通过 `IOS_TEAM_ID`、`IOS_SIGNING_IDENTITY`、`IOS_CONFIGURATION` 和 `GODOT_BIN` 覆盖。导出的文件位于 `build/ios/ipa/LiuziChong.ipa`。把 iPhone 解锁并信任这台 Mac 后，在 Xcode 里选择设备运行，或使用 `xcrun devicectl device install app --device <设备UDID> build/ios/ipa/LiuziChong.ipa` 安装。
