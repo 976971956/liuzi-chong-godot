@@ -18,7 +18,7 @@ type Snapshot = {
   lastMove: number | null;
 };
 
-const ROWS = 5;
+const ROWS = 4;
 const COLS = 4;
 
 const BOARD_SKINS: { id: BoardSkin; label: string }[] = [
@@ -49,8 +49,8 @@ const MUSIC_TRACKS: { id: MusicTrack; label: string; pattern: number[]; bass: nu
 
 function makeInitialBoard(): Cell[] {
   const board: Cell[] = Array(ROWS * COLS).fill(null);
-  [0, 1, 2, 3, 4, 7].forEach((index) => { board[index] = 'red'; });
-  [12, 15, 16, 17, 18, 19].forEach((index) => { board[index] = 'blue'; });
+  [8, 11, 12, 13, 14, 15].forEach((index) => { board[index] = 'red'; });
+  [0, 1, 2, 3, 4, 7].forEach((index) => { board[index] = 'blue'; });
   return board;
 }
 
@@ -345,8 +345,8 @@ export default function Home() {
               <div className="board-corner bl" /><div className="board-corner br" />
               <div className="board" role="grid" aria-label="六子冲棋盘">
                 <div className="board-lines" aria-hidden="true">
-                  {Array.from({ length: ROWS }, (_, row) => <i className="h-line" key={`h-${row}`} style={{ top: `${row * 25}%` }} />)}
-                  {Array.from({ length: COLS }, (_, col) => <i className="v-line" key={`v-${col}`} style={{ left: `${col * 33.333}%` }} />)}
+                  {Array.from({ length: ROWS }, (_, row) => <i className="h-line" key={`h-${row}`} style={{ top: `${row * (100 / (ROWS - 1))}%` }} />)}
+                  {Array.from({ length: COLS }, (_, col) => <i className="v-line" key={`v-${col}`} style={{ left: `${col * (100 / (COLS - 1))}%` }} />)}
                 </div>
                 {board.map((side, index) => {
                   const { row, col } = coords(index);

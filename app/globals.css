@@ -1330,6 +1330,7 @@ body, button, a { font-family: var(--font-body); }
 .game-shell.ui-theme-ink .piece-choice span {
   color: #4b7774;
 }
+.game-shell .board-frame { aspect-ratio: 1 / 1; }
 
 @media (max-width: 760px) {
   .topbar {
