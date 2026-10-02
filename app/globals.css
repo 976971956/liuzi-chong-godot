@@ -1256,6 +1256,48 @@ body, button, a { font-family: var(--font-body); }
 .sound-icon-music { background-image: url('/ui-icon-music.webp'); }
 .sound-icon-rules { background-image: url('/ui-icon-rules.webp'); }
 
+/* Game typography pass: keep the stones clean, while the surrounding HUD reads
+   like an in-game interface instead of a plain settings page. */
+.game-shell .eyebrow,
+.game-shell .turn-pill,
+.game-shell .status-line,
+.game-shell .board-actions button,
+.game-shell .primary-button,
+.game-shell .rules-link,
+.game-shell .player-copy b,
+.game-shell .setting-title,
+.game-shell .theme-card-copy b,
+.game-shell .skin-card span,
+.game-shell .piece-choice span,
+.game-shell .sound-row b,
+.game-shell .track-picker button {
+  font-family: var(--font-display);
+  font-synthesis: none;
+}
+.game-shell .eyebrow {
+  letter-spacing: .2em;
+  text-shadow: 0 1px 0 rgba(255, 247, 219, .5);
+}
+.game-shell .turn-pill,
+.game-shell .status-line {
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+.game-shell .board-actions button,
+.game-shell .primary-button,
+.game-shell .rules-link {
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+.game-shell .setting-title,
+.game-shell .theme-card-copy b,
+.game-shell .skin-card span,
+.game-shell .piece-choice span,
+.game-shell .sound-row b {
+  letter-spacing: .08em;
+}
+.game-shell .track-picker button { letter-spacing: .04em; }
+
 @media (max-width: 920px) {
   .stage-banner { margin-top: 0; padding-inline: 28px; min-height: 72px; }
 }
