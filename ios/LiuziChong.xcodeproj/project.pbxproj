@@ -3,65 +3,54 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F1575721F582BE20003B888 /* dylibs in Resources */ = {isa = PBXBuildFile; fileRef = 1F1575711F582BE20003B888 /* dylibs */; };
-		DEADBEEF2F582BE20003B888 /* LiuziChong.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEADBEEF1F582BE20003B888 /* LiuziChong.xcframework */; };
-		
-		90B4C2B62680C7E90039117A /* dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B4C2B52680C7E90039117A /* dummy.swift */; };
 		1FF8DBB11FBA9DE1009DE660 /* dummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FF8DBB01FBA9DE1009DE660 /* dummy.cpp */; };
-        9039D3BE24C093AC0020482C /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9039D3BD24C093AC0020482C /* MoltenVK.xcframework */; };
+		9039D3BE24C093AC0020482C /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; fileRef = 9039D3BD24C093AC0020482C /* MoltenVK */; };
+		90B4C2B62680C7E90039117A /* dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B4C2B52680C7E90039117A /* dummy.swift */; };
 		D0BCFE4618AEBDA2004A7AAE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0BCFE4418AEBDA2004A7AAE /* InfoPlist.strings */; };
 		D0BCFE7818AEBFEB004A7AAE /* LiuziChong.pck in Resources */ = {isa = PBXBuildFile; fileRef = D0BCFE7718AEBFEB004A7AAE /* LiuziChong.pck */; };
+		DEADBEEF2F582BE20003B888 /* godot in Frameworks */ = {isa = PBXBuildFile; fileRef = DEADBEEF1F582BE20003B888 /* godot */; };
 		F965960D2BC2C3A800579C7E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F965960C2BC2C3A800579C7E /* PrivacyInfo.xcprivacy */; };
-		
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		90A13CD024AA68E500E8464F /* Embed Frameworks */ = {
-				isa = PBXCopyFilesBuildPhase;
-				buildActionMask = 2147483647;
-				dstPath = "";
-				dstSubfolderSpec = 10;
-				files = (
-					
-				);
-				name = "Embed Frameworks";
-				runOnlyForDeploymentPostprocessing = 0;
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1F1575711F582BE20003B888 /* dylibs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dylibs; path = "LiuziChong/dylibs"; sourceTree = "<group>"; };
-		DEADBEEF1F582BE20003B888 /* LiuziChong.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = godot; path = "LiuziChong.xcframework"; sourceTree = "<group>"; };
-		
-		90B4C2AA2680BC560039117A /* dummy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "dummy.h"; sourceTree = "<group>"; };
-		90B4C2B52680C7E90039117A /* dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "dummy.swift"; sourceTree = "<group>"; };
-		1FF4C1881F584E6300A41E41 /* LiuziChong.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "LiuziChong.entitlements"; sourceTree = "<group>"; };
+		1F1575711F582BE20003B888 /* dylibs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dylibs; path = LiuziChong/dylibs; sourceTree = "<group>"; };
+		1FF4C1881F584E6300A41E41 /* LiuziChong.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LiuziChong.entitlements; sourceTree = "<group>"; };
 		1FF8DBB01FBA9DE1009DE660 /* dummy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dummy.cpp; sourceTree = "<group>"; };
-        9039D3BD24C093AC0020482C /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK; path = "MoltenVK.xcframework"; sourceTree = "<group>"; };
-		D0BCFE3418AEBDA2004A7AAE /* LiuziChong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LiuziChong.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9039D3BD24C093AC0020482C /* MoltenVK */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK; path = MoltenVK.xcframework; sourceTree = "<group>"; };
+		90B4C2AA2680BC560039117A /* dummy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dummy.h; sourceTree = "<group>"; };
+		90B4C2B52680C7E90039117A /* dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dummy.swift; sourceTree = "<group>"; };
+		D0BCFE3418AEBDA2004A7AAE /* LiuziChong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LiuziChong.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0BCFE4318AEBDA2004A7AAE /* LiuziChong-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LiuziChong-Info.plist"; sourceTree = "<group>"; };
 		D0BCFE4518AEBDA2004A7AAE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		
-		D0BCFE7718AEBFEB004A7AAE /* LiuziChong.pck */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LiuziChong.pck"; sourceTree = "<group>"; };
+		D0BCFE7718AEBFEB004A7AAE /* LiuziChong.pck */ = {isa = PBXFileReference; lastKnownFileType = file; path = LiuziChong.pck; sourceTree = "<group>"; };
+		DEADBEEF1F582BE20003B888 /* godot */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = godot; path = LiuziChong.xcframework; sourceTree = "<group>"; };
 		F965960C2BC2C3A800579C7E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		
 /* End PBXFileReference section */
-
-		
 
 /* Begin PBXFrameworksBuildPhase section */
 		D0BCFE3118AEBDA2004A7AAE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-                9039D3BE24C093AC0020482C /* MoltenVK.xcframework in Frameworks */,
-				DEADBEEF2F582BE20003B888 /* LiuziChong.xcframework */,
-				
-				
+				9039D3BE24C093AC0020482C /* MoltenVK in Frameworks */,
+				DEADBEEF2F582BE20003B888 /* godot in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,7 +66,6 @@
 				D0BCFE3618AEBDA2004A7AAE /* Frameworks */,
 				D0BCFE3518AEBDA2004A7AAE /* Products */,
 				F965960C2BC2C3A800579C7E /* PrivacyInfo.xcprivacy */,
-				
 			);
 			sourceTree = "<group>";
 		};
@@ -92,10 +80,8 @@
 		D0BCFE3618AEBDA2004A7AAE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-                9039D3BD24C093AC0020482C /* MoltenVK.xcframework */,
-				DEADBEEF1F582BE20003B888 /* LiuziChong.xcframework */,
-				
-				
+				9039D3BD24C093AC0020482C /* MoltenVK */,
+				DEADBEEF1F582BE20003B888 /* godot */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -103,14 +89,13 @@
 		D0BCFE4118AEBDA2004A7AAE /* LiuziChong */ = {
 			isa = PBXGroup;
 			children = (
-				
 				1FF4C1881F584E6300A41E41 /* LiuziChong.entitlements */,
 				D0BCFE4218AEBDA2004A7AAE /* Supporting Files */,
 				1FF8DBB01FBA9DE1009DE660 /* dummy.cpp */,
 				90B4C2AA2680BC560039117A /* dummy.h */,
 				90B4C2B52680C7E90039117A /* dummy.swift */,
 			);
-			path = "LiuziChong";
+			path = LiuziChong;
 			sourceTree = "<group>";
 		};
 		D0BCFE4218AEBDA2004A7AAE /* Supporting Files */ = {
@@ -138,7 +123,7 @@
 			);
 			dependencies = (
 			);
-			name = "LiuziChong";
+			name = LiuziChong;
 			productName = "六子冲";
 			productReference = D0BCFE3418AEBDA2004A7AAE /* LiuziChong.app */;
 			productType = "com.apple.product-type.application";
@@ -153,7 +138,6 @@
 				ORGANIZATIONNAME = GodotEngine;
 				TargetAttributes = {
 					D0BCFE3318AEBDA2004A7AAE = {
-						DevelopmentTeam = ABCDE12345;
 						LastSwiftMigration = 1250;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -185,10 +169,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0BCFE7818AEBFEB004A7AAE /* LiuziChong.pck in Resources */,
-				
 				D0BCFE4618AEBDA2004A7AAE /* InfoPlist.strings in Resources */,
 				F965960D2BC2C3A800579C7E /* PrivacyInfo.xcprivacy in Resources */,
-				
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,7 +182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FF8DBB11FBA9DE1009DE660 /* dummy.cpp in Sources */,
-				90B4C2B62680C7E90039117A /* dummy.swift */,
+				90B4C2B62680C7E90039117A /* dummy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,7 +193,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				D0BCFE4518AEBDA2004A7AAE /* en */,
-				
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -223,7 +204,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "arm64";
+				ARCHS = arm64;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -239,15 +220,11 @@
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
-				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
-					"$(PROJECT_DIR)/**",
-				);
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -256,9 +233,9 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"LD_CLASSIC_1500" = "-ld_classic";
-				"LD_CLASSIC_1501" = "-ld_classic";
-				"LD_CLASSIC_1510" = "-ld_classic";
+				LD_CLASSIC_1500 = "-ld_classic";
+				LD_CLASSIC_1501 = "-ld_classic";
+				LD_CLASSIC_1510 = "-ld_classic";
 				OTHER_LDFLAGS = "$(LD_CLASSIC_$(XCODE_VERSION_ACTUAL)) ";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -269,7 +246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "arm64";
+				ARCHS = arm64;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -285,10 +262,8 @@
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
-				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
-					"$(PROJECT_DIR)/**",
-				);
 				ENABLE_NS_ASSERTIONS = NO;
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(PROJECT_DIR)/**";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -296,10 +271,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-                IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"LD_CLASSIC_1500" = "-ld_classic";
-				"LD_CLASSIC_1501" = "-ld_classic";
-				"LD_CLASSIC_1510" = "-ld_classic";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_CLASSIC_1500 = "-ld_classic";
+				LD_CLASSIC_1501 = "-ld_classic";
+				LD_CLASSIC_1510 = "-ld_classic";
 				OTHER_LDFLAGS = "$(LD_CLASSIC_$(XCODE_VERSION_ACTUAL)) ";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -310,14 +285,18 @@
 		D0BCFE7218AEBDA3004A7AAE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "arm64";
-				CODE_SIGN_ENTITLEMENTS = "LiuziChong/LiuziChong.entitlements";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = "Automatic";
+				ARCHS = arm64;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = LiuziChong/LiuziChong.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BYSMY792J7;
+				EXECUTABLE_NAME = LiuziChong;
 				INFOPLIST_FILE = "LiuziChong/LiuziChong-Info.plist";
-                IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "六子冲";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -326,34 +305,34 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jianghu.liuzi-chong;
-				INFOPLIST_KEY_CFBundleDisplayName = "六子冲";
-				PRODUCT_NAME = "LiuziChong";
-				EXECUTABLE_NAME = "LiuziChong";
 				MARKETING_VERSION = 1.0;
-				CURRENT_PROJECT_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jianghu.liuzi-chong";
+				PRODUCT_NAME = LiuziChong;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = LiuziChong/dummy.h;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 x86_64";
 				WRAPPER_EXTENSION = app;
-				CLANG_ENABLE_MODULES = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "LiuziChong/dummy.h";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		D0BCFE7318AEBDA3004A7AAE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "arm64";
-				CODE_SIGN_ENTITLEMENTS = "LiuziChong/LiuziChong.entitlements";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = "Automatic";
+				ARCHS = arm64;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = LiuziChong/LiuziChong.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BYSMY792J7;
+				EXECUTABLE_NAME = LiuziChong;
 				INFOPLIST_FILE = "LiuziChong/LiuziChong-Info.plist";
-                IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "六子冲";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -362,20 +341,16 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/**",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jianghu.liuzi-chong;
-				INFOPLIST_KEY_CFBundleDisplayName = "六子冲";
-				PRODUCT_NAME = "LiuziChong";
-				EXECUTABLE_NAME = "LiuziChong";
 				MARKETING_VERSION = 1.0;
-				CURRENT_PROJECT_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jianghu.liuzi-chong";
+				PRODUCT_NAME = LiuziChong;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = LiuziChong/dummy.h;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 x86_64";
 				WRAPPER_EXTENSION = app;
-				CLANG_ENABLE_MODULES = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "LiuziChong/dummy.h";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
