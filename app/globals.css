@@ -1308,3 +1308,168 @@ body, button, a { font-family: var(--font-body); }
   .banner-ornament { width: 21px; height: 21px; }
   .stage-heading { margin-bottom: 19px; }
 }
+
+/* Jade typography direction and phone layout. The third concept uses cool jade
+   highlights and translucent edges; the mobile rules keep the board dominant
+   while moving the controls into a comfortable single-column flow. */
+.game-shell.ui-theme-ink .stage-heading h1,
+.game-shell.ui-theme-ink .panel-intro h2,
+.game-shell.ui-theme-ink .stage-banner-copy b {
+  color: #477b78;
+  text-shadow: 0 1px 0 rgba(247, 255, 247, .72), 0 4px 16px rgba(56, 119, 111, .12);
+}
+.game-shell.ui-theme-ink .eyebrow { color: #6c9f95; }
+.game-shell.ui-theme-ink .turn-pill,
+.game-shell.ui-theme-ink .status-line {
+  border-color: rgba(117, 177, 164, .28);
+  box-shadow: inset 0 0 0 1px rgba(232, 255, 247, .12), 0 9px 20px rgba(50, 110, 101, .12);
+}
+.game-shell.ui-theme-ink .setting-title,
+.game-shell.ui-theme-ink .theme-card-copy b,
+.game-shell.ui-theme-ink .skin-card span,
+.game-shell.ui-theme-ink .piece-choice span {
+  color: #4b7774;
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    height: 64px;
+    padding-inline: 15px;
+  }
+  .brand { gap: 9px; }
+  .brand-mark { width: 36px; height: 36px; border-radius: 11px; }
+  .brand-mark::before, .brand-mark::after { height: 24px; }
+  .brand-mark i:nth-child(1) { top: 8px; }
+  .brand-mark i:nth-child(2) { top: 16px; }
+  .brand-mark i:nth-child(3) { top: 24px; }
+  .brand b { font-size: 17px; letter-spacing: .12em; }
+  .brand small { font-size: 7px; letter-spacing: .18em; }
+  .top-actions { gap: 5px; padding: 3px; }
+  .icon-button { width: 32px; height: 32px; }
+
+  .play-layout {
+    display: block;
+    min-height: auto;
+  }
+  .play-stage {
+    padding: 10px 14px 22px;
+  }
+  .stage-banner {
+    width: min(100%, 430px);
+    min-height: 60px;
+    margin: 0 auto 7px;
+    padding: 8px 25px;
+  }
+  .stage-banner-copy b { font-size: clamp(16px, 5vw, 21px); }
+  .stage-banner-copy small { font-size: 7px; letter-spacing: .16em; }
+  .banner-ornament { width: 19px; height: 19px; }
+  .stage-heading {
+    width: min(100%, 430px);
+    margin: 4px auto 0;
+    align-items: center;
+    gap: 10px;
+  }
+  .stage-heading h1 {
+    font-size: clamp(20px, 6vw, 28px);
+    line-height: 1.15;
+    letter-spacing: .02em;
+  }
+  .stage-heading .eyebrow {
+    margin-bottom: 5px;
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+  .turn-pill {
+    min-width: 82px;
+    padding: 7px 8px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .turn-pill span { margin-right: 4px; }
+
+  .board-wrap {
+    width: min(100%, 380px);
+    margin: 14px auto 0;
+  }
+  .board-frame { border-radius: 20px; }
+  .player-red { left: -2%; top: -4%; }
+  .player-blue { right: -2%; bottom: -4%; }
+  .player-tag {
+    min-width: 112px;
+    padding: 5px 7px;
+    gap: 6px;
+    border-radius: 8px;
+  }
+  .faction-badge { width: 28px; height: 28px; }
+  .player-copy { gap: 2px; }
+  .player-copy small { font-size: 7px; }
+  .player-copy b { font-size: 10px; }
+  .status-line {
+    width: min(100%, 380px);
+    margin-top: 13px;
+    padding: 8px 26px 8px 10px;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .board-actions {
+    width: min(100%, 380px);
+    gap: 7px;
+    margin: 10px auto 0;
+  }
+  .board-actions button {
+    flex: 1;
+    min-height: 35px;
+    justify-content: center;
+    padding: 7px 8px;
+    font-size: 10px;
+  }
+
+  .control-panel {
+    display: block;
+    padding: 24px 14px 32px;
+    border-top: 1px solid rgba(37, 75, 71, .18);
+    border-left: 0;
+    background-size: 100% 100%, cover;
+  }
+  .panel-intro {
+    padding-left: 13px;
+    padding-bottom: 17px;
+  }
+  .panel-kicker { margin-bottom: 12px; font-size: 8px; }
+  .panel-intro h2 { margin-bottom: 7px; font-size: 23px; }
+  .panel-intro > p:last-child { font-size: 12px; line-height: 1.65; }
+  .setting-group { padding: 16px 0 17px; }
+  .setting-title { margin-bottom: 10px; font-size: 12px; }
+  .theme-options { gap: 5px; }
+  .theme-card { min-height: 84px; padding: 5px; border-radius: 10px; }
+  .theme-card > i { height: 34px; padding: 5px; }
+  .theme-card-copy b { font-size: 9px; }
+  .theme-card-copy small { font-size: 7px; }
+  .skin-row.four, .piece-options.four { gap: 5px; }
+  .skin-card { padding: 4px 4px 6px; border-radius: 10px; }
+  .skin-card i { height: 42px; margin-bottom: 5px; border-radius: 7px; }
+  .skin-card span, .piece-choice span { font-size: 9px; }
+  .piece-choice { min-height: 68px; border-radius: 10px; gap: 4px; }
+  .demo-piece { width: 27px; height: 27px; }
+  .audio-settings { margin-top: 14px; padding: 4px 10px 10px; }
+  .audio-settings::before { font-size: 7px; }
+  .sound-row { padding-top: 11px; }
+  .sound-row > span { grid-template-columns: 26px auto; }
+  .sound-row b { font-size: 10px; }
+  .sound-row small { font-size: 8px; }
+  .track-picker { margin-left: 26px; }
+  .track-picker button { padding: 6px 2px; font-size: 8px; }
+  .primary-button { margin-top: 18px; min-height: 44px; padding: 11px 14px; font-size: 12px; }
+  .rules-link { margin-top: 9px; font-size: 10px; }
+}
+
+@media (max-width: 390px) {
+  .play-stage { padding-inline: 10px; }
+  .stage-banner { padding-inline: 20px; }
+  .stage-heading h1 { font-size: 21px; }
+  .turn-pill { min-width: 76px; font-size: 9px; }
+  .board-wrap { width: min(100%, 350px); }
+  .player-tag { min-width: 102px; }
+  .player-copy b { font-size: 9px; }
+  .control-panel { padding-inline: 10px; }
+}
