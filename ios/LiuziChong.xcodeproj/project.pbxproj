@@ -244,7 +244,10 @@
 				LD_CLASSIC_1500 = "-ld_classic";
 				LD_CLASSIC_1501 = "-ld_classic";
 				LD_CLASSIC_1510 = "-ld_classic";
-				OTHER_LDFLAGS = "$(LD_CLASSIC_$(XCODE_VERSION_ACTUAL)) ";
+				/* The Godot static archive contains the iOS launcher in its main_ios
+				 * object file. Force that archive member into the final app so Xcode
+				 * can resolve the application entry point. */
+				OTHER_LDFLAGS = "$(LD_CLASSIC_$(XCODE_VERSION_ACTUAL)) -u _main";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -283,7 +286,7 @@
 				LD_CLASSIC_1500 = "-ld_classic";
 				LD_CLASSIC_1501 = "-ld_classic";
 				LD_CLASSIC_1510 = "-ld_classic";
-				OTHER_LDFLAGS = "$(LD_CLASSIC_$(XCODE_VERSION_ACTUAL)) ";
+				OTHER_LDFLAGS = "$(LD_CLASSIC_$(XCODE_VERSION_ACTUAL)) -u _main";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

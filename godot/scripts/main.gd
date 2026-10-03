@@ -1051,10 +1051,10 @@ func _update_responsive() -> void:
 	queue_redraw()
 
 func _safe_area_insets(viewport_size: Vector2) -> Vector4:
-	# Window.get_safe_area() is in viewport coordinates and returns the full
-	# viewport on platforms without cutouts. Keep a defensive fallback for
-	# older Godot exports and for headless/editor runs.
-	var safe_rect: Rect2 = get_window().get_safe_area()
+	# DisplayServer returns the safe rectangle in viewport coordinates and
+	# returns the full viewport on platforms without cutouts. Keep a defensive
+	# fallback for headless/editor runs and older export templates.
+	var safe_rect: Rect2 = DisplayServer.get_display_safe_area()
 	if safe_rect.size.x <= 0.0 or safe_rect.size.y <= 0.0:
 		return Vector4.ZERO
 	return Vector4(
