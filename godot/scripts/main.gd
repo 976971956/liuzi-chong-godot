@@ -103,9 +103,12 @@ func _draw() -> void:
 	var base: Color = background_colors[board_skin]
 	draw_rect(Rect2(Vector2.ZERO, size), base)
 	# The generated portrait artwork provides the game atmosphere. Keep a
-	# translucent wash above it so the board and labels remain readable.
-	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.42))
-	draw_texture_rect(GENERATED_GAME_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.62))
+	# translucent wash above it so the board and labels remain readable. Draw
+	# both images as aspect-preserving covers: stretching a portrait source to
+	# an iPad/landscape viewport makes the lanterns, mountains and scrolls look
+	# visibly wide on phones and tablets.
+	_draw_cover_texture(UI_BACKGROUND, Color(1, 1, 1, 0.42))
+	_draw_cover_texture(GENERATED_GAME_BACKGROUND, Color(1, 1, 1, 0.62))
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.06, 0.05, 0.18))
 	var accent: Color = [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
 	var ink: Color = [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
@@ -115,6 +118,26 @@ func _draw() -> void:
 	for index in range(7):
 		var y := size.y * (0.16 + float(index) * 0.14)
 		draw_line(Vector2(-20, y), Vector2(size.x + 20, y + size.x * 0.06), Color(ink, 0.035), 1.0)
+
+func _draw_cover_texture(texture: Texture2D, tint := Color.WHITE) -> void:
+	# Fill the viewport while preserving a generated artwork's aspect ratio.
+	if texture == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var source_size := Vector2(texture.get_width(), texture.get_height())
+	var target_ratio := size.x / size.y
+	var source_ratio := source_size.x / source_size.y
+	var source := Rect2(Vector2.ZERO, source_size)
+	if source_ratio > target_ratio:
+		# The source is wider than the viewport; crop equal strips left/right.
+		var crop_width := source_size.y * target_ratio
+		source.position.x = (source_size.x - crop_width) * 0.5
+		source.size.x = crop_width
+	else:
+		# The source is taller than the viewport; crop equal strips top/bottom.
+		var crop_height := source_size.x / target_ratio
+		source.position.y = (source_size.y - crop_height) * 0.5
+		source.size.y = crop_height
+	draw_texture_rect_region(texture, Rect2(Vector2.ZERO, size), source, tint)
 
 func _build_ui() -> void:
 	var root_vbox := VBoxContainer.new()
@@ -628,7 +651,7 @@ func _return_home_from_result() -> void:
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
 	rules_dialog.theme = theme
-	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(GENERATED_MODAL_FRAME, 126.0, Color(1, 1, 1, 0.97)))
+	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(GENERATED_MODAL_FRAME, 150.0, Color(1, 1, 1, 0.97), 142.0))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -1006,6 +1029,7 @@ func _update_responsive() -> void:
 		brand_stack.visible = true
 		for button in header_buttons:
 			button.custom_minimum_size = Vector2(46, 46)
+	queue_redraw()
 
 func _safe_area_insets(viewport_size: Vector2) -> Vector4:
 	# Window.get_safe_area() is in viewport coordinates and returns the full
@@ -1047,7 +1071,10 @@ func _style(background: Color, radius: int, border_color := Color.TRANSPARENT, b
 func _panel_surface(background: Color, radius: int, border_color: Color) -> StyleBox:
 	# Popups and the landing card share one illustrated frame, so every modal
 	# feels like part of the same game world instead of a system dialog.
-	var style := _generated_panel_style(GENERATED_SETTINGS_FRAME, 142.0, Color(1, 1, 1, 0.96))
+	# settings_frame_filled.png has a taller crown/base than side rails. Keep
+	# those source regions separate so resizing a phone sheet does not squash
+	# the crown into the center of the panel.
+	var style := _generated_panel_style(GENERATED_SETTINGS_FRAME, 178.0, Color(1, 1, 1, 0.96), 208.0)
 	style.content_margin_left = 28.0
 	style.content_margin_right = 28.0
 	style.content_margin_top = 30.0
@@ -1089,30 +1116,37 @@ func _apply_premium_icon_button(button: Button, size := 46.0) -> void:
 func _texture_button_style(texture: Texture2D, margin := 18.0, tint := Color.WHITE) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()
 	style.texture = texture
+	# button_plate.png is a very wide plate with deeper top/bottom ornaments
+	# than the old flat cards. Use real nine-slice margins on all four sides;
+	# the previous 10 px vertical margins compressed those ornaments into a
+	# thin line on a 44 px phone button.
 	style.texture_margin_left = margin
 	style.texture_margin_right = margin
-	style.texture_margin_top = minf(margin, 10.0)
-	style.texture_margin_bottom = minf(margin, 10.0)
-	# Keep the nine-slice bevel intact without letting its wide corner slices
-	# squeeze icons and labels into the remaining center pixels on small screens.
-	style.content_margin_left = 8.0
-	style.content_margin_right = 8.0
-	style.content_margin_top = 6.0
-	style.content_margin_bottom = 6.0
+	style.texture_margin_top = margin * 0.70
+	style.texture_margin_bottom = margin * 0.70
+	# Keep the label inside the jade center instead of over the gold bevel.
+	style.content_margin_left = 14.0
+	style.content_margin_right = 14.0
+	style.content_margin_top = 10.0
+	style.content_margin_bottom = 10.0
 	style.modulate_color = tint
 	return style
 
-func _generated_panel_style(texture: Texture2D, margin := 32.0, tint := Color.WHITE) -> StyleBoxTexture:
+func _generated_panel_style(texture: Texture2D, margin := 32.0, tint := Color.WHITE, vertical_margin := -1.0) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()
 	style.texture = texture
 	style.texture_margin_left = margin
 	style.texture_margin_right = margin
-	style.texture_margin_top = margin
-	style.texture_margin_bottom = margin
-	style.content_margin_left = 24.0
-	style.content_margin_right = 24.0
-	style.content_margin_top = 24.0
-	style.content_margin_bottom = 24.0
+	var y_margin := margin if vertical_margin <= 0.0 else vertical_margin
+	style.texture_margin_top = y_margin
+	style.texture_margin_bottom = y_margin
+	# Keep the corner ornaments from being stretched into the panel body.
+	# StyleBoxTexture scales the margins down proportionally if a compact
+	# phone popup is smaller than the combined source margins.
+	style.content_margin_left = maxf(30.0, margin * 0.28)
+	style.content_margin_right = maxf(30.0, margin * 0.28)
+	style.content_margin_top = maxf(30.0, y_margin * 0.28)
+	style.content_margin_bottom = maxf(30.0, y_margin * 0.28)
 	style.modulate_color = tint
 	return style
 
