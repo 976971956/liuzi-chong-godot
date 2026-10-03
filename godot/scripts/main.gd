@@ -42,7 +42,12 @@ var game_root: VBoxContainer
 var home_page: Control
 var left_column: VBoxContainer
 var settings_panel: PopupPanel
+var header_panel: PanelContainer
 var header_margin: MarginContainer
+var header_row: HBoxContainer
+var brand_mark: Button
+var brand_stack: VBoxContainer
+var header_buttons: Array[Button] = []
 var page_margin: MarginContainer
 var action_layout: BoxContainer
 var board_view: Control
@@ -118,17 +123,17 @@ func _build_ui() -> void:
 	root_vbox.add_theme_constant_override("separation", 0)
 	add_child(root_vbox)
 
-	var header := PanelContainer.new()
-	header.custom_minimum_size.y = 72
-	header.add_theme_stylebox_override("panel", _style(Color("fbf8f1"), 0, Color("d8d0c2"), 1))
-	root_vbox.add_child(header)
+	header_panel = PanelContainer.new()
+	header_panel.custom_minimum_size.y = 72
+	header_panel.add_theme_stylebox_override("panel", _style(Color("fbf8f1"), 0, Color("d8d0c2"), 1))
+	root_vbox.add_child(header_panel)
 	header_margin = _margin(48, 48, 10, 10)
-	header.add_child(header_margin)
-	var header_row := HBoxContainer.new()
+	header_panel.add_child(header_margin)
+	header_row = HBoxContainer.new()
 	header_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	header_row.add_theme_constant_override("separation", 8)
 	header_margin.add_child(header_row)
-	var brand_mark := Button.new()
+	brand_mark = Button.new()
 	brand_mark.text = "六"
 	brand_mark.tooltip_text = "重新开始"
 	brand_mark.custom_minimum_size = Vector2(42, 42)
@@ -138,7 +143,7 @@ func _build_ui() -> void:
 	brand_mark.add_theme_stylebox_override("hover", _style(Color("2b5142"), 12, Color("d3a75e"), 1))
 	brand_mark.pressed.connect(func(): _new_game(true))
 	header_row.add_child(brand_mark)
-	var brand_stack := VBoxContainer.new()
+	brand_stack = VBoxContainer.new()
 	brand_stack.add_theme_constant_override("separation", -3)
 	header_row.add_child(brand_stack)
 	var brand_title := Label.new()
@@ -161,6 +166,7 @@ func _build_ui() -> void:
 	_apply_premium_icon_button(music_button)
 	music_button.pressed.connect(_toggle_music_from_header)
 	header_row.add_child(music_button)
+	header_buttons.append(music_button)
 	var settings_button := Button.new()
 	settings_button.icon = ICON_SETTINGS
 	settings_button.expand_icon = true
@@ -168,6 +174,7 @@ func _build_ui() -> void:
 	_apply_premium_icon_button(settings_button)
 	settings_button.pressed.connect(_show_settings)
 	header_row.add_child(settings_button)
+	header_buttons.append(settings_button)
 	var help_button := Button.new()
 	help_button.icon = ICON_RULES
 	help_button.expand_icon = true
@@ -175,6 +182,7 @@ func _build_ui() -> void:
 	_apply_premium_icon_button(help_button)
 	help_button.pressed.connect(_show_rules)
 	header_row.add_child(help_button)
+	header_buttons.append(help_button)
 
 	var main_scroll := ScrollContainer.new()
 	main_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -944,33 +952,74 @@ func _show_rules() -> void:
 func _update_responsive() -> void:
 	if not content_box:
 		return
-	var width := get_viewport_rect().size.x
-	var narrow := width < 700.0
+	var viewport_size := get_viewport_rect().size
+	var width := viewport_size.x
+	var safe_insets := _safe_area_insets(viewport_size)
+	var safe_left := safe_insets.x
+	var safe_top := safe_insets.y
+	var safe_right := safe_insets.z
+	var safe_bottom := safe_insets.w
+	var usable_width := maxf(280.0, width - safe_left - safe_right)
+	var narrow := usable_width < 700.0
+	var compact := usable_width < 370.0
 	content_box.vertical = true
+	# The root is drawn edge-to-edge on iOS. Keep the navigation inside the
+	# notch / Dynamic Island safe area while preserving a compact 56 px bar on
+	# small phones. Safe-area values are zero on desktop and in the editor.
+	var header_height := 68.0 if narrow else 76.0
+	header_panel.custom_minimum_size.y = header_height + safe_top + safe_bottom
+	header_margin.add_theme_constant_override("margin_left", int(maxf(12.0, safe_left + (8.0 if narrow else 28.0))))
+	header_margin.add_theme_constant_override("margin_right", int(maxf(12.0, safe_right + (8.0 if narrow else 28.0))))
+	header_margin.add_theme_constant_override("margin_top", int(safe_top + (7.0 if narrow else 10.0)))
+	header_margin.add_theme_constant_override("margin_bottom", int(safe_bottom + (7.0 if narrow else 10.0)))
 	if narrow:
 		left_column.custom_minimum_size.x = 0
-		board_view.custom_minimum_size = Vector2(maxf(280.0, width - 24.0), 430)
+		board_view.custom_minimum_size = Vector2(usable_width - 24.0, 430)
 		action_layout.vertical = true
 		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		header_margin.add_theme_constant_override("margin_left", 12)
-		header_margin.add_theme_constant_override("margin_right", 12)
-		page_margin.add_theme_constant_override("margin_left", 12)
-		page_margin.add_theme_constant_override("margin_right", 12)
+		page_margin.add_theme_constant_override("margin_left", int(maxf(12.0, safe_left + 12.0)))
+		page_margin.add_theme_constant_override("margin_right", int(maxf(12.0, safe_right + 12.0)))
 		page_margin.add_theme_constant_override("margin_top", 12)
+		page_margin.add_theme_constant_override("margin_bottom", int(maxf(20.0, safe_bottom + 18.0)))
 		headline.add_theme_font_size_override("font_size", 22)
-		turn_label.custom_minimum_size.x = 96
+		turn_label.custom_minimum_size.x = 92 if compact else 96
+		header_row.add_theme_constant_override("separation", 4 if compact else 6)
+		brand_mark.custom_minimum_size = Vector2(36, 36) if compact else Vector2(40, 40)
+		brand_mark.add_theme_font_size_override("font_size", 17 if compact else 19)
+		brand_stack.visible = not compact
+		for button in header_buttons:
+			button.custom_minimum_size = Vector2(38, 38) if compact else Vector2(42, 42)
 	else:
-		left_column.custom_minimum_size.x = minf(1040.0, width - 104.0)
+		left_column.custom_minimum_size.x = minf(1040.0, usable_width - 104.0)
 		board_view.custom_minimum_size = Vector2(560, 640)
 		action_layout.vertical = false
 		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		header_margin.add_theme_constant_override("margin_left", 48)
-		header_margin.add_theme_constant_override("margin_right", 48)
-		page_margin.add_theme_constant_override("margin_left", 52)
-		page_margin.add_theme_constant_override("margin_right", 52)
+		page_margin.add_theme_constant_override("margin_left", int(maxf(52.0, safe_left + 52.0)))
+		page_margin.add_theme_constant_override("margin_right", int(maxf(52.0, safe_right + 52.0)))
 		page_margin.add_theme_constant_override("margin_top", 24)
+		page_margin.add_theme_constant_override("margin_bottom", int(maxf(24.0, safe_bottom + 24.0)))
 		headline.add_theme_font_size_override("font_size", 28)
 		turn_label.custom_minimum_size.x = 112
+		header_row.add_theme_constant_override("separation", 8)
+		brand_mark.custom_minimum_size = Vector2(42, 42)
+		brand_mark.add_theme_font_size_override("font_size", 20)
+		brand_stack.visible = true
+		for button in header_buttons:
+			button.custom_minimum_size = Vector2(46, 46)
+
+func _safe_area_insets(viewport_size: Vector2) -> Vector4:
+	# Window.get_safe_area() is in viewport coordinates and returns the full
+	# viewport on platforms without cutouts. Keep a defensive fallback for
+	# older Godot exports and for headless/editor runs.
+	var safe_rect: Rect2 = get_window().get_safe_area()
+	if safe_rect.size.x <= 0.0 or safe_rect.size.y <= 0.0:
+		return Vector4.ZERO
+	return Vector4(
+		maxf(0.0, safe_rect.position.x),
+		maxf(0.0, safe_rect.position.y),
+		maxf(0.0, viewport_size.x - safe_rect.end.x),
+		maxf(0.0, viewport_size.y - safe_rect.end.y)
+	)
 
 func _margin(left: int, right: int, top: int, bottom: int) -> MarginContainer:
 	var margin := MarginContainer.new()

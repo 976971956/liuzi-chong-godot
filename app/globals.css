@@ -1593,3 +1593,160 @@ body { overflow-x: hidden; }
     background-size: 100% 100%, cover;
   }
 }
+
+/* Safe-area aware navigation. The game is edge-to-edge on iOS so the header
+   owns the notch / Dynamic Island inset instead of letting the first row of
+   controls sit underneath it. Keeping the brand flexible also prevents the
+   action group from pushing the title off-screen on narrow phones. */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+.topbar {
+  flex: 0 0 auto;
+  height: calc(86px + var(--safe-top));
+  min-height: calc(86px + var(--safe-top));
+  padding-top: var(--safe-top);
+  padding-right: max(24px, calc(24px + var(--safe-right)));
+  padding-left: max(24px, calc(24px + var(--safe-left)));
+}
+
+.brand {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.brand > span:last-child {
+  min-width: 0;
+}
+
+.brand b,
+.brand small {
+  white-space: nowrap;
+}
+
+.top-actions {
+  flex: 0 0 auto;
+}
+
+.play-layout {
+  min-height: calc(100svh - 86px - var(--safe-top));
+}
+
+@media (min-width: 761px) and (max-width: 980px) {
+  .topbar {
+    height: calc(76px + var(--safe-top));
+    min-height: calc(76px + var(--safe-top));
+    padding-right: max(20px, calc(20px + var(--safe-right)));
+    padding-left: max(20px, calc(20px + var(--safe-left)));
+  }
+
+  .play-layout {
+    min-height: calc(100svh - 76px - var(--safe-top));
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    height: calc(64px + var(--safe-top));
+    min-height: calc(64px + var(--safe-top));
+    padding-top: var(--safe-top);
+    padding-right: max(14px, calc(14px + var(--safe-right)));
+    padding-left: max(14px, calc(14px + var(--safe-left)));
+  }
+
+  .play-layout {
+    min-height: calc(100svh - 64px - var(--safe-top));
+  }
+
+  .brand {
+    gap: clamp(7px, 2.4vw, 10px);
+  }
+
+  .brand b {
+    font-size: clamp(15px, 4.6vw, 18px);
+    letter-spacing: clamp(.08em, 1.4vw, .14em);
+  }
+
+  .brand small {
+    font-size: clamp(6px, 1.8vw, 8px);
+    letter-spacing: clamp(.11em, 1vw, .2em);
+  }
+
+  .top-actions {
+    gap: clamp(3px, 1.6vw, 6px);
+    padding: 3px;
+  }
+
+  .icon-button {
+    width: clamp(30px, 8.4vw, 36px);
+    height: clamp(30px, 8.4vw, 36px);
+    border-radius: clamp(9px, 2.8vw, 12px);
+  }
+
+  .icon-button .ui-icon {
+    width: clamp(20px, 6vw, 24px);
+    height: clamp(20px, 6vw, 24px);
+  }
+}
+
+@media (max-width: 350px) {
+  .topbar {
+    padding-right: max(10px, calc(10px + var(--safe-right)));
+    padding-left: max(10px, calc(10px + var(--safe-left)));
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+
+  .brand-mark::before,
+  .brand-mark::after { height: 21px; }
+  .brand-mark::before { left: 9px; }
+  .brand-mark::after { right: 9px; }
+  .brand-mark i { width: 22px; left: 5px; }
+  .brand-mark i:nth-child(1) { top: 7px; }
+  .brand-mark i:nth-child(2) { top: 14px; }
+  .brand-mark i:nth-child(3) { top: 21px; }
+  .brand small { display: none; }
+  .brand b { font-size: 15px; }
+  .icon-button { width: 30px; height: 30px; }
+}
+
+/* In landscape the viewport height is the scarce dimension. Keep the HUD
+   usable on phones while leaving the board room to breathe below it. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .topbar {
+    height: calc(54px + var(--safe-top));
+    min-height: calc(54px + var(--safe-top));
+    padding-right: max(16px, calc(16px + var(--safe-right)));
+    padding-left: max(16px, calc(16px + var(--safe-left)));
+  }
+
+  .brand-mark { width: 31px; height: 31px; border-radius: 9px; }
+  .brand b { font-size: 15px; }
+  .brand small { display: none; }
+  .icon-button { width: 30px; height: 30px; }
+  .play-layout { min-height: calc(100svh - 54px - var(--safe-top)); }
+}
+
+@supports (height: 100dvh) {
+  .play-layout { min-height: calc(100dvh - 86px - var(--safe-top)); }
+
+  @media (min-width: 761px) and (max-width: 980px) {
+    .play-layout { min-height: calc(100dvh - 76px - var(--safe-top)); }
+  }
+
+  @media (max-width: 760px) {
+    .play-layout { min-height: calc(100dvh - 64px - var(--safe-top)); }
+  }
+
+  @media (max-height: 520px) and (orientation: landscape) {
+    .play-layout { min-height: calc(100dvh - 54px - var(--safe-top)); }
+  }
+}
