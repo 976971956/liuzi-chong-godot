@@ -12,6 +12,8 @@
 		90B4C2B62680C7E90039117A /* dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B4C2B52680C7E90039117A /* dummy.swift */; };
 		D0BCFE4618AEBDA2004A7AAE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0BCFE4418AEBDA2004A7AAE /* InfoPlist.strings */; };
 		D0BCFE7818AEBFEB004A7AAE /* LiuziChong.pck in Resources */ = {isa = PBXBuildFile; fileRef = D0BCFE7718AEBFEB004A7AAE /* LiuziChong.pck */; };
+		E6A04E5E2A8C000100000001 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E6A04E5D2A8C000100000001 /* Launch Screen.storyboard */; };
+		E6A04E602A8C000100000002 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E6A04E5F2A8C000100000002 /* Images.xcassets */; };
 		DEADBEEF2F582BE20003B888 /* godot in Frameworks */ = {isa = PBXBuildFile; fileRef = DEADBEEF1F582BE20003B888 /* godot */; };
 		F965960D2BC2C3A800579C7E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F965960C2BC2C3A800579C7E /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -40,6 +42,8 @@
 		D0BCFE4318AEBDA2004A7AAE /* LiuziChong-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LiuziChong-Info.plist"; sourceTree = "<group>"; };
 		D0BCFE4518AEBDA2004A7AAE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D0BCFE7718AEBFEB004A7AAE /* LiuziChong.pck */ = {isa = PBXFileReference; lastKnownFileType = file; path = LiuziChong.pck; sourceTree = "<group>"; };
+		E6A04E5D2A8C000100000001 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		E6A04E5F2A8C000100000002 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		DEADBEEF1F582BE20003B888 /* godot */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = godot; path = LiuziChong.xcframework; sourceTree = "<group>"; };
 		F965960C2BC2C3A800579C7E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -91,6 +95,8 @@
 			children = (
 				1FF4C1881F584E6300A41E41 /* LiuziChong.entitlements */,
 				D0BCFE4218AEBDA2004A7AAE /* Supporting Files */,
+				E6A04E5D2A8C000100000001 /* Launch Screen.storyboard */,
+				E6A04E5F2A8C000100000002 /* Images.xcassets */,
 				1FF8DBB01FBA9DE1009DE660 /* dummy.cpp */,
 				90B4C2AA2680BC560039117A /* dummy.h */,
 				90B4C2B52680C7E90039117A /* dummy.swift */,
@@ -170,6 +176,8 @@
 			files = (
 				D0BCFE7818AEBFEB004A7AAE /* LiuziChong.pck in Resources */,
 				D0BCFE4618AEBDA2004A7AAE /* InfoPlist.strings in Resources */,
+				E6A04E5E2A8C000100000001 /* Launch Screen.storyboard in Resources */,
+				E6A04E602A8C000100000002 /* Images.xcassets in Resources */,
 				F965960D2BC2C3A800579C7E /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,6 +304,7 @@
 				EXECUTABLE_NAME = LiuziChong;
 				INFOPLIST_FILE = "LiuziChong/LiuziChong-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "六子冲";
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -332,6 +341,7 @@
 				EXECUTABLE_NAME = LiuziChong;
 				INFOPLIST_FILE = "LiuziChong/LiuziChong-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "六子冲";
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

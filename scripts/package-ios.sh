@@ -46,6 +46,7 @@ xcodebuild \
   -scheme LiuziChong \
   -configuration "$CONFIGURATION" \
   -sdk iphoneos \
+  -derivedDataPath "$OUT_DIR/DerivedData" \
   -archivePath "$ARCHIVE_PATH" \
   -allowProvisioningUpdates \
   DEVELOPMENT_TEAM="$TEAM_ID" \

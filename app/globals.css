@@ -1474,3 +1474,122 @@ body, button, a { font-family: var(--font-body); }
   .player-copy b { font-size: 9px; }
   .control-panel { padding-inline: 10px; }
 }
+
+/* Generated web UI kit. Keep the art inside the root public directory so it is
+   available from both the local Next preview and the deployed site. The scroll
+   background avoids iOS WebKit's fixed-background letterboxing/repaint bug. */
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  background-color: #071b1c;
+}
+
+body { overflow-x: hidden; }
+
+.game-shell,
+.game-shell.ui-theme-ink {
+  width: 100%;
+  min-height: 100svh;
+  background-color: #071b1c;
+  background-image:
+    linear-gradient(180deg, rgba(7, 23, 24, .18), rgba(7, 23, 24, .62)),
+    url('/ui_generated/game_bg_portrait.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: scroll;
+}
+
+@supports (height: 100dvh) {
+  .game-shell { min-height: 100dvh; }
+}
+
+/* The generated plate has a transparent center, so a readable material color
+   stays underneath while the gold-green frame carries the game treatment. */
+.game-shell .primary-button,
+.game-shell .board-actions button,
+.game-shell .track-picker button,
+.game-shell .rules-link {
+  background-color: rgba(11, 45, 39, .72);
+  background-image:
+    linear-gradient(180deg, rgba(26, 83, 65, .3), rgba(5, 26, 26, .44)),
+    url('/ui_generated/button_plate.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  border-color: rgba(221, 180, 91, .38);
+  color: #f4e9c8;
+  text-shadow: 0 1px 2px rgba(5, 24, 23, .7);
+}
+
+.game-shell .primary-button:hover,
+.game-shell .board-actions button:hover:not(:disabled),
+.game-shell .track-picker button:hover,
+.game-shell .rules-link:hover {
+  background-color: rgba(16, 68, 55, .8);
+  border-color: rgba(241, 204, 115, .7);
+  filter: brightness(1.08) saturate(1.08);
+}
+
+.game-shell .primary-button span,
+.game-shell .rules-link .ui-icon-arrow-small { color: #f2cb72; }
+
+.game-shell .control-panel {
+  background-color: rgba(12, 35, 32, .78);
+  background-image:
+    url('/ui_generated/settings_frame.png'),
+    linear-gradient(135deg, rgba(12, 43, 39, .9), rgba(8, 27, 29, .82));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%, cover;
+  border-left: 1px solid rgba(224, 181, 91, .26);
+}
+
+.game-shell .theme-card,
+.game-shell .skin-card,
+.game-shell .piece-choice {
+  background-color: rgba(9, 40, 36, .72);
+  background-image:
+    linear-gradient(135deg, rgba(30, 92, 70, .34), rgba(8, 27, 28, .48)),
+    url('/ui_generated/button_plate.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  border-color: rgba(225, 180, 87, .24);
+  color: #e9dfc1;
+}
+
+.game-shell .theme-card:hover,
+.game-shell .skin-card:hover,
+.game-shell .piece-choice:hover,
+.game-shell .theme-card.active,
+.game-shell .skin-card.active,
+.game-shell .piece-choice.active {
+  background-color: rgba(26, 83, 65, .84);
+  border-color: rgba(235, 192, 100, .72);
+}
+
+.game-shell .rules-modal {
+  background-color: #142e2b;
+  background-image:
+    url('/ui_generated/modal_frame.png'),
+    linear-gradient(135deg, rgba(238, 226, 195, .98), rgba(200, 187, 156, .96));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%, cover;
+  border: 0;
+  color: #183b3d;
+  box-shadow: 0 32px 100px rgba(2, 14, 15, .64), 0 0 0 1px rgba(231, 194, 113, .35);
+}
+
+@media (max-width: 760px) {
+  .game-shell {
+    min-height: 100svh;
+    background-position: center top;
+  }
+
+  .game-shell .control-panel {
+    background-size: 100% 100%, cover;
+  }
+}

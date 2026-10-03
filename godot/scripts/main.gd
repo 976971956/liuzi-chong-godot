@@ -17,6 +17,10 @@ const ICON_RULES = preload("res://assets/icons/generated_rules_v2.png")
 const ICON_UNDO = preload("res://assets/icons/generated_undo_v2.png")
 const ICON_RESTART = preload("res://assets/icons/generated_restart_v2.png")
 const ICON_CLOSE = preload("res://assets/icons/generated_close_v2.png")
+const GENERATED_GAME_BACKGROUND = preload("res://assets/ui_generated/game_bg_portrait.png")
+const GENERATED_MODAL_FRAME = preload("res://assets/ui_generated/modal_frame_filled.png")
+const GENERATED_SETTINGS_FRAME = preload("res://assets/ui_generated/settings_frame_filled.png")
+const GENERATED_BUTTON_PLATE = preload("res://assets/ui_generated/button_plate.png")
 
 var board: Array[String] = []
 var current := "red"
@@ -93,7 +97,11 @@ func _ready() -> void:
 func _draw() -> void:
 	var base: Color = background_colors[board_skin]
 	draw_rect(Rect2(Vector2.ZERO, size), base)
-	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.88))
+	# The generated portrait artwork provides the game atmosphere. Keep a
+	# translucent wash above it so the board and labels remain readable.
+	draw_texture_rect(UI_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.42))
+	draw_texture_rect(GENERATED_GAME_BACKGROUND, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, 0.62))
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.02, 0.06, 0.05, 0.18))
 	var accent: Color = [Color("8eb3a5"), Color("9dc6b8"), Color("3b5577"), Color("c7a879")][board_skin]
 	var ink: Color = [Color("31534d"), Color("47766c"), Color("0a1325"), Color("8a6049")][board_skin]
 	draw_circle(Vector2(size.x * 0.08, size.y * 0.12), size.x * 0.75, Color(accent, 0.15))
@@ -612,7 +620,7 @@ func _return_home_from_result() -> void:
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
 	rules_dialog.theme = theme
-	rules_dialog.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.98), 24, Color("cdbda4", 0.92)))
+	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(GENERATED_MODAL_FRAME, 126.0, Color(1, 1, 1, 0.97)))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -987,11 +995,14 @@ func _style(background: Color, radius: int, border_color := Color.TRANSPARENT, b
 		style.border_width_bottom = border_width
 	return style
 
-func _panel_surface(background: Color, radius: int, border_color: Color) -> StyleBoxFlat:
-	var style := _style(background, radius, border_color, 1)
-	style.shadow_color = Color(0.05, 0.09, 0.08, 0.22)
-	style.shadow_size = 14
-	style.shadow_offset = Vector2(0, 5)
+func _panel_surface(background: Color, radius: int, border_color: Color) -> StyleBox:
+	# Popups and the landing card share one illustrated frame, so every modal
+	# feels like part of the same game world instead of a system dialog.
+	var style := _generated_panel_style(GENERATED_SETTINGS_FRAME, 142.0, Color(1, 1, 1, 0.96))
+	style.content_margin_left = 28.0
+	style.content_margin_right = 28.0
+	style.content_margin_top = 30.0
+	style.content_margin_bottom = 30.0
 	return style
 
 func _option_style(background: Color, border_color: Color) -> StyleBoxFlat:
@@ -1049,10 +1060,10 @@ func _generated_panel_style(texture: Texture2D, margin := 32.0, tint := Color.WH
 	style.texture_margin_right = margin
 	style.texture_margin_top = margin
 	style.texture_margin_bottom = margin
-	style.content_margin_left = 18.0
-	style.content_margin_right = 18.0
-	style.content_margin_top = 14.0
-	style.content_margin_bottom = 14.0
+	style.content_margin_left = 24.0
+	style.content_margin_right = 24.0
+	style.content_margin_top = 24.0
+	style.content_margin_bottom = 24.0
 	style.modulate_color = tint
 	return style
 
@@ -1072,10 +1083,10 @@ func _small_button(text: String) -> Button:
 	button.add_theme_color_override("icon_normal_color", Color("405248"))
 	button.add_theme_color_override("icon_hover_color", Color("a7523f"))
 	button.add_theme_color_override("icon_disabled_color", Color("9b9f9c"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("fffdf8"), Color("c7cfc6")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("edf4ed"), Color("729785")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("dceadd"), Color("729785")))
-	button.add_theme_stylebox_override("disabled", _option_style(Color("e9e9e4"), Color("d2d7cf")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.82, 0.90, 0.86, 0.94)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.98, 0.95, 0.82, 1.0)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.70, 0.82, 0.76, 1.0)))
+	button.add_theme_stylebox_override("disabled", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.48, 0.56, 0.52, 0.62)))
 	return button
 
 func _primary_button(text: String) -> Button:
@@ -1088,9 +1099,9 @@ func _primary_button(text: String) -> Button:
 	button.add_theme_color_override("icon_normal_color", Color("fff8e9"))
 	button.add_theme_color_override("icon_hover_color", Color.WHITE)
 	button.add_theme_color_override("icon_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("234b3f"), Color("7da18c")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("30604e"), Color("a9c3a3")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("193a32"), Color("7da18c")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color.WHITE))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(1.0, 0.95, 0.80, 1.0)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.70, 0.82, 0.76, 1.0)))
 	return button
 
 func _eyebrow(text: String) -> Label:
@@ -1108,9 +1119,9 @@ func _home_button(title: String, copy: String) -> Button:
 	button.add_theme_color_override("font_color", Color("23483e"))
 	button.add_theme_color_override("font_hover_color", Color("fff8e9"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f3e9", 0.96), Color("d5c5ad")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("2e5a4b"), Color("b78a45")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("203b31"), Color("d3a75e")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.86, 0.93, 0.88, 0.98)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(1.0, 0.95, 0.80, 1.0)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.70, 0.82, 0.76, 1.0)))
 	return button
 
 func _home_secondary_button(text: String) -> Button:
@@ -1121,8 +1132,8 @@ func _home_secondary_button(text: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("53655c"))
 	button.add_theme_color_override("font_hover_color", Color("23483e"))
-	button.add_theme_stylebox_override("normal", _style(Color("eee9df", 0.94), 13, Color("d7c7ad"), 1))
-	button.add_theme_stylebox_override("hover", _style(Color("fffaf1"), 13, Color("b78a45"), 1))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.72, 0.84, 0.78, 0.88)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.98, 0.94, 0.80, 1.0)))
 	return button
 
 func _section_title(text: String, count: String) -> HBoxContainer:
@@ -1199,10 +1210,10 @@ func _mode_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 13)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.78, 0.88, 0.82, 0.90)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.62, 0.76, 0.68, 1.0)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(1.0, 0.95, 0.80, 1.0)))
+	button.add_theme_stylebox_override("hover_pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.72, 0.84, 0.76, 1.0)))
 	return button
 
 func _difficulty_button(title: String, copy: String) -> Button:
@@ -1213,10 +1224,10 @@ func _difficulty_button(title: String, copy: String) -> Button:
 	button.add_theme_font_size_override("font_size", 11)
 	button.add_theme_color_override("font_color", Color("3c5048"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.78, 0.88, 0.82, 0.90)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.62, 0.76, 0.68, 1.0)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(1.0, 0.95, 0.80, 1.0)))
+	button.add_theme_stylebox_override("hover_pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.72, 0.84, 0.76, 1.0)))
 	return button
 
 func _skin_button(text: String, index: int) -> Button:
@@ -1229,10 +1240,10 @@ func _skin_button(text: String, index: int) -> Button:
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
 	var tint: Color = colors[index].lerp(Color.WHITE, 0.72)
-	button.add_theme_stylebox_override("normal", _option_style(tint, Color("d5c5ad")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(tint, 0.86)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.62, 0.76, 0.68, 1.0)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(1.0, 0.95, 0.80, 1.0)))
+	button.add_theme_stylebox_override("hover_pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.72, 0.84, 0.76, 1.0)))
 	return button
 
 func _piece_button(text: String, index: int) -> Button:
@@ -1243,8 +1254,8 @@ func _piece_button(text: String, index: int) -> Button:
 	button.add_theme_font_size_override("font_size", 12)
 	button.add_theme_color_override("font_color", Color("30463d"))
 	button.add_theme_color_override("font_pressed_color", Color("fff8e9"))
-	button.add_theme_stylebox_override("normal", _option_style(Color("f8f2e8"), Color("dacbb5")))
-	button.add_theme_stylebox_override("pressed", _option_style(Color("23463b"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover", _option_style(Color("fffaf1"), Color("b78a45")))
-	button.add_theme_stylebox_override("hover_pressed", _option_style(Color("2d5648"), Color("b78a45")))
+	button.add_theme_stylebox_override("normal", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.78, 0.88, 0.82, 0.90)))
+	button.add_theme_stylebox_override("pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.62, 0.76, 0.68, 1.0)))
+	button.add_theme_stylebox_override("hover", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(1.0, 0.95, 0.80, 1.0)))
+	button.add_theme_stylebox_override("hover_pressed", _texture_button_style(GENERATED_BUTTON_PLATE, 168.0, Color(0.72, 0.84, 0.76, 1.0)))
 	return button
