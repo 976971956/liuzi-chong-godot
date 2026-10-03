@@ -50,6 +50,8 @@ var brand_stack: VBoxContainer
 var header_buttons: Array[Button] = []
 var page_margin: MarginContainer
 var action_layout: BoxContainer
+var home_shell: PanelContainer
+var home_buttons: Array[Button] = []
 var board_view: Control
 var turn_label: Label
 var step_label: Label
@@ -486,12 +488,12 @@ func _build_home_page() -> void:
 	var center_wrap := CenterContainer.new()
 	center_wrap.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	home_page.add_child(center_wrap)
-	var shell := PanelContainer.new()
-	shell.custom_minimum_size = Vector2(360, 520)
-	shell.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.96), 28, Color("cdbda4", 0.92)))
-	center_wrap.add_child(shell)
+	home_shell = PanelContainer.new()
+	home_shell.custom_minimum_size = Vector2(360, 520)
+	home_shell.add_theme_stylebox_override("panel", _panel_surface(Color("f7f3eb", 0.96), 28, Color("cdbda4", 0.92)))
+	center_wrap.add_child(home_shell)
 	var shell_margin := _margin(28, 28, 26, 26)
-	shell.add_child(shell_margin)
+	home_shell.add_child(shell_margin)
 	var center := VBoxContainer.new()
 	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -531,9 +533,11 @@ func _build_home_page() -> void:
 	var ai_button := _home_button("人机对战", "挑战电脑 · 难度可选")
 	ai_button.pressed.connect(func(): _start_game("ai"))
 	center.add_child(ai_button)
+	home_buttons.append(ai_button)
 	var pvp_button := _home_button("双人对战", "同屏轮流 · 本地对弈")
 	pvp_button.pressed.connect(func(): _start_game("pvp"))
 	center.add_child(pvp_button)
+	home_buttons.append(pvp_button)
 	var utility_row := HBoxContainer.new()
 	utility_row.add_theme_constant_override("separation", 10)
 	center.add_child(utility_row)
@@ -639,7 +643,11 @@ func _show_result_dialog() -> void:
 		return
 	result_title.text = "%s方胜出" % _player_name(winner)
 	result_copy.text = "局已结束，开始下一局?"
-	result_dialog.popup_centered(Vector2i(360, 370))
+	var viewport_size := get_viewport_rect().size
+	result_dialog.popup_centered(Vector2i(
+		int(minf(360.0, viewport_size.x - 20.0)),
+		int(minf(370.0, viewport_size.y - 32.0))
+	))
 
 func _restart_from_result() -> void:
 	result_dialog.hide()
@@ -651,7 +659,10 @@ func _return_home_from_result() -> void:
 func _build_rules_dialog() -> void:
 	rules_dialog = PopupPanel.new()
 	rules_dialog.theme = theme
-	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(GENERATED_MODAL_FRAME, 150.0, Color(1, 1, 1, 0.97), 142.0))
+	# The source frame is 1536 px wide while the phone popup is about 360 px.
+	# Keep the slice margins below a quarter of the rendered width so the
+	# center never collapses into a distorted strip on narrow screens.
+	rules_dialog.add_theme_stylebox_override("panel", _generated_panel_style(GENERATED_MODAL_FRAME, 92.0, Color(1, 1, 1, 0.97), 86.0))
 	add_child(rules_dialog)
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -998,6 +1009,10 @@ func _update_responsive() -> void:
 	if narrow:
 		left_column.custom_minimum_size.x = 0
 		board_view.custom_minimum_size = Vector2(usable_width - 24.0, 430)
+		if home_shell:
+			home_shell.custom_minimum_size.x = maxf(280.0, usable_width - 18.0)
+			for button in home_buttons:
+				button.custom_minimum_size.x = maxf(0.0, home_shell.custom_minimum_size.x - 56.0)
 		action_layout.vertical = true
 		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		page_margin.add_theme_constant_override("margin_left", int(maxf(12.0, safe_left + 12.0)))
@@ -1015,6 +1030,10 @@ func _update_responsive() -> void:
 	else:
 		left_column.custom_minimum_size.x = minf(1040.0, usable_width - 104.0)
 		board_view.custom_minimum_size = Vector2(560, 640)
+		if home_shell:
+			home_shell.custom_minimum_size.x = 360.0
+			for button in home_buttons:
+				button.custom_minimum_size.x = 320.0
 		action_layout.vertical = false
 		status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		page_margin.add_theme_constant_override("margin_left", int(maxf(52.0, safe_left + 52.0)))
@@ -1074,7 +1093,10 @@ func _panel_surface(background: Color, radius: int, border_color: Color) -> Styl
 	# settings_frame_filled.png has a taller crown/base than side rails. Keep
 	# those source regions separate so resizing a phone sheet does not squash
 	# the crown into the center of the panel.
-	var style := _generated_panel_style(GENERATED_SETTINGS_FRAME, 178.0, Color(1, 1, 1, 0.96), 208.0)
+	# The settings artwork is square, but the phone panel is a tall 360–430 px
+	# surface. Smaller nine-slice margins preserve the crown and rails while
+	# leaving enough center area for the controls.
+	var style := _generated_panel_style(GENERATED_SETTINGS_FRAME, 96.0, Color(1, 1, 1, 0.96), 96.0)
 	style.content_margin_left = 28.0
 	style.content_margin_right = 28.0
 	style.content_margin_top = 30.0
@@ -1116,14 +1138,15 @@ func _apply_premium_icon_button(button: Button, size := 46.0) -> void:
 func _texture_button_style(texture: Texture2D, margin := 18.0, tint := Color.WHITE) -> StyleBoxTexture:
 	var style := StyleBoxTexture.new()
 	style.texture = texture
-	# button_plate.png is a very wide plate with deeper top/bottom ornaments
-	# than the old flat cards. Use real nine-slice margins on all four sides;
-	# the previous 10 px vertical margins compressed those ornaments into a
-	# thin line on a 44 px phone button.
-	style.texture_margin_left = margin
-	style.texture_margin_right = margin
-	style.texture_margin_top = margin * 0.70
-	style.texture_margin_bottom = margin * 0.70
+	# button_plate.png is a very wide plate. The buttons are much smaller than
+	# the source bitmap, so normalize the source design margin before applying
+	# it; using 168 px directly leaves no center area on a 44 px phone button.
+	var x_margin := minf(margin * 0.25, 48.0)
+	var y_margin := minf(margin * 0.15, 24.0)
+	style.texture_margin_left = x_margin
+	style.texture_margin_right = x_margin
+	style.texture_margin_top = y_margin
+	style.texture_margin_bottom = y_margin
 	# Keep the label inside the jade center instead of over the gold bevel.
 	style.content_margin_left = 14.0
 	style.content_margin_right = 14.0
